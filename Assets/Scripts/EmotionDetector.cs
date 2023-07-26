@@ -8,6 +8,13 @@ using System.Collections.Generic;
 using System.Collections;
 using UnityEngine;
 using Microsoft.ML.OnnxRuntime;
+using OpenCVForUnity.CoreModule;
+using OpenCVForUnity.DnnModule;
+using OpenCVForUnity.MlModule;
+using OpenCVForUnity.ImgprocModule;
+using OpenCVForUnity.UnityUtils;
+using OpenCVForUnity.UtilsModule;
+using OpenCVForUnity.UnityUtils.Helper;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -26,7 +33,7 @@ public class EmotionDetector : MonoBehaviour
     /// <summary>
     /// The net.
     /// </summary>
-
+    protected SVM net;
     protected string model_filepath;
     private InferenceSession session;
     private byte[] model_bytes;
@@ -45,16 +52,13 @@ public class EmotionDetector : MonoBehaviour
        if (!string.IsNullOrEmpty(model))
        {
             //load model
-            var directoryPath = Application.dataPath + "/Models/";
-            model_filepath = Path.Combine(directoryPath, model);
+            //model_filepath = Path.Combine(Application.streamingAssetsPath, model);
+            model_filepath = Utils.getFilePath("OpenCVForUnity/dnn/" + model);
             if (string.IsNullOrEmpty(model_filepath))
             {
                 Debug.Log("The file:" + model + " did not exist in the folder.");
             }
-            else
-            {
-                model_bytes = LoadModelFromEmbeddedResource(model_filepath);
-            }
+
             
             
        }
@@ -75,12 +79,21 @@ public class EmotionDetector : MonoBehaviour
             // Create an InferenceSession from the Model Path.
             try
             {
-                var options = new SessionOptions { LogId = "Sample" };
+                //var serializedModel = LoadModelFromEmbeddedResource(model_filepath);
+                //string serializedPath = SaveModelToEmbeddedResource(serializedModel, model_filepath);
+                //net = SVM.load(serializedPath);
+                var options = new SessionOptions();
+                options.LogSeverityLevel = OrtLoggingLevel.ORT_LOGGING_LEVEL_INFO;
+                options.GraphOptimizationLevel = GraphOptimizationLevel.ORT_ENABLE_ALL;
+                options.ExecutionMode = ExecutionMode.ORT_SEQUENTIAL;
+                options.EnableMemoryPattern = false;
+                options.AppendExecutionProvider_DML(0);
+
                 session = new InferenceSession(model_filepath, options);
             }
             catch (Exception e)
             {
-                Debug.Log(e.Message);
+                Debug.Log(e.StackTrace);
             }
 
             //! [Initialize network]
@@ -114,9 +127,26 @@ public class EmotionDetector : MonoBehaviour
         return model;
     }
 
+    static string SaveModelToEmbeddedResource(byte[] serializedModel, string model_filepath)
+    {
+        string model = null;
+        string changedFileExtesion = Path.ChangeExtension(model_filepath, ".xml");
+        using (Stream stream = File.OpenWrite(changedFileExtesion))
+        {
+            using (MemoryStream memoryStream = new MemoryStream())
+            {
+                memoryStream.Write(serializedModel, 0, serializedModel.Length);
+
+            }
+        }
+
+        return changedFileExtesion;
+    }
+
     // Update is called once per frame
     protected void Update()
     {
+        //Debug.Log(model_filepath);
         Tensor<float> input = new DenseTensor<float>(new int[] { 1, 49 });
         for (int y = 0; y < 49; y++)
         {
@@ -124,10 +154,19 @@ public class EmotionDetector : MonoBehaviour
             input[0, y] = testData[y];
             //Debug.Log(input[0, y]);
         }
+        try
+        {
+            var results = GetPrediction(input);
+            //var results = GetPredictionOpenCV();
+            //print inferred result
+            Debug.Log(results.First());
+        }
+        catch (Exception e)
+        {
+            //Debug.Log(e.StackTrace);
+        }
 
-        var results = GetPrediction(input);
-        //print inferred result
-        Debug.Log(results.First());
+
 
     }
 
@@ -137,8 +176,49 @@ public class EmotionDetector : MonoBehaviour
 
     }
 
+    List<Mat> GetPredictionOpenCV()
+    {
+
+        // Setup inputs
+        Mat blob = new Mat(new Size(1, 49), CvType.CV_32FC1);
+        List<Mat> outs = new List<Mat>();
+        List<string> output_names = new List<string>();
+
+
+        for (int y = 0; y < 49; y++)
+        {
+            //load tensor with test data
+            blob.put(0, y, testData[y]);
+            //Debug.Log(input[0, y]);
+        }
+
+        //Debug.Log("blob=" + blob.dump());
+        //load tensor with test data
+ 
+
+
+
+
+        // Run inference
+        try
+        {
+            // Run a model.
+            net.predict(blob);
+        }
+        catch (Exception e)
+        {
+            Debug.Log(e.Message);
+        }
+
+
+        return outs;
+
+    }
+    
     System.Collections.Generic.IEnumerable<Int64> GetPrediction(Tensor<float> input)
     {
+        System.Collections.Generic.IEnumerable<Int64> results = null;
+
         // Setup inputs
         var inputs = new List<NamedOnnxValue>
             {
@@ -146,8 +226,15 @@ public class EmotionDetector : MonoBehaviour
             };
 
         // Run inference
-        var results = session.Run(inputs).First().AsEnumerable<Int64>();
-        
+        try
+        {
+            results = session.Run(inputs).First().AsEnumerable<Int64>();
+        }
+        catch (Exception e)
+        {
+            Debug.Log(e.Message + e.StackTrace);
+        }
+
 
         return results;
 

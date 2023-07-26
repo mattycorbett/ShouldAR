@@ -26,39 +26,57 @@ public class CSVLogger : MonoBehaviour
         eyeTrackingScript = eyeTrackerObject.GetComponent<EyeTracking>();
         IMUtrackingScript = IMUTrackerObject.GetComponent<IMUTracking>();
         StartLogger();
+        StartCoroutine(DataRecorderLoop());
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(s != null)
-        {
-            if (eyeTrackerObject.activeSelf && IMUTrackerObject.activeSelf)
-            {
-                WriteLine(System.DateTime.Now.ToString("MM_dd_yyyy__HH_mm_ss") + "," + System.DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() + "," + eyeTrackingScript.blinkRate.ToString()
-                    + "," + eyeTrackingScript.currentEyeBehavior + "," + eyeTrackingScript.behaviorDuration.ToString() + "," + eyeTrackingScript.behaviorVelocity.ToString()
-                     + "," + IMUtrackingScript.respiratoryFreqCounter
-                     + "," + IMUtrackingScript.acceleration.x.ToString() + "," + IMUtrackingScript.acceleration.y.ToString() + "," + IMUtrackingScript.acceleration.z.ToString()
-                    + "," + IMUtrackingScript.angVelocity.x.ToString() + "," + IMUtrackingScript.angVelocity.y.ToString() + "," + IMUtrackingScript.angVelocity.z.ToString());
-            }
-            else if (eyeTrackerObject.activeSelf && !IMUTrackerObject.activeSelf)
-            {
-                WriteLine(System.DateTime.Now.ToString("MM_dd_yyyy__HH_mm_ss") + "," + System.DateTime.Now.Ticks / System.TimeSpan.TicksPerMillisecond + "," + eyeTrackingScript.blinkRate.ToString()
-                    + "," + eyeTrackingScript.currentEyeBehavior + "," + eyeTrackingScript.behaviorDuration.ToString() + "," + eyeTrackingScript.behaviorVelocity.ToString());
-            }
-            else
-            {
-                WriteLine(System.DateTime.Now.ToString("MM_dd_yyyy__HH_mm_ss") + "," + System.DateTime.Now.Ticks / System.TimeSpan.TicksPerMillisecond + "," + ""
-                    + "," + "" + "," + "" + "," + "" + ","
-                    + "," + IMUtrackingScript.respiratoryFreqCounter
-                     + "," + IMUtrackingScript.acceleration.x.ToString() + "," + IMUtrackingScript.acceleration.y.ToString() + "," + IMUtrackingScript.acceleration.z.ToString()
-                    + "," + IMUtrackingScript.angVelocity.x.ToString() + "," + IMUtrackingScript.angVelocity.y.ToString() + "," + IMUtrackingScript.angVelocity.z.ToString());
-            }
-            
-        }
+        s.Flush();
         
     }
 
+    IEnumerator DataRecorderLoop()
+    {
+        while (true)
+        {
+            if (s != null)
+            {
+                if (eyeTrackerObject.activeSelf && IMUTrackerObject.activeSelf)
+                {
+                    WriteLine(System.DateTime.Now.ToString("MM_dd_yyyy__HH_mm_ss") + "," + System.DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() + "," + eyeTrackingScript.blinkRate.ToString()
+                        + "," + eyeTrackingScript.currentEyeBehavior + "," + eyeTrackingScript.behaviorDuration.ToString() + "," + eyeTrackingScript.behaviorVelocity.ToString()
+                         + "," + IMUtrackingScript.respiratoryFreqCounter
+                         + "," + IMUtrackingScript.acceleration.x.ToString() + "," + IMUtrackingScript.acceleration.y.ToString() + "," + IMUtrackingScript.acceleration.z.ToString()
+                        + "," + IMUtrackingScript.angVelocity.x.ToString() + "," + IMUtrackingScript.angVelocity.y.ToString() + "," + IMUtrackingScript.angVelocity.z.ToString());
+                }
+                else if (eyeTrackerObject.activeSelf && !IMUTrackerObject.activeSelf)
+                {
+                    WriteLine(System.DateTime.Now.ToString("MM_dd_yyyy__HH_mm_ss") + "," + System.DateTime.Now.Ticks / System.TimeSpan.TicksPerMillisecond + "," + eyeTrackingScript.blinkRate.ToString()
+                        + "," + eyeTrackingScript.currentEyeBehavior + "," + eyeTrackingScript.behaviorDuration.ToString() + "," + eyeTrackingScript.behaviorVelocity.ToString());
+                }
+                else
+                {
+                    WriteLine(System.DateTime.Now.ToString("MM_dd_yyyy__HH_mm_ss") + "," + System.DateTime.Now.Ticks / System.TimeSpan.TicksPerMillisecond + "," + ""
+                        + "," + "" + "," + "" + "," + "" + ","
+                        + "," + IMUtrackingScript.respiratoryFreqCounter
+                         + "," + IMUtrackingScript.acceleration.x.ToString() + "," + IMUtrackingScript.acceleration.y.ToString() + "," + IMUtrackingScript.acceleration.z.ToString()
+                        + "," + IMUtrackingScript.angVelocity.x.ToString() + "," + IMUtrackingScript.angVelocity.y.ToString() + "," + IMUtrackingScript.angVelocity.z.ToString());
+                }
+
+            }
+            yield return new WaitForSeconds(.01F);
+
+        }
+    }
+    IEnumerator DataFlushLoop()
+    {
+        while (true)
+        {
+            s.Flush();
+            yield return new WaitForSeconds(2);
+        }
+    }
     public void StartLogger()
     {
         string fileName = System.DateTime.Now.ToString("MM_dd_yyyy__HH_mm_ss") + ".csv";
@@ -91,7 +109,7 @@ public class CSVLogger : MonoBehaviour
     public void WriteLine(string line)
     {
         s.WriteLine(line);
-        s.Flush();
+        
     }
 
     private void OnDestroy()

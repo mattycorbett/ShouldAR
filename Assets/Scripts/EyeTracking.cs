@@ -57,43 +57,37 @@ public class EyeTracking : MonoBehaviour
 
         blinkCounter = 0;
 
-        StartCoroutine(BlinkRateCountLoop());
-    }
-    void Update()
-    {
-        var eyes = eyesActions.Data.ReadValue<UnityEngine.InputSystem.XR.Eyes>();
-        //Access input such as eyes.fixationPoint.
-        //Debug.Log(eyes.fixationPoint);
-
         if (!eyesDevice.isValid)
         {
             //Locate the input device using the FindMagicLeapDevice Util
             this.eyesDevice = InputSubsystem.Utils.FindMagicLeapDevice(InputDeviceCharacteristics.EyeTracking | InputDeviceCharacteristics.TrackedDevice);
             return;
         }
-        //Query for Eye Tracking State data
+
+        StartCoroutine(BlinkRateCountLoop());
+        StartCoroutine(EyeDataRecorderLoop());
+    }
+    void Update()
+    {
+        //var eyes = eyesActions.Data.ReadValue<UnityEngine.InputSystem.XR.Eyes>();
+        //Access input such as eyes.fixationPoint.
+        //Debug.Log(eyes.fixationPoint);a
+        // Debug.Log("Fixation Confidence: " + trackingState.FixationConfidence);
+        //Access the trackingState data
         InputSubsystem.Extensions.TryGetEyeTrackingState(eyesDevice, out InputSubsystem.Extensions.MLEyes.State trackingState);
         MLResult gazeStateResult = MLGazeRecognition.GetState(out MLGazeRecognition.State recognitionState);
 
-        // Debug.Log("Fixation Confidence: " + trackingState.FixationConfidence);
-        //Access the trackingState data
-        if ((trackingState.RightBlink || trackingState.LeftBlink))
+        if (recognitionState.Behavior.ToString() == "Saccade")
         {
-            if (!currentlyBlinking)
-            {
-                blinkCounter++;
-                currentlyBlinking = true;
-            }        
-        }
-        else
-        {
-            currentlyBlinking = false;
-        }
 
-        if(recognitionState.Behavior.ToString() == "Saccade")
-        {
-            //Debug.Log("Saccade of amplitude " + recognitionState.VelocityDegps.ToString() + " for " + recognitionState.DurationS.ToString() + " seconds.");
             currentEyeBehavior = "Saccade";
+            behaviorDuration = recognitionState.DurationS;
+            behaviorVelocity = recognitionState.VelocityDegps;
+        }
+        else if (recognitionState.Behavior.ToString() == "Fixation")
+        {
+            //Debug.Log("Pursuit of amplitude " + recognitionState.VelocityDegps.ToString() + " for " + recognitionState.DurationS.ToString() + " seconds.");
+            currentEyeBehavior = "Fixation";
             behaviorDuration = recognitionState.DurationS;
             behaviorVelocity = recognitionState.VelocityDegps;
         }
@@ -112,6 +106,18 @@ public class EyeTracking : MonoBehaviour
             behaviorVelocity = (double)0.0;
         }
 
+        if ((trackingState.RightBlink || trackingState.LeftBlink))
+        {
+            if (!currentlyBlinking)
+            {
+                blinkCounter++;
+                currentlyBlinking = true;
+            }
+        }
+        else
+        {
+            currentlyBlinking = false;
+        }
     }
 
     private void OnPermissionDenied(string permission)
@@ -134,6 +140,14 @@ public class EyeTracking : MonoBehaviour
             Debug.Log("Current Blink Rate: " + blinkRate);
             blinkCounter = 0;
             yield return new WaitForSeconds(15);
+        }
+    }
+
+    IEnumerator EyeDataRecorderLoop()
+    {
+        while (true)
+        {
+
         }
     }
 }
