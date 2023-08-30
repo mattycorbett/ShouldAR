@@ -5,6 +5,8 @@ using UnityEngine.XR;
 using UnityEngine.XR.MagicLeap;
 using UnityEngine.InputSystem;
 using TMPro;
+using System.Linq;
+using System;
 
 
 
@@ -19,13 +21,32 @@ public class EyeTracking : MonoBehaviour
     // Was EyeTracking permission granted by user
     private bool permissionGranted = false;
     private readonly MLPermissions.Callbacks permissionCallbacks = new MLPermissions.Callbacks();
+    private int numberSecondsElapsed;
+    private string previousBehavior = "None";
+    private List<double> fixationList;
+    private float numFixationsPerSecond;
+    private float tempFixationDuration;
+    private float meanFixationDuration;
+    private float SDFixationDuration;
+    private float skewFixationDuration;
+    private float firstFixationDuration;
+
+    private float totalSaccades;
+
+    private float totalPursuits;
+
+    private int blinkRate;
+    CSVLogger loggingScript;
     #endregion
 
     #region public variables
-    public int blinkRate;
-    public string currentEyeBehavior = "None";
-    public double behaviorDuration = 0.0;
-    public double behaviorVelocity = 0.0;
+    [TooltipAttribute("Enable CSV Logging")]
+    public bool enableLogging;
+
+    [TooltipAttribute("User Eye Gaze Debug Prefab")]
+    public GameObject userEyeGazeSphere;
+
+    public GameObject CSVGameObject;
     #endregion
 
     private void Awake()
@@ -33,6 +54,10 @@ public class EyeTracking : MonoBehaviour
         permissionCallbacks.OnPermissionGranted += OnPermissionGranted;
         permissionCallbacks.OnPermissionDenied += OnPermissionDenied;
         permissionCallbacks.OnPermissionDeniedAndDontAskAgain += OnPermissionDenied;
+
+        InvokeRepeating("CounterLoop", 1.0f, 1.0f);
+        InvokeRepeating("BlinkRateCountLoop", 1.0f, 60.0f);
+        InvokeRepeating("EyeDataRecorderLoop", 60.0f, 60.0f);
     }
 
     private void OnDestroy()
@@ -49,6 +74,12 @@ public class EyeTracking : MonoBehaviour
 
     void Start()
     {
+        if (enableLogging)
+        {
+            loggingScript = CSVGameObject.GetComponent<CSVLogger>();
+        }
+        
+        fixationList = new List<double>();
         InputSubsystem.Extensions.MLEyes.StartTracking();
 
         mlInputs = new MagicLeapInputs();
@@ -64,46 +95,52 @@ public class EyeTracking : MonoBehaviour
             return;
         }
 
-        StartCoroutine(BlinkRateCountLoop());
-        StartCoroutine(EyeDataRecorderLoop());
     }
     void Update()
     {
-        //var eyes = eyesActions.Data.ReadValue<UnityEngine.InputSystem.XR.Eyes>();
+        var eyes = eyesActions.Data.ReadValue<UnityEngine.InputSystem.XR.Eyes>();
         //Access input such as eyes.fixationPoint.
-        //Debug.Log(eyes.fixationPoint);a
+        userEyeGazeSphere.transform.position = eyes.fixationPoint;
         // Debug.Log("Fixation Confidence: " + trackingState.FixationConfidence);
+
         //Access the trackingState data
         InputSubsystem.Extensions.TryGetEyeTrackingState(eyesDevice, out InputSubsystem.Extensions.MLEyes.State trackingState);
         MLResult gazeStateResult = MLGazeRecognition.GetState(out MLGazeRecognition.State recognitionState);
 
-        if (recognitionState.Behavior.ToString() == "Saccade")
-        {
+        var currentEyeBehavior = recognitionState.Behavior.ToString();
 
-            currentEyeBehavior = "Saccade";
-            behaviorDuration = recognitionState.DurationS;
-            behaviorVelocity = recognitionState.VelocityDegps;
-        }
-        else if (recognitionState.Behavior.ToString() == "Fixation")
+        if (currentEyeBehavior == "Saccade")
         {
-            //Debug.Log("Pursuit of amplitude " + recognitionState.VelocityDegps.ToString() + " for " + recognitionState.DurationS.ToString() + " seconds.");
-            currentEyeBehavior = "Fixation";
-            behaviorDuration = recognitionState.DurationS;
-            behaviorVelocity = recognitionState.VelocityDegps;
-        }
+            if(previousBehavior != currentEyeBehavior)
+            {
+                //if a fixation has ended, computer new totals and averages
+                if (previousBehavior == "Fixation")
+                {
+                    if (tempFixationDuration >= 300F)
+                    {
+                        //If first fixation
+                        if (fixationList.Count == 0)
+                        {
+                            firstFixationDuration = tempFixationDuration;
+                        }
+                        fixationList.Add((double)tempFixationDuration);
+                        tempFixationDuration = 0F;
+                    }              
+ 
+                }
+            }
+            previousBehavior = "Saccade";
 
-        else if (recognitionState.Behavior.ToString() == "Pursuit")
-        {
-            //Debug.Log("Pursuit of amplitude " + recognitionState.VelocityDegps.ToString() + " for " + recognitionState.DurationS.ToString() + " seconds.");
-            currentEyeBehavior = "Pursuit";
-            behaviorDuration = recognitionState.DurationS;
-            behaviorVelocity = recognitionState.VelocityDegps;
         }
-        else
+        else if (currentEyeBehavior == "Fixation")
         {
-            currentEyeBehavior = "None";
-            behaviorDuration = (double)0.0;
-            behaviorVelocity = (double)0.0;
+            if(previousBehavior != currentEyeBehavior)
+            {
+                
+                
+            }
+            previousBehavior = "Fixation";
+            tempFixationDuration = recognitionState.DurationS * 1000;
         }
 
         if ((trackingState.RightBlink || trackingState.LeftBlink))
@@ -118,6 +155,9 @@ public class EyeTracking : MonoBehaviour
         {
             currentlyBlinking = false;
         }
+
+
+
     }
 
     private void OnPermissionDenied(string permission)
@@ -132,22 +172,75 @@ public class EyeTracking : MonoBehaviour
         permissionGranted = true;
     }
 
-    IEnumerator BlinkRateCountLoop()
+    void BlinkRateCountLoop()
     {
-        while (true)
-        {
-            blinkRate = blinkCounter * 4;
-            Debug.Log("Current Blink Rate: " + blinkRate);
-            blinkCounter = 0;
-            yield return new WaitForSeconds(15);
-        }
+        blinkRate = blinkCounter / 60;
+        blinkCounter = 0;
     }
 
-    IEnumerator EyeDataRecorderLoop()
+    void EyeDataRecorderLoop()
     {
-        while (true)
+        if (fixationList.Any())
         {
+            numFixationsPerSecond = (float)((float)fixationList.Count() / (float)numberSecondsElapsed);
+            meanFixationDuration = (float)(fixationList.Sum() / (float)fixationList.Count());
+            SDFixationDuration = standardDeviation(fixationList.ToArray(), fixationList.Count());
+            skewFixationDuration = skewness(fixationList.ToArray(), fixationList.Count());
+            loggingScript.WriteCSVLineFixations(numFixationsPerSecond, meanFixationDuration, SDFixationDuration, skewFixationDuration, (float)fixationList.Max(), firstFixationDuration);
 
         }
+    }
+    void CounterLoop()
+    {
+        //Debug.Log(numberSecondsElapsed);
+        numberSecondsElapsed += 1;
+    }
+    
+
+    // Function to calculate standard
+    // deviation of data.
+    static float standardDeviation(double[] arr,
+                                            int n)
+    {
+
+        double sum = 0;
+
+        // find standard deviation
+        // deviation of data.
+        for (int i = 0; i < n; i++)
+            sum = (arr[i] - mean(arr, n)) *
+                  (arr[i] - mean(arr, n));
+
+        return (float)Math.Sqrt(sum / n);
+    }
+
+    // Function to calculate skewness.
+    static float skewness(double []arr, int n)
+    {
+        // Find skewness using
+        // above formula
+        double sum = 0;
+         
+        for (int i = 0; i < n; i++)
+            sum = (arr[i] - mean(arr, n)) *
+                  (arr[i] - mean(arr, n)) *
+                  (arr[i] - mean(arr, n));            
+         
+        return (float)sum / (n * standardDeviation(arr, n) *
+                        standardDeviation(arr, n) *
+                        standardDeviation(arr, n) *
+                        standardDeviation(arr, n));
+    }
+
+    // Function to calculate
+    // mean of data.
+    static float mean(double[] arr, int n)
+    {
+        double sum = 0;
+
+        for (int i = 0; i < n; i++)
+            sum = sum + arr[i];
+
+        return (float)sum / n;
     }
 }

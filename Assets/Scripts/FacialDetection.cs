@@ -96,11 +96,8 @@ namespace ShouldAR
 
         protected virtual void Start()
         {
-            size = new Size(captureWidth, captureHeight);
-            bgrMat = new Mat(size, CvType.CV_8UC3);
-            Size input_shape = new Size(inpWidth > 0 ? inpWidth : 320, inpHeight > 0 ? inpHeight : 240);
-            Size output_shape = bgrMat.size();
-            pb = new PriorBox(input_shape, output_shape);
+
+           
 
             if (!string.IsNullOrEmpty(classes))
             {
@@ -118,6 +115,8 @@ namespace ShouldAR
                 if (string.IsNullOrEmpty(model_filepath)) Debug.Log("The file:" + model + " did not exist in the folder �Assets/StreamingAssets/OpenCVForUnity/dnn�.");
             }
             Run();
+
+            
         }
 
         protected virtual void Run()
@@ -155,10 +154,14 @@ namespace ShouldAR
 
         }
 
-        public List<(Vector2, float)> RunDetection(Texture2D rawVideoTexturesRGBA)
+        public List<(Vector2, float, Point[])> RunDetection(Texture2D rawVideoTexturesRGBA, int width, int height)
         {
 
-
+            size = new Size(width, height);
+            bgrMat = new Mat(size, CvType.CV_8UC3);
+            Size input_shape = new Size(inpWidth > 0 ? inpWidth : 320, inpHeight > 0 ? inpHeight : 240);
+            Size output_shape = bgrMat.size();
+            pb = new PriorBox(input_shape, output_shape);
             rgbaMat = new Mat(size, CvType.CV_8UC3);
             bgrMat = new Mat(size, CvType.CV_8UC3);
 
@@ -175,7 +178,7 @@ namespace ShouldAR
             if (net == null)
             {
                 Debug.Log("model file is not loaded");
-                return new List<(Vector2, float)>();
+                return new List<(Vector2, float, Point[])>();
             }
             else
             {
@@ -219,31 +222,19 @@ namespace ShouldAR
                 }
                 blob.Dispose();
 
+                GameObject.Destroy(rawVideoTexturesRGBA);
                 return outputFaces;
             }
-
-            //try
-           // {
-           //     Texture2D texture = new Texture2D(captureWidth, captureHeight, TextureFormat.RGBA32, false);
-           //     Utils.matToTexture2D(rgbaMat, texture);
-           //     cameraCaptureVisualizer.UpdateRGBTextureWithDetection(texture);
-           // }
-            //catch (Exception e)
-            //{
-            //    Debug.Log(e.Message + e.StackTrace);
-            //}
-
-
 
 
         }
 
-        protected List<(Vector2, float)> postprocess(Mat frame, List<Mat> outs, Net net, int backend = Dnn.DNN_BACKEND_OPENCV)
+        protected List<(Vector2, float, Point[])> postprocess(Mat frame, List<Mat> outs, Net net, int backend = Dnn.DNN_BACKEND_OPENCV)
         {
 
             // # Decode bboxes and landmarks
             Mat dets = pb.decode(outs[0], outs[1], outs[2]); // "loc", "conf", "iou"
-            List<(Vector2, float)> outputFaces = new List<(Vector2, float)>();
+            List<(Vector2, float, Point[])> outputFaces = new List<(Vector2, float, Point[])>();
 
             // # Ignore low scores + NMS
             int num = dets.rows();
@@ -287,67 +278,20 @@ namespace ShouldAR
                 var cols = s.width;
                 //Account for flipped Y axis
                 Vector2 testLoc = new Vector2((bbox_arr[0] + bbox_arr[2]) - (bbox_arr[2] / 2), (float)rows - (bbox_arr[1] + (bbox_arr[3]/2)));
-                outputFaces.Add((testLoc, bbox_arr[2]));
-                Debug.Log("Center of Face: " + testLoc);
 
-                //Mat landmarks = dets.colRange(4, 14);
-                //float[] landmarks_arr = new float[10];
-                //landmarks.get(idx, 0, landmarks_arr);
-               // Point[] points = new Point[] { new Point(landmarks_arr[0], landmarks_arr[1]), new Point(landmarks_arr[2], landmarks_arr[3]),
-                  //  new Point(landmarks_arr[4], landmarks_arr[5]), new Point(landmarks_arr[6], landmarks_arr[7]), new Point(landmarks_arr[8], landmarks_arr[9])};
+                Mat landmarks = dets.colRange(4, 14);
+                float[] landmarks_arr = new float[10];
+                landmarks.get(idx, 0, landmarks_arr);
+                Point[] points = new Point[] { new Point(landmarks_arr[0], landmarks_arr[1]), new Point(landmarks_arr[2], landmarks_arr[3]),
+                  new Point(landmarks_arr[4], landmarks_arr[5]), new Point(landmarks_arr[6], landmarks_arr[7]), new Point(landmarks_arr[8], landmarks_arr[9])};
+                
+                
+                outputFaces.Add((testLoc, bbox_arr[2], points));
                 //drawPredPoints(points, frame);
             }
 
             return outputFaces;
         }
-
-        /// <summary>
-        /// Draws the pred.
-        /// </summary>
-        /// <param name="classId">Class identifier.</param>
-        /// <param name="conf">Conf.</param>
-        /// <param name="left">Left.</param>
-        /// <param name="top">Top.</param>
-        /// <param name="right">Right.</param>
-        /// <param name="bottom">Bottom.</param>
-        /// <param name="frame">Frame.</param>
-        protected virtual void drawPred(int classId, float conf, double left, double top, double right, double bottom, Mat frame)
-        {
-            Imgproc.rectangle(frame, new Point(left, top), new Point(right, bottom), new Scalar(0, 255, 0, 255), 2);
-
-            string label = conf.ToString();
-            if (classNames != null && classNames.Count != 0)
-            {
-                if (classId < (int)classNames.Count)
-                {
-                    label = classNames[classId] + ": " + label;
-                }
-            }
-
-            int[] baseLine = new int[1];
-            Size labelSize = Imgproc.getTextSize(label, Imgproc.FONT_HERSHEY_SIMPLEX, 0.5, 1, baseLine);
-
-            top = Mathf.Max((float)top, (float)labelSize.height);
-            Imgproc.rectangle(frame, new Point(left, top - labelSize.height),
-                new Point(left + labelSize.width, top + baseLine[0]), Scalar.all(255), Core.FILLED);
-            Imgproc.putText(frame, label, new Point(left, top), Imgproc.FONT_HERSHEY_SIMPLEX, 0.5, new Scalar(0, 0, 0, 255));
-        }
-        protected virtual void drawPredPoints(Point[] points, Mat frame)
-        {
-            for (int i = 0; i < points.Length; i++)
-            {
-                if (i < pointsColors.Length)
-                {
-                    Imgproc.circle(frame, points[i], 2, pointsColors[i], 2);
-                }
-                else
-                {
-                    Imgproc.circle(frame, points[i], 2, pointsColors[pointsColors.Length - 1], 2);
-                }
-            }
-        }
-
-       
 
         /// <summary>
         /// Gets the outputs names.
@@ -633,5 +577,7 @@ namespace ShouldAR
 
 
     }
+
+
 }
 

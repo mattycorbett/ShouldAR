@@ -17,7 +17,15 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using UnityEngine.XR.MagicLeap;
-
+using UnityEngine.Networking;
+using OpenCVForUnity.CoreModule;
+using OpenCVForUnity.DnnModule;
+using OpenCVForUnity.ImgprocModule;
+using OpenCVForUnity.UnityUtils;
+using OpenCVForUnity.UtilsModule;
+using OpenCVForUnity.UnityUtils.Helper;
+using OpenCVForUnity.Calib3dModule;
+using OpenCVForUnity.UnityUtils;
 
 
 
@@ -59,23 +67,41 @@ namespace ShouldAR
         [SerializeField, Tooltip("Refrence to the Raw Video Capture Visualizer gameobject for RGB frames")]
         private CameraCaptureVisualizer cameraCaptureVisualizer = null;
 
-        [TooltipAttribute("Facal Detection GameObject")]
+        [TooltipAttribute("Facial Detection GameObject")]
         public GameObject detectionComponent;
 
-        [TooltipAttribute("Facal Detection Cube Prefab")]
+        [TooltipAttribute("Facial Detection Cube Prefab")]
         public GameObject faceCube;
 
-        [TooltipAttribute("Enable Facial Detection")]
-        public bool enableDetection;
+        [TooltipAttribute("Rear Camera Facial Detection Cube Prefab")]
+        public GameObject rearFaceCube;
+
+        [TooltipAttribute("Bystander Eye Gaze Debug Prefab")]
+        public GameObject eyeGazeSphere;
+
+        [TooltipAttribute("Temp GameObject")]
+        public GameObject tempGO;
+
+        [TooltipAttribute("Enable Facial Detection Using Front-Facing Camera")]
+        public bool enableFrontDetection;
+
+        [TooltipAttribute("Enable Facial Detection Using Rear-Facing Camera")]
+        public bool enableRearDetection;
 
         [TooltipAttribute("How often to locate faces? (in terms of frames)")]
         public int inferenceRate;
 
-        [SerializeField, Tooltip("Desired width for the camera capture")]
-        private int captureWidth = 1280;
+        [SerializeField, Tooltip("Desired width for the front camera capture")]
+        private int frontCaptureWidth = 1280;
 
-        [SerializeField, Tooltip("Desired height for the camera capture")]
-        private int captureHeight = 720;
+        [SerializeField, Tooltip("Desired height for the front camera capture")]
+        private int frontCaptureHeight = 720;
+
+        [SerializeField, Tooltip("Desired width for the back camera capture")]
+        private int backCaptureWidth = 800;
+
+        [SerializeField, Tooltip("Desired height for the back camera capture")]
+        private int backCaptureHeight = 600;
 
         private bool isCameraConnected;
         private MLCamera.StreamCapability selectedCapability;
@@ -153,7 +179,130 @@ namespace ShouldAR
         /// </summary>
         private void Update()
         {
+
+        }
+
+        IEnumerator GetBackCameraFrame(string uri, Matrix4x4 outMatrix, MLCameraBase.IntrinsicCalibrationParameters intrinsics)
+        {
+            using (UnityWebRequest webRequest = new UnityWebRequest(uri, UnityWebRequest.kHttpVerbGET))
+            {
+                webRequest.downloadHandler = new DownloadHandlerTexture();
+                // Request and wait for the desired page.
+                yield return webRequest.SendWebRequest();
+
+
+                switch (webRequest.result)
+                {
+                    case UnityWebRequest.Result.ConnectionError:
+                    case UnityWebRequest.Result.DataProcessingError:
+                        Debug.Log(": Error: " + webRequest.error);
+                        break;
+                    case UnityWebRequest.Result.ProtocolError:
+                        Debug.Log(": HTTP Error: " + webRequest.error);
+                        break;
+                    case UnityWebRequest.Result.Success:
+                        //Debug.Log("Received JPG of Size: " + webRequest.downloadHandler.data.Length);
+                        Texture2D newImage = new Texture2D(backCaptureWidth, backCaptureHeight);
+                        
+                        newImage = DownloadHandlerTexture.GetContent(webRequest);
+                        //GameObject.Find("TestQuad").GetComponent<Renderer>().material.mainTexture = newImage;
+                        var faces = detectionComponent.GetComponent<FacialDetection>().RunDetection(newImage, newImage.width, newImage.height);
+                        var averagePixelsForFaceAt1Meter = 300;
+
+                        foreach ((Vector2, float, Point[]) face in faces)
+                        {
+
+                            float estimatedFaceDepth = averagePixelsForFaceAt1Meter / face.Item2;
+
+                            var CenterLandmarkPosition = CastRayFromPixelToWorldPoint(newImage.width, newImage.height,
+                                face.Item1, intrinsics, 75.0f, outMatrix, 1, false);
+
+                            var newObject = Instantiate(tempGO, CenterLandmarkPosition, Quaternion.identity);
+                            float gaze_XAngle = Vector2.Angle(new Vector2((float)face.Item3[0].x - (float)face.Item3[1].x, (float)face.Item3[0].y - (float)face.Item3[1].y), face.Item1);
+                            float gaze_YAngle = Vector2.Angle(new Vector2((float)face.Item3[2].x, (float)face.Item3[2].y), face.Item1);
+                            newObject.transform.Rotate(gaze_XAngle * -1, gaze_YAngle, 0);
+                            newObject.transform.RotateAround(outMatrix.GetPosition(), Camera.main.transform.up, 180);
+
+                            rearFaceCube.transform.position = newObject.transform.position;
+
+                            Ray bystanderGazeRay = new Ray(rearFaceCube.transform.position, rearFaceCube.transform.forward);
+                            eyeGazeSphere.transform.position = bystanderGazeRay.GetPoint(3);
+
+
+                            /*MatOfPoint3f op = new MatOfPoint3f();
+                            List<Point3> tempOP = new List<Point3>();
+                            for (int i = 0; i < face.Item3.Length; i++)
+                            {
+                                var CenterLandmarkPosition = CastRayFromPixelToWorldPoint(newImage.width, newImage.height, 
+                                    new Vector2((float)face.Item3[i].x, (float)face.Item3[i].y), intrinsics, 75.0f, outMatrix, 1, false);
+
+                                tempOP.Add(
+                                    new Point3(
+                                        CenterLandmarkPosition.x,
+                                        CenterLandmarkPosition.y,
+                                        CenterLandmarkPosition.z
+                                    )
+                                );
+                            }
+                            op.fromList(tempOP);
+
+                            MatOfPoint2f ip = new MatOfPoint2f();
+                            List<Point> tempIP = new List<Point>(); 
+                            for (int i = 0; i < face.Item3.Length; i++)
+                            {
+                                tempIP.Add(
+                                    new Point(
+                                        face.Item3[i].x,
+                                        face.Item3[i].x
+                                    )
+                                );
+                            }
+                            ip.fromList(tempIP);
+                            Mat rvec = new Mat(1, 3, CvType.CV_64FC1);
+                            Mat tvec = new Mat(1, 3, CvType.CV_64FC1);
+                            Mat cameraMat = new Mat(3, 3, CvType.CV_64FC1);
+
+
+                            List<double> _rVecList = new List<double>();
+                            List<double> _tVecList = new List<double>();
+
+                            cameraMat.put(0,0, outMatrix[0,0], outMatrix[0,1], outMatrix[0,2], outMatrix[0,3], 
+                            outMatrix[1,0], outMatrix[1,1], outMatrix[1,2], outMatrix[1,3],
+                            outMatrix[2,0], outMatrix[2,1], outMatrix[2,2], outMatrix[2,3],
+                            outMatrix[3,0], outMatrix[3,1], outMatrix[3,2], outMatrix[3,3]);
+
+                            Calib3d.solvePnP(op,ip, cameraMat, new MatOfDouble(), rvec, tvec);
+
+                            Converters.Mat_to_vector_double(rvec, _rVecList);
+                            Converters.Mat_to_vector_double(tvec, _tVecList);
+
+                            var poseData = ARUtils.ConvertRvecTvecToPoseData(_rVecList, _tVecList);
+
+                            Debug.Log(poseData.pos);
+                            var newObject = Instantiate(tempGO, poseData.pos, poseData.rot);
+                            rearFaceCube.transform.position = newObject.transform.position;*/
+
+                            //Ray bystanderGazeRay = new Ray(rearFaceCube.transform.position, rearFaceCube.transform.forward);
+                            //eyeGazeSphere.transform.position = bystanderGazeRay.GetPoint(3);
+                            /*if (Physics.Raycast(rearFaceCube.transform.position, rearFaceCube.transform.TransformDirection(Vector3.forward), out hit, Mathf.Infinity))
+                            {
+                                eyeGazeSphere.transform.position = hit.position;
+                                Debug.Log("Did Hit");
+                            }
+                            else
+                            {
             
+                                Debug.Log("Did not Hit");
+                            }*/
+
+                            //Debug.DrawRay(newObject.transform.position, Camera.main.transform.position, Color.green, 1, false);
+
+                            GameObject.Destroy(newImage);
+                            GameObject.Destroy(newObject);
+                        }
+                        break;
+                }
+            }
         }
 
         /// <summary>
@@ -237,7 +386,7 @@ namespace ShouldAR
                     yield break;
                 }
 
-                if (!MLCamera.TryGetBestFitStreamCapabilityFromCollection(streamCapabilities, captureWidth, captureHeight,
+                if (!MLCamera.TryGetBestFitStreamCapabilityFromCollection(streamCapabilities, frontCaptureWidth, frontCaptureHeight,
                     MLCamera.CaptureType.Video, out selectedCapability))
                 {
                     Debug.LogError("Camera device unable to fit stream caps to chosen options.");
@@ -283,18 +432,28 @@ namespace ShouldAR
             }
         }
 
-        public Vector3 CastRayFromPixelToWorldPoint(int width, int height, Vector2 pixelPosition, MLCameraBase.IntrinsicCalibrationParameters parameters, Matrix4x4 cameraTransformationMatrix, float depth)
+        public Vector3 CastRayFromPixelToWorldPoint(int width, int height, Vector2 pixelPosition, MLCameraBase.IntrinsicCalibrationParameters parameters, float FOV, Matrix4x4 cameraTransformationMatrix, float depth, bool frontCamera = true)
         {
+            Vector2 normalizedImagePoint;
             // Step 1: Normalize the image coordinates
-            Vector2 normalizedImagePoint = new Vector2(
-                (pixelPosition.x - parameters.PrincipalPoint.x) / width,
-                (pixelPosition.y - parameters.PrincipalPoint.y) / height);
+            if (frontCamera)
+            {
+                normalizedImagePoint.x = (pixelPosition.x - parameters.PrincipalPoint.x) / width;
+                normalizedImagePoint.y = (pixelPosition.y - parameters.PrincipalPoint.y) / height;
+
+            }
+            else
+            {
+                normalizedImagePoint.x = (pixelPosition.x - width / 2) / width;
+                normalizedImagePoint.y = (pixelPosition.y - height / 2) / height;
+            }
+
 
             // Account for aspect ratio
             normalizedImagePoint.x *= width / (float)height;
 
             // Account for FOV
-            float fovRad = parameters.FOV * Mathf.Deg2Rad;
+            float fovRad = FOV * Mathf.Deg2Rad;
             normalizedImagePoint *= Mathf.Tan(fovRad / 2);
 
             Vector3 cameraPoint = new Vector3(normalizedImagePoint.x, normalizedImagePoint.y, 1);
@@ -321,34 +480,40 @@ namespace ShouldAR
         private void OnCaptureRawVideoFrameAvailable(MLCamera.CameraOutput capturedFrame, MLCamera.ResultExtras resultExtras, MLCamera.Metadata metadataHandle)
         {
             MLCamera.FlipFrameVertically(ref capturedFrame);
+            MLResult result = MLCVCamera.GetFramePose(resultExtras.VCamTimestamp, out Matrix4x4 outMatrix);
+
             samplingCounter += 1;
 
+            if (enableRearDetection && samplingCounter >= inferenceRate)
+            {
+                samplingCounter = 0;
+                StartCoroutine(GetBackCameraFrame("http://10.0.0.231/uploads/esp32-cam.jpg", outMatrix, resultExtras.Intrinsics.Value));
+            }
 
-            if (enableDetection && samplingCounter >= inferenceRate)
+
+            if (enableFrontDetection && samplingCounter >= inferenceRate)
             {
                 var pixelsPerMeterAlongX = resultExtras.Intrinsics.Value.FocalLength.x;
                 var averagePixelsForFaceAt1Meter = pixelsPerMeterAlongX * averageFaceWidthInMeters;
                 samplingCounter = 0;
                 UpdateRGBTexture(ref rawVideoTexturesRGBA, capturedFrame.Planes[0]);
-                var faces = detectionComponent.GetComponent<FacialDetection>().RunDetection(rawVideoTexturesRGBA);
-
-                MLResult result = MLCVCamera.GetFramePose(resultExtras.VCamTimestamp, out Matrix4x4 outMatrix);
-
+                var faces = detectionComponent.GetComponent<FacialDetection>().RunDetection(rawVideoTexturesRGBA, frontCaptureWidth, frontCaptureHeight);
+                
                 if (result.IsOk && resultExtras.Intrinsics != null && faces.Any())
                 {
                     uint width = capturedFrame.Planes[0].Width;
                     uint height = capturedFrame.Planes[0].Height;
                     Vector2 centerPixel = new Vector2(width / 2f, height / 2f);
-                    foreach ((Vector2, float) face in faces)
+                    foreach ((Vector2, float, Point[]) face in faces)
                     {
                         float estimatedFaceDepth = averagePixelsForFaceAt1Meter / face.Item2;
-                        var CenterFaceposition = CastRayFromPixelToWorldPoint((int)width, (int)height, face.Item1, resultExtras.Intrinsics.Value, outMatrix, estimatedFaceDepth);
+                        var CenterFaceposition = CastRayFromPixelToWorldPoint((int)width, (int)height, face.Item1, resultExtras.Intrinsics.Value, resultExtras.Intrinsics.Value.FOV, outMatrix, estimatedFaceDepth);
                         var overlapBoxes = Physics.OverlapBox(CenterFaceposition, faceCube.transform.localScale / 2, Quaternion.identity);
                         if (overlapBoxes.Length > 0 && overlapBoxes[0].gameObject.tag == "BoundingBox")
                         {
                             overlapBoxes[0].gameObject.transform.position = CenterFaceposition;
-                            //var bboxScript = overlapBoxes[0].gameObject.GetComponent<BoundingBoxScript>();
-                            //bboxScript.staleCounter = 0;
+                            var bboxScript = overlapBoxes[0].gameObject.GetComponent<BoundingBoxScript>();
+                            bboxScript.staleCounter = 0;
                         }
                         else
                         {
@@ -359,6 +524,8 @@ namespace ShouldAR
                     }
 
                 }
+
+                
             }
             else
             {

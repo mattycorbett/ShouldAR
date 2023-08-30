@@ -40,25 +40,5 @@ namespace ShouldAR
         }
 
 
-        //If this gameobject is in the same physical space another bounding box, we compare the time they have existed and remove the older one
-        /*void OnCollisionEnter(Collision collision)
-        {
-            if (collision.gameObject.tag == "BoundingBox")
-            {
-                if (collision.gameObject.GetComponent<BoundingBoxScript>().detectionStopwatch.ElapsedMilliseconds < this.detectionStopwatch.ElapsedMilliseconds)
-                {
-                    staleCounter = 0;
-                    this.gameObject.transform.position = collision.gameObject.transform.position;
-                    Destroy(collision.gameObject);
-                }
-                else
-                {
-                    staleCounter = 0;
-                }
-            }
-
-
-        }*/
-
     }
 }
