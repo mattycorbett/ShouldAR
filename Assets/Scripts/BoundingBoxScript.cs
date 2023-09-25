@@ -5,7 +5,7 @@ using TMPro;
 using System;
 using System.Diagnostics;
 
-namespace ShouldAR
+namespace Mediapipe.Unity
 {
     public class BoundingBoxScript : MonoBehaviour
     {

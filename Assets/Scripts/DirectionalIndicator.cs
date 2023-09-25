@@ -3,7 +3,7 @@
 
 using UnityEngine;
 
-namespace ShouldAR
+namespace Mediapipe.Unity.IrisTracking
 {
     /// <summary>
     /// This solver determines the position and orientation of an object as a directional indicator. 

@@ -20,7 +20,7 @@ using UnityEngine.XR.MagicLeap;
 /// Referring to https://github.com/opencv/opencv/blob/4.x/modules/objdetect/src/face_detect.cpp.
 /// </summary>
 /// 
-namespace ShouldAR
+namespace Mediapipe.Unity.IrisTracking
 {
 
     /// <summary>
