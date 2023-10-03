@@ -9,9 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5594273900134223537}
-  - component: {fileID: 5005581714949572823}
-  - component: {fileID: 5743613383216116975}
   - component: {fileID: 9132042850132297435}
+  - component: {fileID: 6476623749899640697}
+  - component: {fileID: 4170989533338308118}
   m_Layer: 0
   m_Name: Solution
   m_TagString: Untagged
@@ -32,42 +32,8 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5005581714949572823
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1949874183509299652}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f016b6b2a48c853e3aa5922f70b018e0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _bootstrapPrefab: {fileID: 968918444066301895, guid: 1146a9de09159a948b683e94fb3d3c95,
-    type: 3}
-  screen: {fileID: 0}
-  graphRunner: {fileID: 5743613383216116975}
-  textureFramePool: {fileID: 9132042850132297435}
-  runningMode: 0
---- !u!114 &5743613383216116975
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1949874183509299652}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 35855da6e15069305aef28799186edb7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _cpuConfig: {fileID: 4900000, guid: 8d76e6d62da5980ed918a8f6a4a15e94, type: 3}
-  _gpuConfig: {fileID: 4900000, guid: 904eba754eb7e5dfbbb83e6c76ee5b7a, type: 3}
-  _openGlEsConfig: {fileID: 4900000, guid: 43dd63fad6219b1a2bbeddb7874f3137, type: 3}
-  _timeoutMicrosec: 50000
 --- !u!114 &9132042850132297435
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -81,3 +47,38 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _poolSize: 10
+--- !u!114 &6476623749899640697
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1949874183509299652}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e3eaa6036012f1b41a3fbb4ddf83a9e3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _cpuConfig: {fileID: 4900000, guid: 8d76e6d62da5980ed918a8f6a4a15e94, type: 3}
+  _gpuConfig: {fileID: 4900000, guid: 904eba754eb7e5dfbbb83e6c76ee5b7a, type: 3}
+  _openGlEsConfig: {fileID: 4900000, guid: 43dd63fad6219b1a2bbeddb7874f3137, type: 3}
+  _timeoutMicrosec: 50000
+--- !u!114 &4170989533338308118
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1949874183509299652}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: da705f61c810a8d469b2452983ea78fe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _bootstrapPrefab: {fileID: 968918444066301895, guid: 1146a9de09159a948b683e94fb3d3c95,
+    type: 3}
+  screen: {fileID: 0}
+  graphRunner: {fileID: 6476623749899640697}
+  textureFramePool: {fileID: 9132042850132297435}
+  runningMode: 0
+  bystanderLocalizationObject: {fileID: 0}

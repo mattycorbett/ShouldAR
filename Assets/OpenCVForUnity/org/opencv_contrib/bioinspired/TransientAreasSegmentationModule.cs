@@ -95,10 +95,10 @@ namespace OpenCVForUnity.BioinspiredModule
          *   </li>
          *   <li>
          *      warning, Exceptions are thrown if read XML file is not valid
-         *     param segmentationParameterFile : the parameters filename
-         *     param applyDefaultSetupOnFailure : set to true if an error must be thrown on error
          *   </li>
          * </ul>
+         *     param segmentationParameterFile : the parameters filename
+         *     param applyDefaultSetupOnFailure : set to true if an error must be thrown on error
          */
         public void setup(string segmentationParameterFile, bool applyDefaultSetupOnFailure)
         {
@@ -118,9 +118,9 @@ namespace OpenCVForUnity.BioinspiredModule
          *   </li>
          *   <li>
          *      warning, Exceptions are thrown if read XML file is not valid
-         *     param segmentationParameterFile : the parameters filename
          *   </li>
          * </ul>
+         *     param segmentationParameterFile : the parameters filename
          */
         public void setup(string segmentationParameterFile)
         {

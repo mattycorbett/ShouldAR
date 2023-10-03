@@ -167,14 +167,16 @@
 //         *     param datapath the name of the parent directory of tessdata ended with "/", or NULL to use the
 //         *     system's default directory.
 //         *     param language an ISO 639-3 code or NULL will default to "eng".
-//         *     param char_whitelist specifies the list of characters used for recognition. NULL defaults to
-//         *     "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".
+//         *     param char_whitelist specifies the list of characters used for recognition. NULL defaults to ""
+//         *     (All characters will be used for recognition).
 //         *     param oem tesseract-ocr offers different OCR Engine Modes (OEM), by default
 //         *     tesseract::OEM_DEFAULT is used. See the tesseract-ocr API documentation for other possible
 //         *     values.
 //         *     param psmode tesseract-ocr offers different Page Segmentation Modes (PSM) tesseract::PSM_AUTO
 //         *     (fully automatic layout analysis) is used. See the tesseract-ocr API documentation for other
 //         *     possible values.
+//         *
+//         *     <b>Note:</b> The char_whitelist default is changed after OpenCV 4.7.0/3.19.0 from "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ" to "".
 //         * return automatically generated
 //         */
 //        public static OCRTesseract create(string datapath, string language, string char_whitelist, int oem, int psmode)
@@ -192,13 +194,15 @@
 //         *     param datapath the name of the parent directory of tessdata ended with "/", or NULL to use the
 //         *     system's default directory.
 //         *     param language an ISO 639-3 code or NULL will default to "eng".
-//         *     param char_whitelist specifies the list of characters used for recognition. NULL defaults to
-//         *     "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".
+//         *     param char_whitelist specifies the list of characters used for recognition. NULL defaults to ""
+//         *     (All characters will be used for recognition).
 //         *     param oem tesseract-ocr offers different OCR Engine Modes (OEM), by default
 //         *     tesseract::OEM_DEFAULT is used. See the tesseract-ocr API documentation for other possible
 //         *     values.
 //         *     (fully automatic layout analysis) is used. See the tesseract-ocr API documentation for other
 //         *     possible values.
+//         *
+//         *     <b>Note:</b> The char_whitelist default is changed after OpenCV 4.7.0/3.19.0 from "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ" to "".
 //         * return automatically generated
 //         */
 //        public static OCRTesseract create(string datapath, string language, string char_whitelist, int oem)
@@ -216,12 +220,14 @@
 //         *     param datapath the name of the parent directory of tessdata ended with "/", or NULL to use the
 //         *     system's default directory.
 //         *     param language an ISO 639-3 code or NULL will default to "eng".
-//         *     param char_whitelist specifies the list of characters used for recognition. NULL defaults to
-//         *     "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".
+//         *     param char_whitelist specifies the list of characters used for recognition. NULL defaults to ""
+//         *     (All characters will be used for recognition).
 //         *     tesseract::OEM_DEFAULT is used. See the tesseract-ocr API documentation for other possible
 //         *     values.
 //         *     (fully automatic layout analysis) is used. See the tesseract-ocr API documentation for other
 //         *     possible values.
+//         *
+//         *     <b>Note:</b> The char_whitelist default is changed after OpenCV 4.7.0/3.19.0 from "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ" to "".
 //         * return automatically generated
 //         */
 //        public static OCRTesseract create(string datapath, string language, string char_whitelist)
@@ -239,11 +245,13 @@
 //         *     param datapath the name of the parent directory of tessdata ended with "/", or NULL to use the
 //         *     system's default directory.
 //         *     param language an ISO 639-3 code or NULL will default to "eng".
-//         *     "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".
+//         *     (All characters will be used for recognition).
 //         *     tesseract::OEM_DEFAULT is used. See the tesseract-ocr API documentation for other possible
 //         *     values.
 //         *     (fully automatic layout analysis) is used. See the tesseract-ocr API documentation for other
 //         *     possible values.
+//         *
+//         *     <b>Note:</b> The char_whitelist default is changed after OpenCV 4.7.0/3.19.0 from "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ" to "".
 //         * return automatically generated
 //         */
 //        public static OCRTesseract create(string datapath, string language)
@@ -260,11 +268,13 @@
 //         *
 //         *     param datapath the name of the parent directory of tessdata ended with "/", or NULL to use the
 //         *     system's default directory.
-//         *     "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".
+//         *     (All characters will be used for recognition).
 //         *     tesseract::OEM_DEFAULT is used. See the tesseract-ocr API documentation for other possible
 //         *     values.
 //         *     (fully automatic layout analysis) is used. See the tesseract-ocr API documentation for other
 //         *     possible values.
+//         *
+//         *     <b>Note:</b> The char_whitelist default is changed after OpenCV 4.7.0/3.19.0 from "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ" to "".
 //         * return automatically generated
 //         */
 //        public static OCRTesseract create(string datapath)
@@ -280,11 +290,13 @@
 //         * Creates an instance of the OCRTesseract class. Initializes Tesseract.
 //         *
 //         *     system's default directory.
-//         *     "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".
+//         *     (All characters will be used for recognition).
 //         *     tesseract::OEM_DEFAULT is used. See the tesseract-ocr API documentation for other possible
 //         *     values.
 //         *     (fully automatic layout analysis) is used. See the tesseract-ocr API documentation for other
 //         *     possible values.
+//         *
+//         *     <b>Note:</b> The char_whitelist default is changed after OpenCV 4.7.0/3.19.0 from "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ" to "".
 //         * return automatically generated
 //         */
 //        public static OCRTesseract create()

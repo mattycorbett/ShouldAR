@@ -328,7 +328,7 @@ namespace OpenCVForUnity.ObjdetectModule
 
 
         //
-        // C++:  void cv::aruco::CharucoDetector::detectDiamonds(Mat image, vector_Mat& diamondCorners, Mat& diamondIds, vector_Mat& markerCorners = vector_Mat(), vector_Mat& markerIds = vector_Mat())
+        // C++:  void cv::aruco::CharucoDetector::detectDiamonds(Mat image, vector_Mat& diamondCorners, Mat& diamondIds, vector_Mat& markerCorners = vector_Mat(), Mat& markerIds = Mat())
         //
 
         /**
@@ -351,21 +351,19 @@ namespace OpenCVForUnity.ObjdetectModule
          * are provided, the diamond search is based on reprojection. If not, diamond search is based on
          * homography. Homography is faster than reprojection, but less accurate.
          */
-        public void detectDiamonds(Mat image, List<Mat> diamondCorners, Mat diamondIds, List<Mat> markerCorners, List<Mat> markerIds)
+        public void detectDiamonds(Mat image, List<Mat> diamondCorners, Mat diamondIds, List<Mat> markerCorners, Mat markerIds)
         {
             ThrowIfDisposed();
             if (image != null) image.ThrowIfDisposed();
             if (diamondIds != null) diamondIds.ThrowIfDisposed();
+            if (markerIds != null) markerIds.ThrowIfDisposed();
             Mat diamondCorners_mat = new Mat();
             Mat markerCorners_mat = Converters.vector_Mat_to_Mat(markerCorners);
-            Mat markerIds_mat = Converters.vector_Mat_to_Mat(markerIds);
-            objdetect_CharucoDetector_detectDiamonds_10(nativeObj, image.nativeObj, diamondCorners_mat.nativeObj, diamondIds.nativeObj, markerCorners_mat.nativeObj, markerIds_mat.nativeObj);
+            objdetect_CharucoDetector_detectDiamonds_10(nativeObj, image.nativeObj, diamondCorners_mat.nativeObj, diamondIds.nativeObj, markerCorners_mat.nativeObj, markerIds.nativeObj);
             Converters.Mat_to_vector_Mat(diamondCorners_mat, diamondCorners);
             diamondCorners_mat.release();
             Converters.Mat_to_vector_Mat(markerCorners_mat, markerCorners);
             markerCorners_mat.release();
-            Converters.Mat_to_vector_Mat(markerIds_mat, markerIds);
-            markerIds_mat.release();
 
         }
 
@@ -492,9 +490,9 @@ namespace OpenCVForUnity.ObjdetectModule
         [DllImport(LIBNAME)]
         private static extern void objdetect_CharucoDetector_detectBoard_12(IntPtr nativeObj, IntPtr image_nativeObj, IntPtr charucoCorners_nativeObj, IntPtr charucoIds_nativeObj);
 
-        // C++:  void cv::aruco::CharucoDetector::detectDiamonds(Mat image, vector_Mat& diamondCorners, Mat& diamondIds, vector_Mat& markerCorners = vector_Mat(), vector_Mat& markerIds = vector_Mat())
+        // C++:  void cv::aruco::CharucoDetector::detectDiamonds(Mat image, vector_Mat& diamondCorners, Mat& diamondIds, vector_Mat& markerCorners = vector_Mat(), Mat& markerIds = Mat())
         [DllImport(LIBNAME)]
-        private static extern void objdetect_CharucoDetector_detectDiamonds_10(IntPtr nativeObj, IntPtr image_nativeObj, IntPtr diamondCorners_mat_nativeObj, IntPtr diamondIds_nativeObj, IntPtr markerCorners_mat_nativeObj, IntPtr markerIds_mat_nativeObj);
+        private static extern void objdetect_CharucoDetector_detectDiamonds_10(IntPtr nativeObj, IntPtr image_nativeObj, IntPtr diamondCorners_mat_nativeObj, IntPtr diamondIds_nativeObj, IntPtr markerCorners_mat_nativeObj, IntPtr markerIds_nativeObj);
         [DllImport(LIBNAME)]
         private static extern void objdetect_CharucoDetector_detectDiamonds_11(IntPtr nativeObj, IntPtr image_nativeObj, IntPtr diamondCorners_mat_nativeObj, IntPtr diamondIds_nativeObj, IntPtr markerCorners_mat_nativeObj);
         [DllImport(LIBNAME)]

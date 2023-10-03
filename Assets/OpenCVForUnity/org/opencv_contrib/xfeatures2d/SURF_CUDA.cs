@@ -115,7 +115,7 @@
 //         *     param _nOctaveLayers Number of octave layers within each octave.
 //         *     param _extended Extended descriptor flag (true - use extended 128-element descriptors; false - use
 //         *     64-element descriptors).
-//         *     param _keypointsRatio
+//         *     param _keypointsRatio Limits a maximum number of features
 //         *     param _upright Up-right or rotated features flag (true - do not compute orientation of features;
 //         *     false - compute orientation).
 //         * return automatically generated
@@ -135,7 +135,7 @@
 //         *     param _nOctaveLayers Number of octave layers within each octave.
 //         *     param _extended Extended descriptor flag (true - use extended 128-element descriptors; false - use
 //         *     64-element descriptors).
-//         *     param _keypointsRatio
+//         *     param _keypointsRatio Limits a maximum number of features
 //         *     false - compute orientation).
 //         * return automatically generated
 //         */

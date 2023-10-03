@@ -163,14 +163,22 @@ namespace OpenCVForUnity.ObjdetectModule
 
         /**
          * Given a board configuration and a set of detected markers, returns the corresponding
-         * image points and object points to call solvePnP()
+         * image points and object points, can be used in solvePnP()
          *
          * param detectedCorners List of detected marker corners of the board.
-         * For CharucoBoard class you can set list of charuco corners.
-         * param detectedIds List of identifiers for each marker or list of charuco identifiers for each corner.
-         * For CharucoBoard class you can set list of charuco identifiers for each corner.
-         * param objPoints Vector of vectors of board marker points in the board coordinate space.
-         * param imgPoints Vector of vectors of the projections of board marker corner points.
+         * For cv::Board and cv::GridBoard the method expects std::vector&lt;std::vector&lt;Point2f&gt;&gt; or std::vector&lt;Mat&gt; with Aruco marker corners.
+         * For cv::CharucoBoard the method expects std::vector&lt;Point2f&gt; or Mat with ChAruco corners (chess board corners matched with Aruco markers).
+         *
+         * param detectedIds List of identifiers for each marker or charuco corner.
+         * For any Board class the method expects std::vector&lt;int&gt; or Mat.
+         *
+         * param objPoints Vector of marker points in the board coordinate space.
+         * For any Board class the method expects std::vector&lt;cv::Point3f&gt; objectPoints or cv::Mat
+         *
+         * param imgPoints Vector of marker points in the image coordinate space.
+         * For any Board class the method expects std::vector&lt;cv::Point2f&gt; objectPoints or cv::Mat
+         *
+         * SEE: solvePnP
          */
         public void matchImagePoints(List<Mat> detectedCorners, Mat detectedIds, Mat objPoints, Mat imgPoints)
         {

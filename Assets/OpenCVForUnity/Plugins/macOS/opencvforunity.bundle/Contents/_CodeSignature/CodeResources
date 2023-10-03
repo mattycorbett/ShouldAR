@@ -3,391 +3,260 @@
 <plist version="1.0">
 <dict>
 	<key>files</key>
-	<dict>
-		<key>Resources/Unity/IUnityGraphics.h</key>
-		<data>
-		3iyGVOLIDDxH+3BEnT+mP6gmJHg=
-		</data>
-		<key>Resources/Unity/IUnityGraphicsD3D11.h</key>
-		<data>
-		CZlZOKSHsHrOr8CgcJO3fK+Yoz0=
-		</data>
-		<key>Resources/Unity/IUnityGraphicsD3D12.h</key>
-		<data>
-		KB6ZNsqGSim3utM7Z8aK28wEtxc=
-		</data>
-		<key>Resources/Unity/IUnityGraphicsD3D9.h</key>
-		<data>
-		1VTlS6z0NiNt9fm9cyIEB1YZXcg=
-		</data>
-		<key>Resources/Unity/IUnityGraphicsMetal.h</key>
-		<data>
-		InGVSYft88aUjCWk3w/NaludpS4=
-		</data>
-		<key>Resources/Unity/IUnityGraphicsVulkan.h</key>
-		<data>
-		c4Y5Lbq6jUy+4ULQXIex773bA5Y=
-		</data>
-		<key>Resources/Unity/IUnityInterface.h</key>
-		<data>
-		yz0CJt9CUmpy/UovPX3WfhOyKSY=
-		</data>
-		<key>Resources/gl3w/gl3w.c</key>
-		<data>
-		gC6QsAwFkJ3wsF5XK03y+OVHLRo=
-		</data>
-		<key>Resources/gl3w/gl3w.h</key>
-		<data>
-		7pXsKW19TZi/4aEbPff9ymRDjvI=
-		</data>
-		<key>Resources/gl3w/glcorearb.h</key>
-		<data>
-		rxNfwyiIU1IKid29EwlfR0c5iUI=
-		</data>
-		<key>Resources/gl3w/readme.txt</key>
-		<data>
-		DbSBytGlUa9KB1NXNLvz5KLnvbE=
-		</data>
-	</dict>
+	<dict/>
 	<key>files2</key>
 	<dict>
-		<key>MacOS/libopencv_aruco.4.7.0.dylib</key>
+		<key>MacOS/libopencv_aruco.4.8.0.dylib</key>
 		<dict>
 			<key>cdhash</key>
 			<data>
-			J9aunJg2DRxQhcXbMp8/K7DzCcw=
+			TDhgutiske8RRrMeDOsbx2kDRQ0=
 			</data>
 			<key>requirement</key>
-			<string>cdhash H"27d6ae9c98360d1c5085c5db329f3f2bb0f309cc" or cdhash H"8b7e2453d338a6524137d4a9c8e3306e7cfdefcd"</string>
+			<string>cdhash H"4c3860bad8ac91ef1146b31e0ceb1bc76903450d" or cdhash H"da8018349afb465b9edf8aa4825beeb526156cf9"</string>
 		</dict>
-		<key>MacOS/libopencv_barcode.4.7.0.dylib</key>
+		<key>MacOS/libopencv_bgsegm.4.8.0.dylib</key>
 		<dict>
 			<key>cdhash</key>
 			<data>
-			Iykz4BK+NWQy1p49o3xZ6+hHgZo=
+			O3eIhRRN5+AGQKYsYVLL8DO22uE=
 			</data>
 			<key>requirement</key>
-			<string>cdhash H"232933e012be356432d69e3da37c59ebe847819a" or cdhash H"50e9b6f3a4154f4c9153bef134662fdc7a41b49b"</string>
+			<string>cdhash H"3b778885144de7e00640a62c6152cbf033b6dae1" or cdhash H"f86bd0f552bb3fb29cc0a5559044822cd30d3e76"</string>
 		</dict>
-		<key>MacOS/libopencv_bgsegm.4.7.0.dylib</key>
+		<key>MacOS/libopencv_bioinspired.4.8.0.dylib</key>
 		<dict>
 			<key>cdhash</key>
 			<data>
-			QSkTRTLAcErSVWUorczx6CGK9n8=
+			wjdFEUNrodlbJMuWux98Sb9vEso=
 			</data>
 			<key>requirement</key>
-			<string>cdhash H"4129134532c0704ad2556528adccf1e8218af67f" or cdhash H"f86d9a75bb6f04ad5fa0bdd254c2c0d5cf6aace5"</string>
+			<string>cdhash H"c2374511436ba1d95b24cb96bb1f7c49bf6f12ca" or cdhash H"479790503ab5ef4aa80b3dfa6ef9ab5235cd0fa4"</string>
 		</dict>
-		<key>MacOS/libopencv_bioinspired.4.7.0.dylib</key>
+		<key>MacOS/libopencv_calib3d.4.8.0.dylib</key>
 		<dict>
 			<key>cdhash</key>
 			<data>
-			USA8x2RQo+0uY4zJkN9v8Ok/Tno=
+			FbblUuiHqzJSqGXHZOrGUgFWLBs=
 			</data>
 			<key>requirement</key>
-			<string>cdhash H"51203cc76450a3ed2e638cc990df6ff0e93f4e7a" or cdhash H"524cbbd9085ad3c327511bbfebbec178e435b550"</string>
+			<string>cdhash H"15b6e552e887ab3252a865c764eac65201562c1b" or cdhash H"8d948e90c43e6636f4f141e851ae5b3e92a00829"</string>
 		</dict>
-		<key>MacOS/libopencv_calib3d.4.7.0.dylib</key>
+		<key>MacOS/libopencv_core.4.8.0.dylib</key>
 		<dict>
 			<key>cdhash</key>
 			<data>
-			kLlvSwXs/7uyoPwRe2bn9PhzNdE=
+			xNcYo2UCOds687MH/XLGGOK2uR8=
 			</data>
 			<key>requirement</key>
-			<string>cdhash H"90b96f4b05ecffbbb2a0fc117b66e7f4f87335d1" or cdhash H"ab7a0c37994157c99f4b7529c73e5e0e156310ae"</string>
+			<string>cdhash H"c4d718a3650239db3af3b307fd72c618e2b6b91f" or cdhash H"16107f4185a7ff03ddc681f4f0e80cb2221a9c1c"</string>
 		</dict>
-		<key>MacOS/libopencv_core.4.7.0.dylib</key>
+		<key>MacOS/libopencv_dnn.4.8.0.dylib</key>
 		<dict>
 			<key>cdhash</key>
 			<data>
-			OZRAadlvcLuLAoXrtp2UOEvPKdg=
+			jVwvcGROJqNFN/AZXZv8ExB30JI=
 			</data>
 			<key>requirement</key>
-			<string>cdhash H"39944069d96f70bb8b0285ebb69d94384bcf29d8" or cdhash H"84c15d50f0d63a614b869688137459fdb8293dc7"</string>
+			<string>cdhash H"8d5c2f70644e26a34537f0195d9bfc131077d092" or cdhash H"aab149359d9fd2efac16e0ea2dace3e90faa0927"</string>
 		</dict>
-		<key>MacOS/libopencv_dnn.4.7.0.dylib</key>
+		<key>MacOS/libopencv_face.4.8.0.dylib</key>
 		<dict>
 			<key>cdhash</key>
 			<data>
-			uTsojulDw3AQ0Nb1HVzdIwjvqFo=
+			V6T2oWgkKRNxeVYAJDTwVF0HJ90=
 			</data>
 			<key>requirement</key>
-			<string>cdhash H"b93b288ee943c37010d0d6f51d5cdd2308efa85a" or cdhash H"8b678b942d2c40cdc4f0346eb1c3c23e6504750f"</string>
+			<string>cdhash H"57a4f6a168242913717956002434f0545d0727dd" or cdhash H"b33b4075cef9160106ede7f4bab11a359aa2aeda"</string>
 		</dict>
-		<key>MacOS/libopencv_face.4.7.0.dylib</key>
+		<key>MacOS/libopencv_features2d.4.8.0.dylib</key>
 		<dict>
 			<key>cdhash</key>
 			<data>
-			kLSH70302VGLP/Tj0qrcI28IDPU=
+			zFX7PTBqW6iV1tIUfRCUQXVyibU=
 			</data>
 			<key>requirement</key>
-			<string>cdhash H"90b487ef4df4d9518b3ff4e3d2aadc236f080cf5" or cdhash H"4d30e221626615da123dcccf61d145147af0ee1d"</string>
+			<string>cdhash H"cc55fb3d306a5ba895d6d2147d109441757289b5" or cdhash H"4e5c7dad13de65a518592417e33bb6382b067460"</string>
 		</dict>
-		<key>MacOS/libopencv_features2d.4.7.0.dylib</key>
+		<key>MacOS/libopencv_flann.4.8.0.dylib</key>
 		<dict>
 			<key>cdhash</key>
 			<data>
-			WFvvINLcWucQPftnTX1u9LOy/K4=
+			9cPExYXrXSgZTCPrrJKyjt0b1+U=
 			</data>
 			<key>requirement</key>
-			<string>cdhash H"585bef20d2dc5ae7103dfb674d7d6ef4b3b2fcae" or cdhash H"47d312223e0aca155c9690ff236b1821234aa476"</string>
+			<string>cdhash H"f5c3c4c585eb5d28194c23ebac92b28edd1bd7e5" or cdhash H"066db62d8879fc96f984130737d497b52e911c7e"</string>
 		</dict>
-		<key>MacOS/libopencv_flann.4.7.0.dylib</key>
+		<key>MacOS/libopencv_highgui.4.8.0.dylib</key>
 		<dict>
 			<key>cdhash</key>
 			<data>
-			r33t0FYCZcFeyGB3/VNZ8r5+0eo=
+			YsuYA5ChHsfPJaT590b6EwcA7dw=
 			</data>
 			<key>requirement</key>
-			<string>cdhash H"af7dedd0560265c15ec86077fd5359f2be7ed1ea" or cdhash H"aa1e5baa7cf9c0a52cbb7ed5db4bd60ce886bc39"</string>
+			<string>cdhash H"62cb980390a11ec7cf25a4f9f746fa130700eddc" or cdhash H"f4e381f205546828050ae9b0632a7f4cb2a95655"</string>
 		</dict>
-		<key>MacOS/libopencv_highgui.4.7.0.dylib</key>
+		<key>MacOS/libopencv_img_hash.4.8.0.dylib</key>
 		<dict>
 			<key>cdhash</key>
 			<data>
-			/EapzGtjQck7l7ogIhimcwXptfI=
+			cH4aSqYOabEKd/F/DRT3UsQHMiU=
 			</data>
 			<key>requirement</key>
-			<string>cdhash H"fc46a9cc6b6341c93b97ba202218a67305e9b5f2" or cdhash H"6a7e7a364e56ad94d3eaafd3d9331c20c03acb53"</string>
+			<string>cdhash H"707e1a4aa60e69b10a77f17f0d14f752c4073225" or cdhash H"5cc78f1eabfd1189798a687503d63684a4162228"</string>
 		</dict>
-		<key>MacOS/libopencv_img_hash.4.7.0.dylib</key>
+		<key>MacOS/libopencv_imgcodecs.4.8.0.dylib</key>
 		<dict>
 			<key>cdhash</key>
 			<data>
-			vuQzfZhg4D8I+lcvnI0YjugPKtw=
+			6x6wdamNpEvt+4bOd+YXZF6xGpA=
 			</data>
 			<key>requirement</key>
-			<string>cdhash H"bee4337d9860e03f08fa572f9c8d188ee80f2adc" or cdhash H"23d3755d5802e519643acf33d95862b050eb22ab"</string>
+			<string>cdhash H"eb1eb075a98da44bedfb86ce77e617645eb11a90" or cdhash H"fa1e0308781026c6c479b5cbd7f88b76f46ffec8"</string>
 		</dict>
-		<key>MacOS/libopencv_imgcodecs.4.7.0.dylib</key>
+		<key>MacOS/libopencv_imgproc.4.8.0.dylib</key>
 		<dict>
 			<key>cdhash</key>
 			<data>
-			6v4V1hxODhYY8Ut4yphpXrJv1cA=
+			4Uc3O91ktOvL0XwWumlDXJOWGDc=
 			</data>
 			<key>requirement</key>
-			<string>cdhash H"eafe15d61c4e0e1618f14b78ca98695eb26fd5c0" or cdhash H"6781597f7b9abbb13b44c2a4d4bede9257d34f99"</string>
+			<string>cdhash H"e147373bdd64b4ebcbd17c16ba69435c93961837" or cdhash H"4b73823426f229a16ff1190a1346222697808b75"</string>
 		</dict>
-		<key>MacOS/libopencv_imgproc.4.7.0.dylib</key>
+		<key>MacOS/libopencv_ml.4.8.0.dylib</key>
 		<dict>
 			<key>cdhash</key>
 			<data>
-			DJxXKEr+GfhTIi3bVo5mIl50u94=
+			/DSDsEZx4gRlpcoMhOqOx6YjPBU=
 			</data>
 			<key>requirement</key>
-			<string>cdhash H"0c9c57284afe19f853222ddb568e66225e74bbde" or cdhash H"c39d12cf00c5c41a29c8b4e35acf997c109920b0"</string>
+			<string>cdhash H"fc3483b04671e20465a5ca0c84ea8ec7a6233c15" or cdhash H"14575e624883e01a924f9abf3387ce9e4eb4000c"</string>
 		</dict>
-		<key>MacOS/libopencv_ml.4.7.0.dylib</key>
+		<key>MacOS/libopencv_objdetect.4.8.0.dylib</key>
 		<dict>
 			<key>cdhash</key>
 			<data>
-			1Uvj1P2VWlv61qYuFsE1nsZg/r8=
+			vmQx6QLlTudxM/hw9W32wF5EezA=
 			</data>
 			<key>requirement</key>
-			<string>cdhash H"d54be3d4fd955a5bfad6a62e16c1359ec660febf" or cdhash H"5d44fc22321465b0440ab0376afd57e35f338027"</string>
+			<string>cdhash H"be6431e902e54ee77133f870f56df6c05e447b30" or cdhash H"a6d79402717525033a212c7e0eb3eb3cf5db4170"</string>
 		</dict>
-		<key>MacOS/libopencv_objdetect.4.7.0.dylib</key>
+		<key>MacOS/libopencv_phase_unwrapping.4.8.0.dylib</key>
 		<dict>
 			<key>cdhash</key>
 			<data>
-			JTEBtax3DQX1XV6MUNWo4YYv7Qk=
+			pLuYkAsr5iVE5peDZJcdjNdi6dw=
 			</data>
 			<key>requirement</key>
-			<string>cdhash H"253101b5ac770d05f55d5e8c50d5a8e1862fed09" or cdhash H"43cc0f6a34b79e50f9b87d472916fe4f0fc2287e"</string>
+			<string>cdhash H"a4bb98900b2be62544e6978364971d8cd762e9dc" or cdhash H"149061b8aaebcba56bf6b1f4a0021fa2104544c0"</string>
 		</dict>
-		<key>MacOS/libopencv_phase_unwrapping.4.7.0.dylib</key>
+		<key>MacOS/libopencv_photo.4.8.0.dylib</key>
 		<dict>
 			<key>cdhash</key>
 			<data>
-			fTBIk1iZATRD68howDy74R0Ubh0=
+			cp/UwOgTjI/BW22WrMwcNxLQcXk=
 			</data>
 			<key>requirement</key>
-			<string>cdhash H"7d3048935899013443ebc868c03cbbe11d146e1d" or cdhash H"0c566b0f2d26fdd2734719f11698bb4bd60999ef"</string>
+			<string>cdhash H"729fd4c0e8138c8fc15b6d96accc1c3712d07179" or cdhash H"550184414fa71d18bc578004272fb3942c764ed7"</string>
 		</dict>
-		<key>MacOS/libopencv_photo.4.7.0.dylib</key>
+		<key>MacOS/libopencv_plot.4.8.0.dylib</key>
 		<dict>
 			<key>cdhash</key>
 			<data>
-			33PByRezgj6SQ/wv0q18/QhgVLk=
+			cHmCsdIaJFoL4b9DaKO1TmkQA3Y=
 			</data>
 			<key>requirement</key>
-			<string>cdhash H"df73c1c917b3823e9243fc2fd2ad7cfd086054b9" or cdhash H"050f31cb1a94c8be74c4ce13210682f44be44075"</string>
+			<string>cdhash H"707982b1d21a245a0be1bf4368a3b54e69100376" or cdhash H"03f6b88861140c64f97d286e25f4f47aa6021d44"</string>
 		</dict>
-		<key>MacOS/libopencv_plot.4.7.0.dylib</key>
+		<key>MacOS/libopencv_structured_light.4.8.0.dylib</key>
 		<dict>
 			<key>cdhash</key>
 			<data>
-			IgoS3FUmcO/zeaiSygX8Bfv0F04=
+			tB2fx2xOT0MGfo5q84ts6vO0X3I=
 			</data>
 			<key>requirement</key>
-			<string>cdhash H"220a12dc552670eff379a892ca05fc05fbf4174e" or cdhash H"26523856c48ece4ff99bbd43ed8df0da9c1396d1"</string>
+			<string>cdhash H"b41d9fc76c4e4f43067e8e6af38b6ceaf3b45f72" or cdhash H"819089f98660762c42ae77c26876142179133b81"</string>
 		</dict>
-		<key>MacOS/libopencv_structured_light.4.7.0.dylib</key>
+		<key>MacOS/libopencv_text.4.8.0.dylib</key>
 		<dict>
 			<key>cdhash</key>
 			<data>
-			Gl2eeJ3xn6xt4pmIvbYfBzKBld4=
+			NCh5QFKjN3KyZnYao9ETvwCH/TQ=
 			</data>
 			<key>requirement</key>
-			<string>cdhash H"1a5d9e789df19fac6de29988bdb61f07328195de" or cdhash H"ba030de72dfacd65073393bb289db7fc11592392"</string>
+			<string>cdhash H"3428794052a33772b266761aa3d113bf0087fd34" or cdhash H"c4a3da382d1540455c357f931a4e611473ae19ab"</string>
 		</dict>
-		<key>MacOS/libopencv_text.4.7.0.dylib</key>
+		<key>MacOS/libopencv_tracking.4.8.0.dylib</key>
 		<dict>
 			<key>cdhash</key>
 			<data>
-			D73HxLXG4r+a/NPExOCzJ1zqP3w=
+			z8sTO4NpeMdS63EIQJrPE2SD/yk=
 			</data>
 			<key>requirement</key>
-			<string>cdhash H"0fbdc7c4b5c6e2bf9afcd3c4c4e0b3275cea3f7c" or cdhash H"dcb84baea9f97ceb4910ea6acddd4befef52b9e2"</string>
+			<string>cdhash H"cfcb133b836978c752eb7108409acf136483ff29" or cdhash H"4e9bb465799e0852033ee29deb1eae952e121f36"</string>
 		</dict>
-		<key>MacOS/libopencv_tracking.4.7.0.dylib</key>
+		<key>MacOS/libopencv_video.4.8.0.dylib</key>
 		<dict>
 			<key>cdhash</key>
 			<data>
-			5+bRgUezKGrzPyjLkWt9I3VSZ1g=
+			hXM7neozk24u5Z9KnFvG1reKI94=
 			</data>
 			<key>requirement</key>
-			<string>cdhash H"e7e6d18147b3286af33f28cb916b7d2375526758" or cdhash H"536cea0209f4eac779c421e511b4b3f90b300bbe"</string>
+			<string>cdhash H"85733b9dea33936e2ee59f4a9c5bc6d6b78a23de" or cdhash H"16e6591ea8505788d3951461b2434c2b3deb256d"</string>
 		</dict>
-		<key>MacOS/libopencv_video.4.7.0.dylib</key>
+		<key>MacOS/libopencv_videoio.4.8.0.dylib</key>
 		<dict>
 			<key>cdhash</key>
 			<data>
-			TrZWpgBUwnY1s8GTy9W7QkCZKdk=
+			QIwnPqWyVxXHdRu9aek/Z+8q3S4=
 			</data>
 			<key>requirement</key>
-			<string>cdhash H"4eb656a60054c27635b3c193cbd5bb42409929d9" or cdhash H"d00526cc598852fa4126c518121dd067e4c38bb9"</string>
+			<string>cdhash H"408c273ea5b25715c7751bbd69e93f67ef2add2e" or cdhash H"a212978715a3d50cbad7287bb14475a7d842c84c"</string>
 		</dict>
-		<key>MacOS/libopencv_videoio.4.7.0.dylib</key>
+		<key>MacOS/libopencv_videostab.4.8.0.dylib</key>
 		<dict>
 			<key>cdhash</key>
 			<data>
-			R3L03YYmW0emvO/EW54foNEGejU=
+			1Mhxpc3UpzWu71fWRn/SOUbMfaE=
 			</data>
 			<key>requirement</key>
-			<string>cdhash H"4772f4dd86265b47a6bcefc45b9e1fa0d1067a35" or cdhash H"09b559a960dbf8955053f6fc060f0b2a3f33ef29"</string>
+			<string>cdhash H"d4c871a5cdd4a735aeef57d6467fd23946cc7da1" or cdhash H"db673099582c985664ff576772fad645160dbad4"</string>
 		</dict>
-		<key>MacOS/libopencv_videostab.4.7.0.dylib</key>
+		<key>MacOS/libopencv_wechat_qrcode.4.8.0.dylib</key>
 		<dict>
 			<key>cdhash</key>
 			<data>
-			EaaQA5qcQvK6yMfND3LjK7/4XME=
+			9SG3XdmRhrKIDc6Ugpk0NpxmyIQ=
 			</data>
 			<key>requirement</key>
-			<string>cdhash H"11a690039a9c42f2bac8c7cd0f72e32bbff85cc1" or cdhash H"d556ba7f16d7da055c8e538027a8a4fcccf37ec6"</string>
+			<string>cdhash H"f521b75dd99186b2880dce94829934369c66c884" or cdhash H"85e455173e75ede6dea9fa716e0568751d9c68b5"</string>
 		</dict>
-		<key>MacOS/libopencv_wechat_qrcode.4.7.0.dylib</key>
+		<key>MacOS/libopencv_xfeatures2d.4.8.0.dylib</key>
 		<dict>
 			<key>cdhash</key>
 			<data>
-			t1HYNTR/Dyu2F9NMvBRR65KYPk4=
+			StPXmLhXf98LWuJHTOeiY2n+a3w=
 			</data>
 			<key>requirement</key>
-			<string>cdhash H"b751d835347f0f2bb617d34cbc1451eb92983e4e" or cdhash H"b4858928629c0a0c73dce298da87a0ad5b4eeb9b"</string>
+			<string>cdhash H"4ad3d798b8577fdf0b5ae2474ce7a26369fe6b7c" or cdhash H"e4c126ca9a6ccd882ff2fa120433f414b906a4c4"</string>
 		</dict>
-		<key>MacOS/libopencv_xfeatures2d.4.7.0.dylib</key>
+		<key>MacOS/libopencv_ximgproc.4.8.0.dylib</key>
 		<dict>
 			<key>cdhash</key>
 			<data>
-			7EH3P0HG5dqSgSzFKTphMiW7igw=
+			umFcyyJyP2v6RDcU4Hvv4uvnhdw=
 			</data>
 			<key>requirement</key>
-			<string>cdhash H"ec41f73f41c6e5da92812cc5293a613225bb8a0c" or cdhash H"ca0be1614dd47d76aa8f00330adebd140fe7e5c8"</string>
+			<string>cdhash H"ba615ccb22723f6bfa443714e07befe2ebe785dc" or cdhash H"3cf3efaf25bc11e4d2a18e0a7acb60429c912c9b"</string>
 		</dict>
-		<key>MacOS/libopencv_ximgproc.4.7.0.dylib</key>
+		<key>MacOS/libopencv_xphoto.4.8.0.dylib</key>
 		<dict>
 			<key>cdhash</key>
 			<data>
-			rTVoPBlcvvxu8Un0ba9zSYrHDSM=
+			npuN9GNagtv1D9o5DZkVlnoKmls=
 			</data>
 			<key>requirement</key>
-			<string>cdhash H"ad35683c195cbefc6ef149f46daf73498ac70d23" or cdhash H"e3852bb396032e9660d6ea93bb47f199a2bb8c7a"</string>
-		</dict>
-		<key>MacOS/libopencv_xphoto.4.7.0.dylib</key>
-		<dict>
-			<key>cdhash</key>
-			<data>
-			Uf+flWKlF1mHnUcjUBYKOcR1dUI=
-			</data>
-			<key>requirement</key>
-			<string>cdhash H"51ff9f9562a51759879d472350160a39c4757542" or cdhash H"5675958edd2b0a5b2d2307ff60d750eb7ae8914d"</string>
-		</dict>
-		<key>Resources/Unity/IUnityGraphics.h</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			NZqAaJku9A2GMNdkvRY2QGuCqDFXsJ2wo6ZvKlhpSuc=
-			</data>
-		</dict>
-		<key>Resources/Unity/IUnityGraphicsD3D11.h</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			ppMLirqis/f3usZiVu+lVMT2fBjtSns7DiQQny+vcww=
-			</data>
-		</dict>
-		<key>Resources/Unity/IUnityGraphicsD3D12.h</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			D+pVcoPJuzK+fO54hUnuN8qxiJroOFaW0mdsryUZEYs=
-			</data>
-		</dict>
-		<key>Resources/Unity/IUnityGraphicsD3D9.h</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			RkablK0tZKnIbCXqPlCDYrX9A04rsK4se/bBBhc0R2s=
-			</data>
-		</dict>
-		<key>Resources/Unity/IUnityGraphicsMetal.h</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			syiz/uTyXR3p0h0I3N9ObxApOgmadzyZFHZfEyUGLPc=
-			</data>
-		</dict>
-		<key>Resources/Unity/IUnityGraphicsVulkan.h</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			r7q5tV2ds6fFg9lBf9xgToL0UV9v5FDRP/qcbVXqCe4=
-			</data>
-		</dict>
-		<key>Resources/Unity/IUnityInterface.h</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			Hb1T0L6j6B2rzOIJtOUJavTSNsN/wvffDc7jOKF7frg=
-			</data>
-		</dict>
-		<key>Resources/gl3w/gl3w.c</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			QgkqBBQbXL/redzEsQN+GH56wx9Qib6gKA0nRrWzFN0=
-			</data>
-		</dict>
-		<key>Resources/gl3w/gl3w.h</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			oJogkRJAKl3IIPRlwrK91av8JDO8rXZ36j5t5EISJwQ=
-			</data>
-		</dict>
-		<key>Resources/gl3w/glcorearb.h</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			S+6XkdwPHh/BzZu9GmAWcdlLbuOIkjbl2nL8tMJqExo=
-			</data>
-		</dict>
-		<key>Resources/gl3w/readme.txt</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			bVDCROqJ7nzrb6B7IIUc/dQkVti6FjyZVUGmsnDZnJU=
-			</data>
+			<string>cdhash H"9e9b8df4635a82dbf50fda390d9915967a0a9a5b" or cdhash H"6dda1be650b30ea2357f75cb3da9ee592f8e7cff"</string>
 		</dict>
 	</dict>
 	<key>rules</key>

@@ -50,6 +50,7 @@ namespace OpenCVForUnity.ObjdetectModule
         public const int DICT_APRILTAG_25h9 = 0 + 18;
         public const int DICT_APRILTAG_36h10 = 0 + 19;
         public const int DICT_APRILTAG_36h11 = 0 + 20;
+        public const int DICT_ARUCO_MIP_36h12 = 0 + 21;
         //
         // C++:  void cv::groupRectangles(vector_Rect& rectList, vector_int& weights, int groupThreshold, double eps = 0.2)
         //

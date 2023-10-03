@@ -1132,12 +1132,12 @@ namespace OpenCVForUnity.XphotoModule
          *   </li>
          *   <li>
          *      #INPAINT_FSR_BEST or #INPAINT_FSR_FAST: 1-channel grayscale or 3-channel BGR image.
+         *   </li>
+         * </ul>
          *     param mask mask (#CV_8UC1), where non-zero pixels indicate valid image area, while zero pixels
          *     indicate area to be inpainted
          *     param dst destination image
          *     param algorithmType see xphoto::InpaintTypes
-         *   </li>
-         * </ul>
          */
         public static void inpaint(Mat src, Mat mask, Mat dst, int algorithmType)
         {

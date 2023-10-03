@@ -45,6 +45,20 @@ namespace OpenCVForUnity.ObjdetectModule
         public static CharucoParameters __fromPtr__(IntPtr addr) { return new CharucoParameters(addr); }
 
         //
+        // C++:   cv::aruco::CharucoParameters::CharucoParameters()
+        //
+
+        public CharucoParameters()
+        {
+
+
+            nativeObj = DisposableObject.ThrowIfNullIntPtr(objdetect_CharucoParameters_CharucoParameters_10());
+
+
+        }
+
+
+        //
         // C++: Mat CharucoParameters::cameraMatrix
         //
 
@@ -165,6 +179,10 @@ namespace OpenCVForUnity.ObjdetectModule
 #endif
 
 
+
+        // C++:   cv::aruco::CharucoParameters::CharucoParameters()
+        [DllImport(LIBNAME)]
+        private static extern IntPtr objdetect_CharucoParameters_CharucoParameters_10();
 
         // C++: Mat CharucoParameters::cameraMatrix
         [DllImport(LIBNAME)]

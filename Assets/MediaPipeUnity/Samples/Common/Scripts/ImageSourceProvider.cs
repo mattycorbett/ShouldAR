@@ -4,7 +4,7 @@
 // license that can be found in the LICENSE file or at
 // https://opensource.org/licenses/MIT.
 
-namespace Mediapipe.Unity.Sample
+namespace Mediapipe.Unity
 {
   public static class ImageSourceProvider
   {

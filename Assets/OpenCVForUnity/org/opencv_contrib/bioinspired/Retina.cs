@@ -128,10 +128,10 @@ namespace OpenCVForUnity.BioinspiredModule
          *   </li>
          *   <li>
          *      warning, Exceptions are thrown if read XML file is not valid
-         *     param retinaParameterFile the parameters filename
-         *     param applyDefaultSetupOnFailure set to true if an error must be thrown on error
          *   </li>
          * </ul>
+         *     param retinaParameterFile the parameters filename
+         *     param applyDefaultSetupOnFailure set to true if an error must be thrown on error
          *
          *     You can retrieve the current parameters structure using the method Retina::getParameters and update
          *     it before running method Retina::setup.
@@ -154,9 +154,9 @@ namespace OpenCVForUnity.BioinspiredModule
          *   </li>
          *   <li>
          *      warning, Exceptions are thrown if read XML file is not valid
-         *     param retinaParameterFile the parameters filename
          *   </li>
          * </ul>
+         *     param retinaParameterFile the parameters filename
          *
          *     You can retrieve the current parameters structure using the method Retina::getParameters and update
          *     it before running method Retina::setup.
@@ -1250,6 +1250,8 @@ namespace OpenCVForUnity.BioinspiredModule
          *   </li>
          *   <li>
          *        cv::bioinspired::RETINA_COLOR_BAYER: standard bayer sampling
+         *   </li>
+         * </ul>
          *     param useRetinaLogSampling activate retina log sampling, if true, the 2 following parameters can
          *     be used
          *     param reductionFactor only usefull if param useRetinaLogSampling=true, specifies the reduction
@@ -1257,8 +1259,6 @@ namespace OpenCVForUnity.BioinspiredModule
          *     underscaled, then a reduction of the output is allowed without precision leak
          *     param samplingStrength only usefull if param useRetinaLogSampling=true, specifies the strength of
          *     the log scale that is applied
-         *   </li>
-         * </ul>
          * return automatically generated
          */
         public static Retina create(Size inputSize, bool colorMode, int colorSamplingMethod, bool useRetinaLogSampling, float reductionFactor, float samplingStrength)
@@ -1285,14 +1285,14 @@ namespace OpenCVForUnity.BioinspiredModule
          *   </li>
          *   <li>
          *        cv::bioinspired::RETINA_COLOR_BAYER: standard bayer sampling
+         *   </li>
+         * </ul>
          *     param useRetinaLogSampling activate retina log sampling, if true, the 2 following parameters can
          *     be used
          *     param reductionFactor only usefull if param useRetinaLogSampling=true, specifies the reduction
          *     factor of the output frame (as the center (fovea) is high resolution and corners can be
          *     underscaled, then a reduction of the output is allowed without precision leak
          *     the log scale that is applied
-         *   </li>
-         * </ul>
          * return automatically generated
          */
         public static Retina create(Size inputSize, bool colorMode, int colorSamplingMethod, bool useRetinaLogSampling, float reductionFactor)
@@ -1319,13 +1319,13 @@ namespace OpenCVForUnity.BioinspiredModule
          *   </li>
          *   <li>
          *        cv::bioinspired::RETINA_COLOR_BAYER: standard bayer sampling
+         *   </li>
+         * </ul>
          *     param useRetinaLogSampling activate retina log sampling, if true, the 2 following parameters can
          *     be used
          *     factor of the output frame (as the center (fovea) is high resolution and corners can be
          *     underscaled, then a reduction of the output is allowed without precision leak
          *     the log scale that is applied
-         *   </li>
-         * </ul>
          * return automatically generated
          */
         public static Retina create(Size inputSize, bool colorMode, int colorSamplingMethod, bool useRetinaLogSampling)
@@ -1352,12 +1352,12 @@ namespace OpenCVForUnity.BioinspiredModule
          *   </li>
          *   <li>
          *        cv::bioinspired::RETINA_COLOR_BAYER: standard bayer sampling
+         *   </li>
+         * </ul>
          *     be used
          *     factor of the output frame (as the center (fovea) is high resolution and corners can be
          *     underscaled, then a reduction of the output is allowed without precision leak
          *     the log scale that is applied
-         *   </li>
-         * </ul>
          * return automatically generated
          */
         public static Retina create(Size inputSize, bool colorMode, int colorSamplingMethod)
@@ -1383,12 +1383,12 @@ namespace OpenCVForUnity.BioinspiredModule
          *   </li>
          *   <li>
          *        cv::bioinspired::RETINA_COLOR_BAYER: standard bayer sampling
+         *   </li>
+         * </ul>
          *     be used
          *     factor of the output frame (as the center (fovea) is high resolution and corners can be
          *     underscaled, then a reduction of the output is allowed without precision leak
          *     the log scale that is applied
-         *   </li>
-         * </ul>
          * return automatically generated
          */
         public static Retina create(Size inputSize, bool colorMode)

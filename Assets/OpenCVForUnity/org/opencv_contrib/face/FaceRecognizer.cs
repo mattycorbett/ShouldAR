@@ -360,10 +360,10 @@ namespace OpenCVForUnity.FaceModule
          * <ul>
          *   <li>
          *  if implemented - send all result of prediction to collector that can be used for somehow custom result handling
-         *     param src Sample image to get a prediction from.
-         *     param collector User-defined collector object that accepts all results
          *   </li>
          * </ul>
+         *     param src Sample image to get a prediction from.
+         *     param collector User-defined collector object that accepts all results
          *
          *     To implement this method u just have to do same internal cycle as in predict(InputArray src, CV_OUT int &amp;label, CV_OUT double &amp;confidence) but
          *     not try to get "best result, just resend it to caller side with given collector

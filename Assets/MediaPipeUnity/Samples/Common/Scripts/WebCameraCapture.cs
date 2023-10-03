@@ -29,7 +29,13 @@ namespace Mediapipe.Unity
     /// </summary>
     public class WebCameraCapture : MonoBehaviour
     {
+        
         public Texture2D rawVideoTexturesRGBA;
+
+        [TooltipAttribute("Rear Camera Capture Display Quad")]
+        public GameObject debugImageQuad;
+
+        [TooltipAttribute("Time (in frames) between rear camera updates")]
         public int timelimit;
         private int timer;
         /// <summary>
@@ -58,7 +64,7 @@ namespace Mediapipe.Unity
             if (timer > timelimit) {
                 timer = 0;
                 StartCoroutine(GetWebImage());
-
+                debugImageQuad.GetComponent<Renderer>().material.mainTexture = rawVideoTexturesRGBA;
             }
 
         }

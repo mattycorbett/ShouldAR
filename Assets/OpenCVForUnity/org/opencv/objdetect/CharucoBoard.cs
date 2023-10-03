@@ -87,6 +87,45 @@ namespace OpenCVForUnity.ObjdetectModule
 
 
         //
+        // C++:  void cv::aruco::CharucoBoard::setLegacyPattern(bool legacyPattern)
+        //
+
+        /**
+         * set legacy chessboard pattern.
+         *
+         * Legacy setting creates chessboard patterns starting with a white box in the upper left corner
+         * if there is an even row count of chessboard boxes, otherwise it starts with a black box.
+         * This setting ensures compatibility to patterns created with OpenCV versions prior OpenCV 4.6.0.
+         * See https://github.com/opencv/opencv/issues/23152.
+         *
+         * Default value: false.
+         * param legacyPattern automatically generated
+         */
+        public void setLegacyPattern(bool legacyPattern)
+        {
+            ThrowIfDisposed();
+
+            objdetect_CharucoBoard_setLegacyPattern_10(nativeObj, legacyPattern);
+
+
+        }
+
+
+        //
+        // C++:  bool cv::aruco::CharucoBoard::getLegacyPattern()
+        //
+
+        public bool getLegacyPattern()
+        {
+            ThrowIfDisposed();
+
+            return objdetect_CharucoBoard_getLegacyPattern_10(nativeObj);
+
+
+        }
+
+
+        //
         // C++:  Size cv::aruco::CharucoBoard::getChessboardSize()
         //
 
@@ -188,6 +227,15 @@ namespace OpenCVForUnity.ObjdetectModule
         private static extern IntPtr objdetect_CharucoBoard_CharucoBoard_10(double size_width, double size_height, float squareLength, float markerLength, IntPtr dictionary_nativeObj, IntPtr ids_nativeObj);
         [DllImport(LIBNAME)]
         private static extern IntPtr objdetect_CharucoBoard_CharucoBoard_11(double size_width, double size_height, float squareLength, float markerLength, IntPtr dictionary_nativeObj);
+
+        // C++:  void cv::aruco::CharucoBoard::setLegacyPattern(bool legacyPattern)
+        [DllImport(LIBNAME)]
+        private static extern void objdetect_CharucoBoard_setLegacyPattern_10(IntPtr nativeObj, [MarshalAs(UnmanagedType.U1)] bool legacyPattern);
+
+        // C++:  bool cv::aruco::CharucoBoard::getLegacyPattern()
+        [DllImport(LIBNAME)]
+        [return: MarshalAs(UnmanagedType.U1)]
+        private static extern bool objdetect_CharucoBoard_getLegacyPattern_10(IntPtr nativeObj);
 
         // C++:  Size cv::aruco::CharucoBoard::getChessboardSize()
         [DllImport(LIBNAME)]

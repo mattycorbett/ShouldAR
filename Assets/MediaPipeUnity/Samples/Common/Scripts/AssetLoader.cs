@@ -6,7 +6,7 @@
 
 using System.Collections;
 
-namespace Mediapipe.Unity.Sample
+namespace Mediapipe.Unity
 {
   public static class AssetLoader
   {

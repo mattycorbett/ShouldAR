@@ -7,7 +7,7 @@
 using System.Collections;
 using UnityEngine;
 
-namespace Mediapipe.Unity.Sample
+namespace Mediapipe.Unity
 {
   public class Bootstrap : MonoBehaviour
   {

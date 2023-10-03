@@ -9130,7 +9130,7 @@ namespace OpenCVForUnity.ImgprocModule
          * rectangle. In C++, instead of using this function, you can directly use RotatedRect::points method. Please
          * visit the REF: tutorial_bounding_rotated_ellipses "tutorial on Creating Bounding rotated boxes and ellipses for contours" for more information.
          *
-         * param box The input rotated rectangle. It may be the output of
+         * param box The input rotated rectangle. It may be the output of REF: minAreaRect.
          * param points The output array of four vertices of rectangles.
          */
         public static void boxPoints(RotatedRect box, Mat points)

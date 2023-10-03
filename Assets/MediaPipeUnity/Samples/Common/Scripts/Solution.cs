@@ -7,7 +7,7 @@
 using System.Collections;
 using UnityEngine;
 
-namespace Mediapipe.Unity.Sample
+namespace Mediapipe.Unity
 {
   public abstract class Solution : MonoBehaviour
   {
@@ -72,13 +72,10 @@ namespace Mediapipe.Unity.Sample
 
     protected static void ReadFromImageSource(ImageSource imageSource, TextureFrame textureFrame)
     {
-            Debug.Log("Here1");
       var sourceTexture = imageSource.GetCurrentTexture();
-            Debug.Log("Here2");
             // For some reason, when the image is coiped on GPU, latency tends to be high.
             // So even when OpenGL ES is available, use CPU to copy images.
             var textureType = sourceTexture.GetType();
-            Debug.Log("Here3");
             if (textureType == typeof(WebCamTexture))
       {
         textureFrame.ReadTextureFromOnCPU((WebCamTexture)sourceTexture);

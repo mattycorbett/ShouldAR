@@ -23,7 +23,7 @@ namespace OpenCVForUnity.UnityUtils
         */
         public static string getVersion()
         {
-            return "2.5.4";
+            return "2.5.6";
         }
 
         /**
@@ -573,105 +573,6 @@ namespace OpenCVForUnity.UnityUtils
             }
 
             RenderTexture.active = prevRT;
-        }
-
-        /**
-        * Register Plugin on WebGL.
-        * <p>
-        * <br>For the WebGL platform, please call this method before calling IntPtrToTextureInRenderThread(), ArrayToTextureInRenderThread() and MatToTextureInRenderThread() methods.
-        */
-        public static void registerWebGLPlugin()
-        {
-#if UNITY_WEBGL && !UNITY_EDITOR
-            if (isWebGLPluginRegistered) return;
-            OpenCVForUnity_RegisterPlugin();
-            isWebGLPluginRegistered = true;
-#endif
-        }
-
-        /**
-        * Copies Pixel Data IntPtr to Texture at render thread.
-        * <p>
-        * <br>This method copies the pixel data IntPtr to Texture at render thread.
-        * <br>The pixel data must have the same byte size as the Texture data ([width * height * 4] byte)
-        * <br>The texture's TextureFormat needs to be 4byte per pixel (RGBA32, ARGB32).
-        * 
-        * @param intPtr the pixel data must have the same byte size as the Texture data ([width * height * 4] byte).
-        * @param texture the texture's TextureFormat needs to be 4byte per pixel (RGBA32, ARGB32).
-        */
-        public static void intPtrToTextureInRenderThread(IntPtr intPtr, Texture texture)
-        {
-            if (intPtr == IntPtr.Zero)
-                throw new ArgumentException("intPtr == IntPtr.Zero");
-
-            if (texture == null)
-                throw new ArgumentNullException("texture");
-
-            OpenCVForUnity_SetByteArrayFromUnity(intPtr, 0, 0, 0);
-            OpenCVForUnity_SetTextureFromUnity(texture.GetNativeTexturePtr(), texture.width, texture.height, 4);
-
-            GL.IssuePluginEvent(OpenCVForUnity_GetRenderEventFunc(), 1);
-        }
-
-        /**
-        * Copies Pixel Data Array to Texture at render thread.
-        * <p>
-        * <br>This method copies the pixel data Array to Texture at render thread.
-        * <br>The pixel data Array must have the same byte size as the Texture data ([width * height * 4] byte)
-        * <br>The texture's TextureFormat needs to be 4byte per pixel (RGBA32, ARGB32).
-        * 
-        * @param array the pixel data Array must have the same byte size as the Texture data ([width * height * 4] byte).
-        * @param texture the texture's TextureFormat needs to be 4byte per pixel (RGBA32, ARGB32).
-        */
-        public static void arrayToTextureInRenderThread<T>(T[] array, Texture texture) where T : struct
-        {
-            if (array == null)
-                throw new ArgumentNullException("array");
-
-            if (texture == null)
-                throw new ArgumentNullException("texture");
-
-            GCHandle arrayHandle = GCHandle.Alloc(array, GCHandleType.Pinned);
-
-            OpenCVForUnity_SetByteArrayFromUnity(arrayHandle.AddrOfPinnedObject(), 0, 0, 0);
-            OpenCVForUnity_SetTextureFromUnity(texture.GetNativeTexturePtr(), texture.width, texture.height, 4);
-
-            GL.IssuePluginEvent(OpenCVForUnity_GetRenderEventFunc(), 1);
-
-            arrayHandle.Free();
-        }
-
-        /**
-        * Copies OpenCV Mat data to Texture at render thread.
-        * <p>
-        * <br>This method copies the OpenCV Mat data to Texture at render thread.
-        * <br>This method does not flip mat before copying mat to the texture.
-        * <br>The OpenCV Mat data must have the same byte size as the Texture data ([width * height * 4] byte)
-        * <br>The texture's TextureFormat needs to be 4byte per pixel (RGBA32, ARGB32).
-        * 
-        * @param mat the OpenCV Mat data must have the same byte size as the Texture data ([width * height * 4] byte).
-        * @param texture the texture's TextureFormat needs to be 4byte per pixel (RGBA32, ARGB32).
-        */
-        public static void matToTextureInRenderThread(Mat mat, Texture texture)
-        {
-            if (mat == null)
-                throw new ArgumentNullException("mat");
-            if (mat != null)
-                mat.ThrowIfDisposed();
-
-            if (texture == null)
-                throw new ArgumentNullException("texture");
-
-            if (mat.cols() != texture.width || mat.rows() != texture.height)
-                throw new ArgumentException("The Texture object must have the same size.");
-
-            if (!mat.isContinuous())
-                throw new ArgumentException("mat.isContinuous() must be true.");
-
-            OpenCVForUnity_SetByteArrayFromUnity((IntPtr)mat.dataAddr(), mat.width(), mat.height(), (int)mat.elemSize());
-            OpenCVForUnity_SetTextureFromUnity(texture.GetNativeTexturePtr(), texture.width, texture.height, 4);
-
-            GL.IssuePluginEvent(OpenCVForUnity_GetRenderEventFunc(), 1);
         }
 
         /**
@@ -1273,21 +1174,5 @@ namespace OpenCVForUnity.UnityUtils
         [DllImport(LIBNAME)]
         private static extern void OpenCVForUnity_ByteArrayToMatData(IntPtr byteArray, IntPtr Mat);
 
-
-        [DllImport(LIBNAME)]
-        private static extern void OpenCVForUnity_SetTextureFromUnity(System.IntPtr texture, int width, int height, int bytesPerPixel);
-
-        [DllImport(LIBNAME)]
-        private static extern void OpenCVForUnity_SetByteArrayFromUnity(System.IntPtr byteArray, int width, int height, int bytesPerPixel);
-
-        [DllImport(LIBNAME)]
-        private static extern IntPtr OpenCVForUnity_GetRenderEventFunc();
-
-#if UNITY_WEBGL && !UNITY_EDITOR
-        private static bool isWebGLPluginRegistered = false;
-
-        [DllImport(LIBNAME)]
-        private static extern void OpenCVForUnity_RegisterPlugin();
-#endif
     }
 }

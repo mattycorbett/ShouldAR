@@ -1929,6 +1929,7 @@ namespace OpenCVForUnity.CoreModule
          * Element-wise multiplication with scale factor
          * @param m operand with with which to perform element-wise multiplication
          * @param scale scale factor
+         * @return reference to a new Mat object
          */
         public Mat mul(Mat m, double scale)
         {
@@ -1943,6 +1944,7 @@ namespace OpenCVForUnity.CoreModule
         /**
         * Element-wise multiplication
         * @param m operand with with which to perform element-wise multiplication
+        * @return reference to a new Mat object
         */
         public Mat mul(Mat m)
         {
@@ -1958,6 +1960,7 @@ namespace OpenCVForUnity.CoreModule
         * Matrix multiplication
         * @param m operand with with which to perform matrix multiplication
         * @see Core#gemm(Mat, Mat, double, Mat, double, Mat, int)
+        * @return reference to a new Mat object
         */
         public Mat matMul(Mat m)
         {

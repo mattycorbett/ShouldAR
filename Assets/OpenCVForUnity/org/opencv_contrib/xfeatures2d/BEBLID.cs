@@ -86,10 +86,10 @@ namespace OpenCVForUnity.Xfeatures2dModule
          *   </li>
          *   <li>
          *      &lt;b&gt; 5.00f &lt;/b&gt; should be the scale for AKAZE, MSD, AGAST, FAST, BRISK keypoints
-         *     param n_bits Determine the number of bits in the descriptor. Should be either
-         *      BEBLID::SIZE_512_BITS or BEBLID::SIZE_256_BITS.
          *   </li>
          * </ul>
+         *     param n_bits Determine the number of bits in the descriptor. Should be either
+         *      BEBLID::SIZE_512_BITS or BEBLID::SIZE_256_BITS.
          * return automatically generated
          */
         public static BEBLID create(float scale_factor, int n_bits)
@@ -116,9 +116,9 @@ namespace OpenCVForUnity.Xfeatures2dModule
          *   </li>
          *   <li>
          *      &lt;b&gt; 5.00f &lt;/b&gt; should be the scale for AKAZE, MSD, AGAST, FAST, BRISK keypoints
-         *      BEBLID::SIZE_512_BITS or BEBLID::SIZE_256_BITS.
          *   </li>
          * </ul>
+         *      BEBLID::SIZE_512_BITS or BEBLID::SIZE_256_BITS.
          * return automatically generated
          */
         public static BEBLID create(float scale_factor)

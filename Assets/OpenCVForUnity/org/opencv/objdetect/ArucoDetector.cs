@@ -129,7 +129,7 @@ namespace OpenCVForUnity.ObjdetectModule
          * and its corresponding identifier.
          * Note that this function does not perform pose estimation.
          * <b>Note:</b> The function does not correct lens distortion or takes it into account. It's recommended to undistort
-         * input image with corresponging camera model, if camera parameters are known
+         * input image with corresponding camera model, if camera parameters are known
          * SEE: undistort, estimatePoseSingleMarkers,  estimatePoseBoard
          */
         public void detectMarkers(Mat image, List<Mat> corners, Mat ids, List<Mat> rejectedImgPoints)
@@ -164,7 +164,7 @@ namespace OpenCVForUnity.ObjdetectModule
          * and its corresponding identifier.
          * Note that this function does not perform pose estimation.
          * <b>Note:</b> The function does not correct lens distortion or takes it into account. It's recommended to undistort
-         * input image with corresponging camera model, if camera parameters are known
+         * input image with corresponding camera model, if camera parameters are known
          * SEE: undistort, estimatePoseSingleMarkers,  estimatePoseBoard
          */
         public void detectMarkers(Mat image, List<Mat> corners, Mat ids)
@@ -185,7 +185,7 @@ namespace OpenCVForUnity.ObjdetectModule
         //
 
         /**
-         * Refind not detected markers based on the already detected and the board layout
+         * Refine not detected markers based on the already detected and the board layout
          *
          * param image input image
          * param board layout of markers in the board.
@@ -227,7 +227,7 @@ namespace OpenCVForUnity.ObjdetectModule
         }
 
         /**
-         * Refind not detected markers based on the already detected and the board layout
+         * Refine not detected markers based on the already detected and the board layout
          *
          * param image input image
          * param board layout of markers in the board.
@@ -267,7 +267,7 @@ namespace OpenCVForUnity.ObjdetectModule
         }
 
         /**
-         * Refind not detected markers based on the already detected and the board layout
+         * Refine not detected markers based on the already detected and the board layout
          *
          * param image input image
          * param board layout of markers in the board.
@@ -305,7 +305,7 @@ namespace OpenCVForUnity.ObjdetectModule
         }
 
         /**
-         * Refind not detected markers based on the already detected and the board layout
+         * Refine not detected markers based on the already detected and the board layout
          *
          * param image input image
          * param board layout of markers in the board.

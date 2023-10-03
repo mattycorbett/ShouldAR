@@ -162,7 +162,7 @@ namespace OpenCVForUnity.DnnModule
 
 
         //
-        // C++:  Model cv::dnn::Model::setInputScale(double scale)
+        // C++:  Model cv::dnn::Model::setInputScale(Scalar scale)
         //
 
         /**
@@ -170,11 +170,11 @@ namespace OpenCVForUnity.DnnModule
          * param scale Multiplier for frame values.
          * return automatically generated
          */
-        public Model setInputScale(double scale)
+        public Model setInputScale(Scalar scale)
         {
             ThrowIfDisposed();
 
-            return new Model(DisposableObject.ThrowIfNullIntPtr(dnn_Model_setInputScale_10(nativeObj, scale)));
+            return new Model(DisposableObject.ThrowIfNullIntPtr(dnn_Model_setInputScale_10(nativeObj, scale.val[0], scale.val[1], scale.val[2], scale.val[3])));
 
 
         }
@@ -395,9 +395,9 @@ namespace OpenCVForUnity.DnnModule
         [DllImport(LIBNAME)]
         private static extern IntPtr dnn_Model_setInputMean_10(IntPtr nativeObj, double mean_val0, double mean_val1, double mean_val2, double mean_val3);
 
-        // C++:  Model cv::dnn::Model::setInputScale(double scale)
+        // C++:  Model cv::dnn::Model::setInputScale(Scalar scale)
         [DllImport(LIBNAME)]
-        private static extern IntPtr dnn_Model_setInputScale_10(IntPtr nativeObj, double scale);
+        private static extern IntPtr dnn_Model_setInputScale_10(IntPtr nativeObj, double scale_val0, double scale_val1, double scale_val2, double scale_val3);
 
         // C++:  Model cv::dnn::Model::setInputCrop(bool crop)
         [DllImport(LIBNAME)]

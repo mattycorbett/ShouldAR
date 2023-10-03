@@ -420,13 +420,13 @@ namespace OpenCVForUnity.VideoModule
          *      minEigThreshold description); if the flag is not set, then L1 distance between patches
          *      around the original and a moved point, divided by number of pixels in a window, is used as a
          *      error measure.
+         *   </li>
+         * </ul>
          * param minEigThreshold the algorithm calculates the minimum eigen value of a 2x2 normal matrix of
          * optical flow equations (this matrix is called a spatial gradient matrix in CITE: Bouguet00), divided
          * by number of pixels in a window; if this value is less than minEigThreshold, then a corresponding
          * feature is filtered out and its flow is not processed, so it allows to remove bad points and get a
          * performance boost.
-         *   </li>
-         * </ul>
          *
          * The function implements a sparse iterative version of the Lucas-Kanade optical flow in pyramids. See
          * CITE: Bouguet00 . The function is parallelized with the TBB library.
@@ -499,12 +499,12 @@ namespace OpenCVForUnity.VideoModule
          *      minEigThreshold description); if the flag is not set, then L1 distance between patches
          *      around the original and a moved point, divided by number of pixels in a window, is used as a
          *      error measure.
+         *   </li>
+         * </ul>
          * optical flow equations (this matrix is called a spatial gradient matrix in CITE: Bouguet00), divided
          * by number of pixels in a window; if this value is less than minEigThreshold, then a corresponding
          * feature is filtered out and its flow is not processed, so it allows to remove bad points and get a
          * performance boost.
-         *   </li>
-         * </ul>
          *
          * The function implements a sparse iterative version of the Lucas-Kanade optical flow in pyramids. See
          * CITE: Bouguet00 . The function is parallelized with the TBB library.
@@ -576,12 +576,12 @@ namespace OpenCVForUnity.VideoModule
          *      minEigThreshold description); if the flag is not set, then L1 distance between patches
          *      around the original and a moved point, divided by number of pixels in a window, is used as a
          *      error measure.
+         *   </li>
+         * </ul>
          * optical flow equations (this matrix is called a spatial gradient matrix in CITE: Bouguet00), divided
          * by number of pixels in a window; if this value is less than minEigThreshold, then a corresponding
          * feature is filtered out and its flow is not processed, so it allows to remove bad points and get a
          * performance boost.
-         *   </li>
-         * </ul>
          *
          * The function implements a sparse iterative version of the Lucas-Kanade optical flow in pyramids. See
          * CITE: Bouguet00 . The function is parallelized with the TBB library.
@@ -652,12 +652,12 @@ namespace OpenCVForUnity.VideoModule
          *      minEigThreshold description); if the flag is not set, then L1 distance between patches
          *      around the original and a moved point, divided by number of pixels in a window, is used as a
          *      error measure.
+         *   </li>
+         * </ul>
          * optical flow equations (this matrix is called a spatial gradient matrix in CITE: Bouguet00), divided
          * by number of pixels in a window; if this value is less than minEigThreshold, then a corresponding
          * feature is filtered out and its flow is not processed, so it allows to remove bad points and get a
          * performance boost.
-         *   </li>
-         * </ul>
          *
          * The function implements a sparse iterative version of the Lucas-Kanade optical flow in pyramids. See
          * CITE: Bouguet00 . The function is parallelized with the TBB library.
@@ -727,12 +727,12 @@ namespace OpenCVForUnity.VideoModule
          *      minEigThreshold description); if the flag is not set, then L1 distance between patches
          *      around the original and a moved point, divided by number of pixels in a window, is used as a
          *      error measure.
+         *   </li>
+         * </ul>
          * optical flow equations (this matrix is called a spatial gradient matrix in CITE: Bouguet00), divided
          * by number of pixels in a window; if this value is less than minEigThreshold, then a corresponding
          * feature is filtered out and its flow is not processed, so it allows to remove bad points and get a
          * performance boost.
-         *   </li>
-         * </ul>
          *
          * The function implements a sparse iterative version of the Lucas-Kanade optical flow in pyramids. See
          * CITE: Bouguet00 . The function is parallelized with the TBB library.
@@ -801,12 +801,12 @@ namespace OpenCVForUnity.VideoModule
          *      minEigThreshold description); if the flag is not set, then L1 distance between patches
          *      around the original and a moved point, divided by number of pixels in a window, is used as a
          *      error measure.
+         *   </li>
+         * </ul>
          * optical flow equations (this matrix is called a spatial gradient matrix in CITE: Bouguet00), divided
          * by number of pixels in a window; if this value is less than minEigThreshold, then a corresponding
          * feature is filtered out and its flow is not processed, so it allows to remove bad points and get a
          * performance boost.
-         *   </li>
-         * </ul>
          *
          * The function implements a sparse iterative version of the Lucas-Kanade optical flow in pyramids. See
          * CITE: Bouguet00 . The function is parallelized with the TBB library.
@@ -991,14 +991,14 @@ namespace OpenCVForUnity.VideoModule
          *   <li>
          *     <b>MOTION_HOMOGRAPHY</b> sets a homography as a motion model; eight parameters are
          *      estimated;\{code warpMatrix\} is \(3\times 3\).
+         *   </li>
+         * </ul>
          * param criteria parameter, specifying the termination criteria of the ECC algorithm;
          * criteria.epsilon defines the threshold of the increment in the correlation coefficient between two
          * iterations (a negative criteria.epsilon makes criteria.maxcount the only termination criterion).
          * Default values are shown in the declaration above.
          * param inputMask An optional mask to indicate valid values of inputImage.
          * param gaussFiltSize An optional value indicating size of gaussian blur filter; (DEFAULT: 5)
-         *   </li>
-         * </ul>
          *
          * The function estimates the optimum transformation (warpMatrix) with respect to ECC criterion
          * (CITE: EP08), that is

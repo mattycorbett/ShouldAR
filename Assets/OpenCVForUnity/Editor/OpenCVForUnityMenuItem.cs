@@ -243,10 +243,11 @@ namespace OpenCVForUnity.Editor
         }
 
 
-            public static void SetWindowsPluginImportSettings(string pluginsFolderPath, string extraFolderPath, bool displayProgressBar = false)
+        public static void SetWindowsPluginImportSettings(string pluginsFolderPath, string extraFolderPath, bool displayProgressBar = false)
         {
             SetPlugins(new string[] { extraFolderPath + "/dll_version/Windows/x86/opencvforunity.dll" }, null, null, displayProgressBar);
             SetPlugins(new string[] { extraFolderPath + "/dll_version/Windows/x86_64/opencvforunity.dll" }, null, null, displayProgressBar);
+            SetPlugins(new string[] { extraFolderPath + "/dll_version/Windows/ARM64/opencvforunity.dll" }, null, null, displayProgressBar);
 
             SetPlugins(new string[] { pluginsFolderPath + "/Windows/x86/opencvforunity.dll" }, new Dictionary<string, string>() { {
                                 "CPU",
@@ -278,6 +279,23 @@ namespace OpenCVForUnity.Editor
                                     }
                                 }
                 }, displayProgressBar);
+#if UNITY_2023_1_OR_NEWER
+            SetPlugins(new string[] { pluginsFolderPath + "/Windows/ARM64/opencvforunity.dll" }, new Dictionary<string, string>() { {
+                                "CPU",
+                                "ARM64"
+                            }, {
+                                "OS",
+                                "Windows"
+                            }
+                        },
+    new Dictionary<BuildTarget, Dictionary<string, string>>() { {BuildTarget.StandaloneWindows64,new Dictionary<string, string> () { {
+                                            "CPU",
+                                            "ARM64"
+                                        }
+                                    }
+                                }
+    }, displayProgressBar);
+#endif
         }
 
         public static void SetLinuxPluginImportSettings(string pluginsFolderPath, string extraFolderPath, bool displayProgressBar = false)
@@ -361,7 +379,16 @@ namespace OpenCVForUnity.Editor
         public static void SetWebGLPluginImportSettings(string pluginsFolderPath, string extraFolderPath, bool displayProgressBar = false)
         {
 
-#if UNITY_2022_2_OR_NEWER
+#if UNITY_2023_2_OR_NEWER
+            SetPlugins(new string[] { pluginsFolderPath + "/WebGL/2019.1/opencvforunity.bc" }, null, null, displayProgressBar);
+            SetPlugins(new string[] { pluginsFolderPath + "/WebGL/2021.2/opencvforunity.bc" }, null, null, displayProgressBar);
+            SetPlugins(new string[] { pluginsFolderPath + "/WebGL/2022.2/opencvforunity.bc" }, null, null, displayProgressBar);
+            SetPlugins(new string[] { pluginsFolderPath + "/WebGL/2023.2/opencvforunity.bc" }, null, new Dictionary<BuildTarget, Dictionary<string, string>>() { {
+                                BuildTarget.WebGL,
+                                null
+                            }
+                        }, displayProgressBar);
+#elif UNITY_2022_2_OR_NEWER
             SetPlugins(new string[] { pluginsFolderPath + "/WebGL/2019.1/opencvforunity.bc" }, null, null, displayProgressBar);
             SetPlugins(new string[] { pluginsFolderPath + "/WebGL/2021.2/opencvforunity.bc" }, null, null, displayProgressBar);
             SetPlugins(new string[] { pluginsFolderPath + "/WebGL/2022.2/opencvforunity.bc" }, null, new Dictionary<BuildTarget, Dictionary<string, string>>() { {
@@ -369,6 +396,7 @@ namespace OpenCVForUnity.Editor
                                 null
                             }
                         }, displayProgressBar);
+            SetPlugins(new string[] { pluginsFolderPath + "/WebGL/2023.2/opencvforunity.bc" }, null, null, displayProgressBar);
 #elif UNITY_2021_2_OR_NEWER
             SetPlugins(new string[] { pluginsFolderPath + "/WebGL/2019.1/opencvforunity.bc" }, null, null, displayProgressBar);
             SetPlugins(new string[] { pluginsFolderPath + "/WebGL/2021.2/opencvforunity.bc" }, null, new Dictionary<BuildTarget, Dictionary<string, string>>() { {
@@ -377,6 +405,7 @@ namespace OpenCVForUnity.Editor
                             }
                         }, displayProgressBar);
             SetPlugins(new string[] { pluginsFolderPath + "/WebGL/2022.2/opencvforunity.bc" }, null, null, displayProgressBar);
+            SetPlugins(new string[] { pluginsFolderPath + "/WebGL/2023.2/opencvforunity.bc" }, null, null, displayProgressBar);
 #elif UNITY_2019_1_OR_NEWER
             SetPlugins(new string[] { pluginsFolderPath + "/WebGL/2019.1/opencvforunity.bc" }, null, new Dictionary<BuildTarget, Dictionary<string, string>>() { {
                                 BuildTarget.WebGL,
@@ -385,6 +414,7 @@ namespace OpenCVForUnity.Editor
                         }, displayProgressBar);
             SetPlugins(new string[] { pluginsFolderPath + "/WebGL/2021.2/opencvforunity.bc" }, null, null, displayProgressBar);
             SetPlugins(new string[] { pluginsFolderPath + "/WebGL/2022.2/opencvforunity.bc" }, null, null, displayProgressBar);
+            SetPlugins(new string[] { pluginsFolderPath + "/WebGL/2023.2/opencvforunity.bc" }, null, null, displayProgressBar);
 #endif
             if (PlayerSettings.WebGL.exceptionSupport == WebGLExceptionSupport.None)
                 PlayerSettings.WebGL.exceptionSupport = WebGLExceptionSupport.ExplicitlyThrownExceptionsOnly;
@@ -659,7 +689,7 @@ namespace OpenCVForUnity.Editor
         [MenuItem("Tools/OpenCV for Unity/Open OpenCV C++ API Reference", false, 36)]
         public static void OpenOpenCVAPIReference()
         {
-            Application.OpenURL("http://docs.opencv.org/4.7.0/index.html");
+            Application.OpenURL("http://docs.opencv.org/4.8.0/index.html");
         }
     }
 }

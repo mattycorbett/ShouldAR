@@ -478,8 +478,8 @@ namespace OpenCVForUnity.PhotoModule
         /**
          * Modification of fastNlMeansDenoising function for images sequence where consecutive images have been
          * captured in small period of time. For example video. This version of the function is for grayscale
-         * images or for manual manipulation with colorspaces. For more details see
-         * &lt;http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.131.6394&gt;
+         * images or for manual manipulation with colorspaces. See CITE: Buades2005DenoisingIS for more details
+         * (open access [here](https://static.aminer.org/pdf/PDF/000/317/196/spatio_temporal_wiener_filtering_of_image_sequences_using_a_parametric.pdf)).
          *
          * param srcImgs Input 8-bit 1-channel, 2-channel, 3-channel or
          * 4-channel images sequence. All images should have the same type and
@@ -511,8 +511,8 @@ namespace OpenCVForUnity.PhotoModule
         /**
          * Modification of fastNlMeansDenoising function for images sequence where consecutive images have been
          * captured in small period of time. For example video. This version of the function is for grayscale
-         * images or for manual manipulation with colorspaces. For more details see
-         * &lt;http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.131.6394&gt;
+         * images or for manual manipulation with colorspaces. See CITE: Buades2005DenoisingIS for more details
+         * (open access [here](https://static.aminer.org/pdf/PDF/000/317/196/spatio_temporal_wiener_filtering_of_image_sequences_using_a_parametric.pdf)).
          *
          * param srcImgs Input 8-bit 1-channel, 2-channel, 3-channel or
          * 4-channel images sequence. All images should have the same type and
@@ -543,8 +543,8 @@ namespace OpenCVForUnity.PhotoModule
         /**
          * Modification of fastNlMeansDenoising function for images sequence where consecutive images have been
          * captured in small period of time. For example video. This version of the function is for grayscale
-         * images or for manual manipulation with colorspaces. For more details see
-         * &lt;http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.131.6394&gt;
+         * images or for manual manipulation with colorspaces. See CITE: Buades2005DenoisingIS for more details
+         * (open access [here](https://static.aminer.org/pdf/PDF/000/317/196/spatio_temporal_wiener_filtering_of_image_sequences_using_a_parametric.pdf)).
          *
          * param srcImgs Input 8-bit 1-channel, 2-channel, 3-channel or
          * 4-channel images sequence. All images should have the same type and
@@ -574,8 +574,8 @@ namespace OpenCVForUnity.PhotoModule
         /**
          * Modification of fastNlMeansDenoising function for images sequence where consecutive images have been
          * captured in small period of time. For example video. This version of the function is for grayscale
-         * images or for manual manipulation with colorspaces. For more details see
-         * &lt;http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.131.6394&gt;
+         * images or for manual manipulation with colorspaces. See CITE: Buades2005DenoisingIS for more details
+         * (open access [here](https://static.aminer.org/pdf/PDF/000/317/196/spatio_temporal_wiener_filtering_of_image_sequences_using_a_parametric.pdf)).
          *
          * param srcImgs Input 8-bit 1-channel, 2-channel, 3-channel or
          * 4-channel images sequence. All images should have the same type and
@@ -609,8 +609,8 @@ namespace OpenCVForUnity.PhotoModule
         /**
          * Modification of fastNlMeansDenoising function for images sequence where consecutive images have been
          * captured in small period of time. For example video. This version of the function is for grayscale
-         * images or for manual manipulation with colorspaces. For more details see
-         * &lt;http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.131.6394&gt;
+         * images or for manual manipulation with colorspaces. See CITE: Buades2005DenoisingIS for more details
+         * (open access [here](https://static.aminer.org/pdf/PDF/000/317/196/spatio_temporal_wiener_filtering_of_image_sequences_using_a_parametric.pdf)).
          *
          * param srcImgs Input 8-bit or 16-bit (only with NORM_L1) 1-channel,
          * 2-channel, 3-channel or 4-channel images sequence. All images should
@@ -646,8 +646,8 @@ namespace OpenCVForUnity.PhotoModule
         /**
          * Modification of fastNlMeansDenoising function for images sequence where consecutive images have been
          * captured in small period of time. For example video. This version of the function is for grayscale
-         * images or for manual manipulation with colorspaces. For more details see
-         * &lt;http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.131.6394&gt;
+         * images or for manual manipulation with colorspaces. See CITE: Buades2005DenoisingIS for more details
+         * (open access [here](https://static.aminer.org/pdf/PDF/000/317/196/spatio_temporal_wiener_filtering_of_image_sequences_using_a_parametric.pdf)).
          *
          * param srcImgs Input 8-bit or 16-bit (only with NORM_L1) 1-channel,
          * 2-channel, 3-channel or 4-channel images sequence. All images should
@@ -682,8 +682,8 @@ namespace OpenCVForUnity.PhotoModule
         /**
          * Modification of fastNlMeansDenoising function for images sequence where consecutive images have been
          * captured in small period of time. For example video. This version of the function is for grayscale
-         * images or for manual manipulation with colorspaces. For more details see
-         * &lt;http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.131.6394&gt;
+         * images or for manual manipulation with colorspaces. See CITE: Buades2005DenoisingIS for more details
+         * (open access [here](https://static.aminer.org/pdf/PDF/000/317/196/spatio_temporal_wiener_filtering_of_image_sequences_using_a_parametric.pdf)).
          *
          * param srcImgs Input 8-bit or 16-bit (only with NORM_L1) 1-channel,
          * 2-channel, 3-channel or 4-channel images sequence. All images should
@@ -717,8 +717,8 @@ namespace OpenCVForUnity.PhotoModule
         /**
          * Modification of fastNlMeansDenoising function for images sequence where consecutive images have been
          * captured in small period of time. For example video. This version of the function is for grayscale
-         * images or for manual manipulation with colorspaces. For more details see
-         * &lt;http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.131.6394&gt;
+         * images or for manual manipulation with colorspaces. See CITE: Buades2005DenoisingIS for more details
+         * (open access [here](https://static.aminer.org/pdf/PDF/000/317/196/spatio_temporal_wiener_filtering_of_image_sequences_using_a_parametric.pdf)).
          *
          * param srcImgs Input 8-bit or 16-bit (only with NORM_L1) 1-channel,
          * 2-channel, 3-channel or 4-channel images sequence. All images should

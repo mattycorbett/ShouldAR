@@ -13,7 +13,7 @@ using UnityEngine.Rendering;
 
 using Stopwatch = System.Diagnostics.Stopwatch;
 
-namespace Mediapipe.Unity.Sample
+namespace Mediapipe.Unity
 {
   public abstract class GraphRunner : MonoBehaviour
   {

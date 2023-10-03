@@ -7,7 +7,7 @@
 using System.Collections;
 using UnityEngine;
 
-namespace Mediapipe.Unity.Sample
+namespace Mediapipe.Unity
 {
   public abstract class ImageSourceSolution<T> : Solution where T : GraphRunner
   {
@@ -85,8 +85,6 @@ namespace Mediapipe.Unity.Sample
       OnStartRun();
       graphRunner.StartRun(imageSource);
 
-      
-
 
     }
     void Update()
@@ -97,18 +95,12 @@ namespace Mediapipe.Unity.Sample
         {
             var imageSource = ImageSourceProvider.ImageSource;
             var waitWhilePausing = new WaitWhile(() => isPaused);
-            // while (true)
-            // {
+
             if (isPaused)
             {
                 yield return waitWhilePausing;
             }
 
-            /* if (!textureFramePool.TryGetTextureFrame(out var textureFrame))
-             {
-                 yield return new WaitForEndOfFrame();
-                 continue;
-             }*/
             textureFramePool.TryGetTextureFrame(out var textureFrame);
             // Copy current image to TextureFrame
             ReadFromImageSource(imageSource, textureFrame);
@@ -117,10 +109,9 @@ namespace Mediapipe.Unity.Sample
 
             if (runningMode.IsSynchronous())
             {
-                RenderCurrentFrame(textureFrame);
+                //RenderCurrentFrame(textureFrame);
                 yield return WaitForNextValue();
             }
-            // }
         }
 
         protected virtual void SetupScreen(ImageSource imageSource)

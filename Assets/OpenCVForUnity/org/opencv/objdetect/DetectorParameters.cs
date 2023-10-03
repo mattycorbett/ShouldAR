@@ -355,17 +355,31 @@ namespace OpenCVForUnity.ObjdetectModule
 
 
         //
-        // C++: CornerRefineMethod DetectorParameters::cornerRefinementMethod
+        // C++: int DetectorParameters::cornerRefinementMethod
         //
 
-        // Return type 'CornerRefineMethod' is not supported, skipping the function
+        public int get_cornerRefinementMethod()
+        {
+            ThrowIfDisposed();
+
+            return objdetect_DetectorParameters_get_1cornerRefinementMethod_10(nativeObj);
+
+
+        }
 
 
         //
         // C++: void DetectorParameters::cornerRefinementMethod
         //
 
-        // Unknown type 'CornerRefineMethod' (I), skipping the function
+        public void set_cornerRefinementMethod(int cornerRefinementMethod)
+        {
+            ThrowIfDisposed();
+
+            objdetect_DetectorParameters_set_1cornerRefinementMethod_10(nativeObj, cornerRefinementMethod);
+
+
+        }
 
 
         //
@@ -1047,6 +1061,14 @@ namespace OpenCVForUnity.ObjdetectModule
         // C++: void DetectorParameters::minMarkerDistanceRate
         [DllImport(LIBNAME)]
         private static extern void objdetect_DetectorParameters_set_1minMarkerDistanceRate_10(IntPtr nativeObj, double minMarkerDistanceRate);
+
+        // C++: int DetectorParameters::cornerRefinementMethod
+        [DllImport(LIBNAME)]
+        private static extern int objdetect_DetectorParameters_get_1cornerRefinementMethod_10(IntPtr nativeObj);
+
+        // C++: void DetectorParameters::cornerRefinementMethod
+        [DllImport(LIBNAME)]
+        private static extern void objdetect_DetectorParameters_set_1cornerRefinementMethod_10(IntPtr nativeObj, int cornerRefinementMethod);
 
         // C++: int DetectorParameters::cornerRefinementWinSize
         [DllImport(LIBNAME)]

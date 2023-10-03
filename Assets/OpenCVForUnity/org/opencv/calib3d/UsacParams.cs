@@ -366,6 +366,62 @@ namespace OpenCVForUnity.Calib3dModule
         }
 
 
+        //
+        // C++: PolishingMethod UsacParams::final_polisher
+        //
+
+        public int get_final_polisher()
+        {
+            ThrowIfDisposed();
+
+            return calib3d_UsacParams_get_1final_1polisher_10(nativeObj);
+
+
+        }
+
+
+        //
+        // C++: void UsacParams::final_polisher
+        //
+
+        public void set_final_polisher(int final_polisher)
+        {
+            ThrowIfDisposed();
+
+            calib3d_UsacParams_set_1final_1polisher_10(nativeObj, final_polisher);
+
+
+        }
+
+
+        //
+        // C++: int UsacParams::final_polisher_iterations
+        //
+
+        public int get_final_polisher_iterations()
+        {
+            ThrowIfDisposed();
+
+            return calib3d_UsacParams_get_1final_1polisher_1iterations_10(nativeObj);
+
+
+        }
+
+
+        //
+        // C++: void UsacParams::final_polisher_iterations
+        //
+
+        public void set_final_polisher_iterations(int final_polisher_iterations)
+        {
+            ThrowIfDisposed();
+
+            calib3d_UsacParams_set_1final_1polisher_1iterations_10(nativeObj, final_polisher_iterations);
+
+
+        }
+
+
 #if (UNITY_IOS || UNITY_WEBGL) && !UNITY_EDITOR
         const string LIBNAME = "__Internal";
 #else
@@ -466,6 +522,22 @@ namespace OpenCVForUnity.Calib3dModule
         // C++: void UsacParams::threshold
         [DllImport(LIBNAME)]
         private static extern void calib3d_UsacParams_set_1threshold_10(IntPtr nativeObj, double threshold);
+
+        // C++: PolishingMethod UsacParams::final_polisher
+        [DllImport(LIBNAME)]
+        private static extern int calib3d_UsacParams_get_1final_1polisher_10(IntPtr nativeObj);
+
+        // C++: void UsacParams::final_polisher
+        [DllImport(LIBNAME)]
+        private static extern void calib3d_UsacParams_set_1final_1polisher_10(IntPtr nativeObj, int final_polisher);
+
+        // C++: int UsacParams::final_polisher_iterations
+        [DllImport(LIBNAME)]
+        private static extern int calib3d_UsacParams_get_1final_1polisher_1iterations_10(IntPtr nativeObj);
+
+        // C++: void UsacParams::final_polisher_iterations
+        [DllImport(LIBNAME)]
+        private static extern void calib3d_UsacParams_set_1final_1polisher_1iterations_10(IntPtr nativeObj, int final_polisher_iterations);
 
         // native support for java finalize()
         [DllImport(LIBNAME)]
