@@ -2,11 +2,18 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class UserEyeGazeCollider : MonoBehaviour
 {
+
+
+    
+    
+
     // Start is called before the first frame update
     void Start()
     {
+       
         
     }
 
@@ -20,7 +27,7 @@ public class UserEyeGazeCollider : MonoBehaviour
     {
         if (collision.gameObject.tag == "EyeGaze")
         {
-            Debug.Log("Collision");
+            
         }
 
 

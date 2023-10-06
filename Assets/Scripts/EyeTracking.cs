@@ -26,7 +26,7 @@ public class EyeTracking : MonoBehaviour
     private List<double> fixationList;
     private float numFixationsPerSecond;
     private float tempFixationDuration;
-    private float meanFixationDuration;
+    
     private float SDFixationDuration;
     private float skewFixationDuration;
     private float firstFixationDuration;
@@ -47,6 +47,8 @@ public class EyeTracking : MonoBehaviour
     public GameObject userEyeGazeSphere;
 
     public GameObject CSVGameObject;
+
+    public float meanFixationDuration;
     #endregion
 
     private void Awake()
@@ -186,7 +188,12 @@ public class EyeTracking : MonoBehaviour
             meanFixationDuration = (float)(fixationList.Sum() / (float)fixationList.Count());
             SDFixationDuration = standardDeviation(fixationList.ToArray(), fixationList.Count());
             skewFixationDuration = skewness(fixationList.ToArray(), fixationList.Count());
-            loggingScript.WriteCSVLineFixations(numFixationsPerSecond, meanFixationDuration, SDFixationDuration, skewFixationDuration, (float)fixationList.Max(), firstFixationDuration);
+            if (enableLogging)
+            {
+                loggingScript.WriteCSVLineFixations(numFixationsPerSecond, meanFixationDuration, SDFixationDuration, skewFixationDuration, (float)fixationList.Max(), firstFixationDuration);
+
+            }
+
 
         }
     }
