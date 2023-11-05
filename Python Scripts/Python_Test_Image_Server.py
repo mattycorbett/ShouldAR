@@ -40,6 +40,7 @@ while True:
             array_from_client.extend(data)
 
         img: Image.Image = create_image_from_bytes(array_from_client)
-        img.show()
+        ms = time.time() * 1000.0
+        img.save(str(ms) + ".jpg")
     conn.close()
     print('client disconnected')

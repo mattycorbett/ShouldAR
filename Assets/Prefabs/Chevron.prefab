@@ -12,6 +12,8 @@ GameObject:
   - component: {fileID: 33341094294523886}
   - component: {fileID: 64383987690698326}
   - component: {fileID: 23463222375796690}
+  - component: {fileID: -5400172452276845181}
+  - component: {fileID: 5885306435203151616}
   m_Layer: 0
   m_Name: Chevron
   m_TagString: Untagged
@@ -106,3 +108,29 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &-5400172452276845181
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1329002528574780}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d69319b9ac923a45ba8c0b16afa22bf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  staleLimit: 1000
+--- !u!114 &5885306435203151616
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1329002528574780}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5405733ed86e39a409641d10b16f0818, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  target: {fileID: 0}

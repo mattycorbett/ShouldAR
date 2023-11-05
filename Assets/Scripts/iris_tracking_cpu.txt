@@ -29,6 +29,7 @@ input_stream: "input_video"
 output_stream: "face_landmarks_with_iris"
 output_stream: "face_rect"
 output_stream: "face_detections"
+output_stream: "multi_face_landmarks"
 
 # Defines how many faces to detect. Iris tracking currently only handles one
 # face (left and right eye), and therefore this should always be set to 1.
@@ -37,7 +38,7 @@ node {
   output_side_packet: "PACKET:0:num_faces"
   node_options: {
     [type.googleapis.com/mediapipe.ConstantSidePacketCalculatorOptions]: {
-      packet { int_value: 1 }
+      packet { int_value: 2 }
     }
   }
 }

@@ -5,18 +5,29 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="31021cf1-3071-4509-a677-16c32ce22669" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/MediaPipeUnity/Samples/Common/Scripts/ImageSource/WebImageSource.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/MediaPipeUnity/Samples/Common/Scripts/ImageSource/WebImageSource.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/MediaPipeUnity/Samples/Common/Scripts/ImageSourceSolution.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/MediaPipeUnity/Samples/Common/Scripts/ImageSourceSolution.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/MediaPipeUnity/Samples/Common/Scripts/Solution.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/MediaPipeUnity/Samples/Common/Scripts/Solution.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/MediaPipeUnity/Samples/Common/Scripts/WebCameraCapture.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/MediaPipeUnity/Samples/Common/Scripts/WebCameraCapture.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/MediaPipeUnity/Samples/Scenes/Iris Tracking/Iris Tracking.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/MediaPipeUnity/Samples/Scenes/Iris Tracking/Iris Tracking.unity" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/MediaPipeUnity/Samples/Scenes/AppSettings.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/MediaPipeUnity/Samples/Scenes/AppSettings.asset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scenes/ShouldAR.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/ShouldAR.unity" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/CameraCapture.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/CameraCapture.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/EyeTracking.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/EyeTracking.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/IrisTrackingSolution.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/IrisTrackingSolution.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/UserEyeGazeCollider.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/UserEyeGazeCollider.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ESP32 CAM/sketch_localESP32CAM_Client.ino" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ProjectSettings/ProjectSettings.asset" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectSettings/ProjectSettings.asset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Python Scripts/Python_Test_Image_Server.py" beforeDir="false" afterPath="$PROJECT_DIR$/Python Scripts/Python_Test_Image_Server.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -29,15 +40,21 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "WebServerToolWindowFactoryState": "false",
+    "last_opened_file_path": "C:/Users/Matty/ShouldAR/Python Scripts",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)"
   }
-}</component>
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Matty\ShouldAR\Python Scripts" />
+    </key>
+  </component>
   <component name="RunManager">
     <configuration default="true" type="PythonConfigurationType" factoryName="Python">
       <module name="ShouldAR" />
@@ -75,6 +92,10 @@
       <workItem from="1696424702945" duration="45000" />
       <workItem from="1696424760548" duration="6666000" />
       <workItem from="1696525603184" duration="6643000" />
+      <workItem from="1697033088414" duration="1043000" />
+      <workItem from="1697124650774" duration="921000" />
+      <workItem from="1697471354293" duration="1000000" />
+      <workItem from="1697550364859" duration="2798000" />
     </task>
     <servers />
   </component>

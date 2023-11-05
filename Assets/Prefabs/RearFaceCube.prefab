@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 7930102540176085216}
   - component: {fileID: 7759421955027300234}
   - component: {fileID: 8379925952741638114}
+  - component: {fileID: -7905882159377937648}
   m_Layer: 0
   m_Name: RearFaceCube
   m_TagString: BoundingBox
@@ -105,3 +106,17 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &-7905882159377937648
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5938473847878257314}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1641663d42eabdc4097fff4fd23888cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  staleCounter: 0
+  staleLimit: 100

@@ -43,21 +43,21 @@ namespace Mediapipe.Unity
         [TooltipAttribute("Rear Camera Capture Display Quad")]
         public GameObject debugImageQuad;
 
-        [TooltipAttribute("Time (in frames) between rear camera updates")]
-        public int timelimit;
-        private int timer;
-        
+        [TooltipAttribute("Show Captured Rear Camera Frame (for debugging)?")]
+        public bool showCapturedImage;
 
-
+        [TooltipAttribute("Server (this device) IP Address")]
+        public string serverAddress;
 
         /// <summary>
         /// Using Awake so that Permissions is set before PermissionRequester Start.
         /// </summary>
         void Awake()
         {
-            timer = 0;
-            rawVideoTexturesRGBA = new Texture2D(1024, 768);
-            //rawVideoTexturesRGBA = new Texture2D(800, 600, TextureFormat.RGBA32, false, true);
+            rawVideoTexturesRGBA = new Texture2D(1280 , 720);
+            UnityEngine.Color[] pixels = Enumerable.Repeat(UnityEngine.Color.white, 1280 * 720).ToArray();
+            rawVideoTexturesRGBA.SetPixels(pixels);
+            rawVideoTexturesRGBA.Apply();
             GetSocketImage();
         }
 
@@ -69,19 +69,21 @@ namespace Mediapipe.Unity
 
         }
 
+        void OnDestroy()
+        {
+
+        }
+
         /// <summary>
         /// Display permission error if necessary or update status text.
         /// </summary>
         private void Update()
         {
-            timer += 1;
-            if (timer > timelimit) {
-                timer = 0;
-                
-                //rawVideoTexturesRGBA.LoadRawTextureData(bytes);
-                //rawVideoTexturesRGBA.Apply();
+            if (showCapturedImage)
+            {
                 debugImageQuad.GetComponent<Renderer>().material.mainTexture = rawVideoTexturesRGBA;
             }
+            
 
         }
 
@@ -103,7 +105,7 @@ namespace Mediapipe.Unity
 
         async void Service()
         {
-            System.Net.IPAddress ipaddress = System.Net.IPAddress.Parse("10.0.0.99");
+            System.Net.IPAddress ipaddress = System.Net.IPAddress.Parse(serverAddress);
             IPEndPoint ipEndPoint = new(ipaddress, 6464);
             
 
@@ -129,7 +131,7 @@ namespace Mediapipe.Unity
                                     byte[] tempLengthByteArray = new byte[lengthBufferSize];
                                     int totalLengthBytes = 0;
                                     int numberOfLengthBytesRead = 0;
-                                    //numberOfLengthBytesRead = await myNetworkStream.ReadAsync(myLengthBuffer, 0, 4);
+                                    //read in integer value that contains length of next read (the image itself)
                                     do
                                     {
                                         if (lengthBufferSize > (4 - totalLengthBytes))
@@ -144,13 +146,14 @@ namespace Mediapipe.Unity
                                     }
                                     while (totalLengthBytes < 4);
 
-                                    //Debug.Log(totalLengthBytes);
+                                    //read in the image, and only the exact number of bytes required
                                     
                                     int imageSize = BitConverter.ToInt32(myLengthBuffer, 0);
 
                                     if(imageSize > 5000000 || imageSize == null)
                                     {
                                         Debug.Log("Image corrupted, breaking out of receive loop");
+                                        Service();
                                         break;
                                     }
 
@@ -159,7 +162,7 @@ namespace Mediapipe.Unity
                                     byte[] myReadBuffer = new byte[bufferSize];
                                     byte[] tempByteArray = new byte[imageSize];
                                     int numberOfBytesRead = 0;
-                                    Debug.Log("Expected image size " + imageSize);
+                                    //Debug.Log("Expected image size " + imageSize);
                                     // Incoming message may be larger than the buffer size.
                                     do
                                     {
@@ -174,8 +177,8 @@ namespace Mediapipe.Unity
                                     }
                                     while (totalBytes < imageSize);
 
-                                    // Print out the received message to the console.
-                                    Debug.Log("You received an image of length : " + totalBytes);
+                                    //load image on Texture2D
+                                    //Debug.Log("You received an image of length : " + totalBytes);
  
                                     ImageConversion.LoadImage(rawVideoTexturesRGBA, tempByteArray);
                                 }
@@ -202,6 +205,7 @@ namespace Mediapipe.Unity
                 }
 
                 handler.Close();
+                listener.Close();
             }
 
 

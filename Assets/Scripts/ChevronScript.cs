@@ -7,11 +7,10 @@ using System.Diagnostics;
 
 namespace Mediapipe.Unity
 {
-    public class BoundingBoxScript : MonoBehaviour
+    public class ChevronScript : MonoBehaviour
     {
-        public int staleCounter;
         public Stopwatch detectionStopwatch;
-
+        public int staleLimit = 1000;
 
         void Start()
         {
@@ -27,17 +26,17 @@ namespace Mediapipe.Unity
 
         void Update()
         {
-            staleCounter += 1;
 
             //If object has existed for more than the given threshold without update, we treat it as stale and remove
-            if (staleCounter > 60)
+
+            if (detectionStopwatch.ElapsedMilliseconds > staleLimit)
             {
                 RemoveDetection();
             }
 
- 
 
         }
+
 
 
     }

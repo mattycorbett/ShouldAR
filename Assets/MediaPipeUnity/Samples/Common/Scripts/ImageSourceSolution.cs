@@ -104,14 +104,20 @@ namespace Mediapipe.Unity
             textureFramePool.TryGetTextureFrame(out var textureFrame);
             // Copy current image to TextureFrame
             ReadFromImageSource(imageSource, textureFrame);
-            AddTextureFrameToInputStream(textureFrame);
-            yield return new WaitForEndOfFrame();
-
-            if (runningMode.IsSynchronous())
+            if(textureFrame != null)
             {
-                //RenderCurrentFrame(textureFrame);
-                yield return WaitForNextValue();
+                AddTextureFrameToInputStream(textureFrame);
+                //yield return new WaitForEndOfFrame();
+
+                if (runningMode.IsSynchronous())
+                {
+                    //RenderCurrentFrame(textureFrame);
+                    yield return WaitForNextValue();
+                }
             }
+
+
+
         }
 
         protected virtual void SetupScreen(ImageSource imageSource)

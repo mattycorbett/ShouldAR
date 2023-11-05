@@ -27,8 +27,12 @@ WiFiServer wifiServer(5005);
 const char* ssid = "Corbett";
 const char* password = "ConnorBuddy2018";
 WiFiClient client;
-const int timerInterval = 500;    // time between each HTTP POST image
+const int timerInterval = 0;    // time between each HTTP POST image
 unsigned long previousMillis = 0;   // last time image was sent
+
+  //String serverName = "10.0.0.99";   
+  String serverName = "10.0.0.40";   
+  const int serverPort = 6464;
 
 void setup() {
   Serial.begin(115200);
@@ -70,12 +74,12 @@ void setup() {
   //config.pixel_format = PIXFORMAT_YUV422;
 
   if (psramFound()) {
-    config.frame_size = FRAMESIZE_XGA;
-    config.jpeg_quality = 10;
+    config.frame_size = FRAMESIZE_HD;
+    config.jpeg_quality = 16;
     config.fb_count = 2;
   } else {
     config.frame_size = FRAMESIZE_SVGA;
-    config.jpeg_quality = 12;
+    config.jpeg_quality = 16;
     config.fb_count = 1;
   }
 
@@ -86,8 +90,7 @@ void setup() {
     return;
   }
 
-    String serverName = "10.0.0.99";   
-  const int serverPort = 6464;
+
 
   Serial.println("Connecting to server: " + serverName);
 
@@ -101,7 +104,17 @@ void loop() {
   
   unsigned long currentMillis = millis();
   if (currentMillis - previousMillis >= timerInterval) {
-    sendPhoto();
+    if(client.connected())
+    {
+      sendPhoto();
+    }
+    else
+    {
+      if (client.connect(serverName.c_str(), serverPort)) {
+        Serial.println("Connection successful!");   
+      }
+    }
+    
     previousMillis = currentMillis;
   }
 
@@ -121,18 +134,18 @@ void sendPhoto() {
     int32_t fbLen = fb->len;
 
     String intString = String(fbLen);
-    Serial.println("Sending Image of Size " + intString + " in Variable with size " + sizeof(fbLen));
+    //Serial.println("Sending Image of Size " + intString + " in Variable with size " + sizeof(fbLen));
     //send length of image to server
     client.write((byte*)&fbLen, sizeof(fbLen));
   
 
-    for (size_t n=0; n<fbLen; n=n+8192) {
-      if (n+8192 < fbLen) {
-        client.write(fbBuf, 8192);
-        fbBuf += 8192;
+    for (size_t n=0; n<fbLen; n=n+16384) {
+      if (n+16384 < fbLen) {
+        client.write(fbBuf, 16384);
+        fbBuf += 16384;
       }
-      else if (fbLen%8192>0) {
-        size_t remainder = fbLen%8192;
+      else if (fbLen%16384>0) {
+        size_t remainder = fbLen%16384;
         client.write(fbBuf, remainder);
       }
     }   

@@ -12,7 +12,7 @@ namespace Mediapipe.Unity
 {
   public class IrisTrackingSolution : ImageSourceSolution<IrisTrackingGraph>
   {
-
+        public List<NormalizedLandmarkList> currentFaceLandmarks;
         public NormalizedLandmarkList currentFaceAndIrisLandmarks;
         public List<Detection> currentFaceList;
 
@@ -23,6 +23,7 @@ namespace Mediapipe.Unity
                 graphRunner.OnFaceDetectionsOutput += OnFaceDetectionsOutput;
                 graphRunner.OnFaceRectOutput += OnFaceRectOutput;
                 graphRunner.OnFaceLandmarksWithIrisOutput += OnFaceLandmarksWithIrisOutput;
+                graphRunner.OnFaceLandmarksOutput += OnFaceLandmarksOutput;
             }
 
             var imageSource = ImageSourceProvider.ImageSource;
@@ -38,14 +39,15 @@ namespace Mediapipe.Unity
             List<Detection> faceDetections = null;
             NormalizedRect faceRect = null;
             NormalizedLandmarkList faceLandmarksWithIris = null;
+            List<NormalizedLandmarkList> faceLandmarks = null;
 
             if (runningMode == RunningMode.Sync)
             {
-                var _ = graphRunner.TryGetNext(out faceDetections, out faceRect, out faceLandmarksWithIris, true);
+                var _ = graphRunner.TryGetNext(out faceDetections, out faceRect, out faceLandmarksWithIris, out faceLandmarks, true);
             }
             else if (runningMode == RunningMode.NonBlockingSync)
             {
-                yield return new WaitUntil(() => graphRunner.TryGetNext(out faceDetections, out faceRect, out faceLandmarksWithIris, false));
+                yield return new WaitUntil(() => graphRunner.TryGetNext(out faceDetections, out faceRect, out faceLandmarksWithIris, out faceLandmarks, false));
             }
 
         }
@@ -65,6 +67,13 @@ namespace Mediapipe.Unity
         {
             //_faceLandmarksWithIrisAnnotationController.DrawLater(eventArgs.value);
             currentFaceAndIrisLandmarks = eventArgs.value;
+
+        }
+
+        private void OnFaceLandmarksOutput(object stream, OutputEventArgs<List<NormalizedLandmarkList>> eventArgs)
+        {
+            //_faceLandmarksWithIrisAnnotationController.DrawLater(eventArgs.value);
+            currentFaceLandmarks = eventArgs.value;
 
         }
 

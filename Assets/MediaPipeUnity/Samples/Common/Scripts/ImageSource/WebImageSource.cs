@@ -31,9 +31,10 @@ namespace Mediapipe.Unity
       _defaultAvailableResolutions = defaultAvailableResolutions;
     }
 
-    private Texture2D _outputTexture;
-    private Texture _image;
-    private Texture image
+        private Texture2D _outputTexture;
+        private Texture2D _nullTexture = null;
+        private Texture _image;
+        private Texture image
     {
       get
       {
@@ -84,7 +85,6 @@ namespace Mediapipe.Unity
         yield break;
       }
 
-      InitializeOutputTexture(image);
       _isPlaying = true;
       yield return null;
     }
@@ -113,9 +113,9 @@ namespace Mediapipe.Unity
     public override Texture GetCurrentTexture()
     {
             _outputTexture = GameObject.Find("WebCameraCapture").GetComponent<WebCameraCapture>().rawVideoTexturesRGBA;
-            //InitializeOutputTexture(_outputTexture);
             return _outputTexture;
-    }
+
+        }
 
 
 
@@ -126,24 +126,5 @@ namespace Mediapipe.Unity
             return (resolutions == null || resolutions.Length == 0) ? new ResolutionStruct() : resolutions[0];
         }
 
-        private void InitializeOutputTexture(Texture src)
-    {
-      _outputTexture = new Texture2D(textureWidth, textureHeight, TextureFormat.RGBA32, false);
-
-      Texture resizedTexture = new Texture2D(textureWidth, textureHeight, TextureFormat.RGBA32, false);
-      // TODO: assert ConvertTexture finishes successfully
-      var _ = Graphics.ConvertTexture(src, resizedTexture);
-
-      var currentRenderTexture = RenderTexture.active;
-      var tmpRenderTexture = new RenderTexture(resizedTexture.width, resizedTexture.height, 32);
-      Graphics.Blit(resizedTexture, tmpRenderTexture);
-      RenderTexture.active = tmpRenderTexture;
-
-      var rect = new UnityEngine.Rect(0, 0, _outputTexture.width, _outputTexture.height);
-      _outputTexture.ReadPixels(rect, 0, 0);
-      _outputTexture.Apply();
-
-      RenderTexture.active = currentRenderTexture;
-    }
   }
 }
