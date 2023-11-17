@@ -27,7 +27,7 @@ WiFiServer wifiServer(5005);
 const char* ssid = "Corbett";
 const char* password = "ConnorBuddy2018";
 WiFiClient client;
-const int timerInterval = 0;    // time between each HTTP POST image
+const int timerInterval = 100;    // time between each HTTP POST image
 unsigned long previousMillis = 0;   // last time image was sent
 
   //String serverName = "10.0.0.99";   
@@ -75,11 +75,11 @@ void setup() {
 
   if (psramFound()) {
     config.frame_size = FRAMESIZE_HD;
-    config.jpeg_quality = 16;
+    config.jpeg_quality = 9;
     config.fb_count = 2;
   } else {
     config.frame_size = FRAMESIZE_SVGA;
-    config.jpeg_quality = 16;
+    config.jpeg_quality = 9;
     config.fb_count = 1;
   }
 
@@ -136,16 +136,21 @@ void sendPhoto() {
     String intString = String(fbLen);
     //Serial.println("Sending Image of Size " + intString + " in Variable with size " + sizeof(fbLen));
     //send length of image to server
+
+    if(fbLen > 200000){
+      esp_camera_fb_return(fb);
+      return;
+    }
     client.write((byte*)&fbLen, sizeof(fbLen));
   
 
-    for (size_t n=0; n<fbLen; n=n+16384) {
-      if (n+16384 < fbLen) {
-        client.write(fbBuf, 16384);
-        fbBuf += 16384;
+    for (size_t n=0; n<fbLen; n=n+32768) {
+      if (n+32768 < fbLen) {
+        client.write(fbBuf, 32768);
+        fbBuf += 32768;
       }
-      else if (fbLen%16384>0) {
-        size_t remainder = fbLen%16384;
+      else if (fbLen%32768>0) {
+        size_t remainder = fbLen%32768;
         client.write(fbBuf, remainder);
       }
     }   

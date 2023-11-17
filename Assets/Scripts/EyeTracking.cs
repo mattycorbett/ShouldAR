@@ -59,7 +59,7 @@ public class EyeTracking : MonoBehaviour
 
         InvokeRepeating("CounterLoop", 1.0f, 1.0f);
         InvokeRepeating("BlinkRateCountLoop", 1.0f, 60.0f);
-        InvokeRepeating("EyeDataRecorderLoop", 60.0f, 60.0f);
+        InvokeRepeating("EyeDataRecorderLoop", 1.0f, 1.0f);
     }
 
     private void OnDestroy()
@@ -111,38 +111,39 @@ public class EyeTracking : MonoBehaviour
 
         var currentEyeBehavior = recognitionState.Behavior.ToString();
 
-        if (currentEyeBehavior == "Saccade")
-        {
-            if(previousBehavior != currentEyeBehavior)
-            {
-                //if a fixation has ended, computer new totals and averages
-                if (previousBehavior == "Fixation")
-                {
-                    if (tempFixationDuration >= 300F)
-                    {
-                        //If first fixation
-                        if (fixationList.Count == 0)
-                        {
-                            firstFixationDuration = tempFixationDuration;
-                        }
-                        fixationList.Add((double)tempFixationDuration);
-                        tempFixationDuration = 0F;
-                    }              
- 
-                }
-            }
-            previousBehavior = "Saccade";
 
-        }
-        else if (currentEyeBehavior == "Fixation")
+        if (currentEyeBehavior != "Fixation")
         {
-            if(previousBehavior != currentEyeBehavior)
+            //if a fixation has ended, compute new totals and averages
+            if (previousBehavior == "Fixation")
             {
-                
-                
+
+                //If first fixation
+                if (fixationList.Count == 0)
+                {
+                    firstFixationDuration = tempFixationDuration;
+                }
+                fixationList.Add((double)tempFixationDuration);
+                tempFixationDuration = 0F;
+
+
+            }
+            previousBehavior = currentEyeBehavior;
+        }
+
+        //track an ongoing fixation
+        if (currentEyeBehavior == "Fixation")
+        {
+            if (previousBehavior == "Fixation")
+            {
+                tempFixationDuration = tempFixationDuration + (recognitionState.DurationS);
+            }
+            else
+            {
+                tempFixationDuration = recognitionState.DurationS;
             }
             previousBehavior = "Fixation";
-            tempFixationDuration = recognitionState.DurationS * 1000;
+            
         }
 
         if ((trackingState.RightBlink || trackingState.LeftBlink))
@@ -188,11 +189,13 @@ public class EyeTracking : MonoBehaviour
             meanFixationDuration = (float)(fixationList.Sum() / (float)fixationList.Count());
             SDFixationDuration = standardDeviation(fixationList.ToArray(), fixationList.Count());
             skewFixationDuration = skewness(fixationList.ToArray(), fixationList.Count());
+            Debug.Log(meanFixationDuration);
             if (enableLogging)
             {
                 loggingScript.WriteCSVLineFixations(numFixationsPerSecond, meanFixationDuration, SDFixationDuration, skewFixationDuration, (float)fixationList.Max(), firstFixationDuration);
 
             }
+            fixationList.Clear();
 
 
         }

@@ -44,9 +44,6 @@ namespace Mediapipe.Unity
         [TooltipAttribute("Rear Camera Facial Detection Cube Prefab")]
         public GameObject rearFaceCube;
 
-        [TooltipAttribute("Rear Detection Chevron Prefab")]
-        public GameObject rearChevron;
-
         [TooltipAttribute("Bystander Eye Gaze Debug Prefab")]
         public GameObject eyeGazeSphere;
 
@@ -58,6 +55,9 @@ namespace Mediapipe.Unity
 
         [TooltipAttribute("Eye Tracking Prefab")]
         public GameObject eyeTrackingObject;
+
+        [TooltipAttribute("SSA Attack Chevron (under Main Camera)")]
+        public GameObject attackIndicatorObject;
 
         [SerializeField, Tooltip("Enable ML2 Front Camera?")]
         private bool enableFrontDetection = false;
@@ -73,6 +73,12 @@ namespace Mediapipe.Unity
 
         [SerializeField, Tooltip("Height (in pixels) for the rear camera capture")]
         private int rearCaptureHeight = 720;
+
+        [SerializeField, Tooltip("Rear camera FOV (in degrees)")]
+        private int rearCaptureFOV = 55;
+
+        [TooltipAttribute("Use only Head Pose for Bystander Gaze Estimation?")]
+        public bool useOnlyHeadPose;
 
 
         private bool isCameraConnected;
@@ -210,7 +216,7 @@ namespace Mediapipe.Unity
             var FaceAndIrisLandmarks = mediapipeSolution.currentFaceAndIrisLandmarks;
             var FaceLandmarks = mediapipeSolution.currentFaceLandmarks;
 
-            if (FaceAndIrisLandmarks != null)
+            if (FaceAndIrisLandmarks != null && !useOnlyHeadPose)
             {
                 var angles = EstimateHeadPoseFromFaceAndIrisLandmarks(FaceAndIrisLandmarks);
                 var rearFace = Instantiate(rearFaceCube, new UnityEngine.Vector3(0, 0, 2), UnityEngine.Quaternion.identity);
@@ -218,224 +224,264 @@ namespace Mediapipe.Unity
 
                 RaycastHit hitData;
                 Ray bystanderGazeRay = new Ray(rearFace.transform.position, rearFace.transform.forward);
-                Physics.Raycast(bystanderGazeRay, out hitData);
+                var hitSuccess = Physics.Raycast(bystanderGazeRay, out hitData);
                 eyeGazeSphere.transform.position = bystanderGazeRay.GetPoint(3);
 
+                if (hitSuccess)
+                {
+                    if (hitData.collider.tag == "EyeGaze")
+                    {
+                        attackIndicatorObject.GetComponent<ChevronScript>().bystanderGazeHits += 1;
+                        attackIndicatorObject.GetComponent<ChevronScript>().lastHitPosition = rearFace.transform;
+                    }
+
+                }
+
             }
-            if (FaceLandmarks != null && (FaceLandmarks.Count > 1 || FaceAndIrisLandmarks == null))
+
+            if (FaceLandmarks != null && (useOnlyHeadPose || FaceAndIrisLandmarks == null))
             {
-                var angles = EstimateHeadPoseFromFaceLandmarks(FaceLandmarks[1]);
-                Debug.Log("Face Direction X (Face 2) = " + angles[0]);
-                Debug.Log("Face Direction Y (Face 2) = " + angles[1]);
+
+                var angles = EstimateHeadPoseFromFaceLandmarks(FaceLandmarks[0]);
+                var rearFace = Instantiate(rearFaceCube, new UnityEngine.Vector3(0, 0, 2), UnityEngine.Quaternion.identity);
+                rearFace.transform.eulerAngles = new UnityEngine.Vector3((float)angles[0], (float)angles[1], (float)angles[2]);
+
+                RaycastHit hitData;
+                Ray bystanderGazeRay = new Ray(rearFace.transform.position, rearFace.transform.forward);
+                var hitSuccess = Physics.Raycast(bystanderGazeRay, out hitData);
+                eyeGazeSphere.transform.position = bystanderGazeRay.GetPoint(3);
+
+                if (hitSuccess)
+                {
+                    if (hitData.collider.tag == "EyeGaze")
+                    {
+                        attackIndicatorObject.GetComponent<ChevronScript>().bystanderGazeHits += 1;
+                        attackIndicatorObject.GetComponent<ChevronScript>().lastHitPosition = rearFace.transform;
+                    }
+
+                }
+
+
             }
-
-
 #endif
         }
 
+
+
+
         double[] EstimateHeadPoseFromFaceAndIrisLandmarks(NormalizedLandmarkList FaceAndIrisLandmarks)
-        {
-
-
-            Mat rvec = new Mat(3, 1, CvType.CV_64FC1);
-            Mat tvec = new Mat(3, 1, CvType.CV_64FC1);
-            Mat rmat = new Mat(3, 3, CvType.CV_64FC1);
-
-            OpenCVForUnity.CoreModule.Point[] imagePoints = new OpenCVForUnity.CoreModule.Point[6];
-            imagePoints[0] = new OpenCVForUnity.CoreModule.Point(FaceAndIrisLandmarks.Landmark[1].X * (float)rearCaptureWidth, FaceAndIrisLandmarks.Landmark[1].Y * (float)rearCaptureHeight);//tip of nose
-            imagePoints[1] = new OpenCVForUnity.CoreModule.Point(FaceAndIrisLandmarks.Landmark[33].X * (float)rearCaptureWidth, FaceAndIrisLandmarks.Landmark[33].Y * (float)rearCaptureHeight);//left outside eyelid
-            imagePoints[2] = new OpenCVForUnity.CoreModule.Point(FaceAndIrisLandmarks.Landmark[263].X * (float)rearCaptureWidth, FaceAndIrisLandmarks.Landmark[263].Y * (float)rearCaptureHeight);//right outside eyelid
-            imagePoints[3] = new OpenCVForUnity.CoreModule.Point(FaceAndIrisLandmarks.Landmark[61].X * (float)rearCaptureWidth, FaceAndIrisLandmarks.Landmark[61].Y * (float)rearCaptureHeight);//left outside mouth
-            imagePoints[4] = new OpenCVForUnity.CoreModule.Point(FaceAndIrisLandmarks.Landmark[291].X * (float)rearCaptureWidth, FaceAndIrisLandmarks.Landmark[291].Y * (float)rearCaptureHeight);//right outside mouth
-            imagePoints[5] = new OpenCVForUnity.CoreModule.Point(FaceAndIrisLandmarks.Landmark[199].X * (float)rearCaptureWidth, FaceAndIrisLandmarks.Landmark[199].Y * (float)rearCaptureHeight);//chin
-            var image_points = new MatOfPoint2f(imagePoints);
-
-            OpenCVForUnity.CoreModule.Point3[] objectPoints = new OpenCVForUnity.CoreModule.Point3[6];
-            objectPoints[0] = new OpenCVForUnity.CoreModule.Point3(0, -1.126865, 7.475604);//tip of nose
-            objectPoints[1] = new OpenCVForUnity.CoreModule.Point3(-4.445859, 2.663991, 3.173422);//left outside eyelid
-            objectPoints[2] = new OpenCVForUnity.CoreModule.Point3(4.445859, 2.663991, 3.173422);//right outside eyelid
-            objectPoints[3] = new OpenCVForUnity.CoreModule.Point3(-2.456206, -4.342621, 4.283884);//left outside mouth
-            objectPoints[4] = new OpenCVForUnity.CoreModule.Point3(2.456206, -4.342621, 4.283884);//right outside mouth
-            objectPoints[5] = new OpenCVForUnity.CoreModule.Point3(0, -9.403378, 4.264492); //chin
-
-
-
-
-            MatOfPoint3f object_points = new MatOfPoint3f(objectPoints);
-
-            Calib3d.solvePnP(object_points, image_points, camMatrix, distCoeffs, rvec, tvec);
-
-            double tvec_x = tvec.get(0, 0)[0];
-            double tvec_y = tvec.get(1, 0)[0];
-            double tvec_z = tvec.get(2, 0)[0];
-
-            if (!double.IsNaN(tvec_z))
-            { // if tvec is wrong data, do not use extrinsic guesses. (the estimated object is not in the camera field of view)
-                Calib3d.solvePnP(object_points, image_points, camMatrix, distCoeffs, rvec, tvec, true, Calib3d.SOLVEPNP_ITERATIVE);
-            }
-
-            Mat mtxR = new Mat(3, 3, CvType.CV_64FC1);
-            Mat mtxQ = new Mat(3, 3, CvType.CV_64FC1);
-
-            Calib3d.Rodrigues(rvec, rmat);
-
-            var angles = Calib3d.RQDecomp3x3(rmat, mtxR, mtxQ);
-
-
-            OpenCVForUnity.CoreModule.Point3 Eye_ball_center_right = new OpenCVForUnity.CoreModule.Point3(-29.05, 32.7, -39.5);
-            OpenCVForUnity.CoreModule.Point3 Eye_ball_center_left = new OpenCVForUnity.CoreModule.Point3(29.05, 32.7, -39.5); // the center of the left eyeball as a vector.
-
-            // 2d pupil location
-            OpenCVForUnity.CoreModule.Point left_pupil = new OpenCVForUnity.CoreModule.Point(FaceAndIrisLandmarks.Landmark[468].X * (float)rearCaptureWidth, FaceAndIrisLandmarks.Landmark[468].Y * (float)rearCaptureHeight);
-            OpenCVForUnity.CoreModule.Point right_pupil = new OpenCVForUnity.CoreModule.Point(FaceAndIrisLandmarks.Landmark[473].X * (float)rearCaptureWidth, FaceAndIrisLandmarks.Landmark[473].Y * (float)rearCaptureHeight);
-            OpenCVForUnity.CoreModule.Point nose = new OpenCVForUnity.CoreModule.Point(FaceAndIrisLandmarks.Landmark[1].X * (float)rearCaptureWidth, FaceAndIrisLandmarks.Landmark[1].Y * (float)rearCaptureHeight);
-            
-            Mat nose_world_point = new Mat(3, 1, CvType.CV_64FC1);
-            nose_world_point.put(0, 0, nose.x, nose.y, 0f);
-
-            Mat XRot = new Mat(3, 3, CvType.CV_64FC1);
-            Mat YRot = new Mat(3, 3, CvType.CV_64FC1);
-            Mat ZRot = new Mat(3, 3, CvType.CV_64FC1);
-
-            if ((float)angles[0] < 0)
             {
-                angles[0] = -180f - (float)angles[0];
+
+
+                Mat rvec = new Mat(3, 1, CvType.CV_64FC1);
+                Mat tvec = new Mat(3, 1, CvType.CV_64FC1);
+                Mat rmat = new Mat(3, 3, CvType.CV_64FC1);
+
+                OpenCVForUnity.CoreModule.Point[] imagePoints = new OpenCVForUnity.CoreModule.Point[6];
+                imagePoints[0] = new OpenCVForUnity.CoreModule.Point((FaceAndIrisLandmarks.Landmark[1].X * (float)rearCaptureWidth), (FaceAndIrisLandmarks.Landmark[1].Y * (float)rearCaptureHeight));//tip of nose
+                imagePoints[1] = new OpenCVForUnity.CoreModule.Point((FaceAndIrisLandmarks.Landmark[33].X * (float)rearCaptureWidth), (FaceAndIrisLandmarks.Landmark[33].Y * (float)rearCaptureHeight));//left outside eyelid
+                imagePoints[2] = new OpenCVForUnity.CoreModule.Point((FaceAndIrisLandmarks.Landmark[263].X * (float)rearCaptureWidth), (FaceAndIrisLandmarks.Landmark[263].Y * (float)rearCaptureHeight));//right outside eyelid
+                imagePoints[3] = new OpenCVForUnity.CoreModule.Point((FaceAndIrisLandmarks.Landmark[61].X * (float)rearCaptureWidth), (FaceAndIrisLandmarks.Landmark[61].Y * (float)rearCaptureHeight));//left outside mouth
+                imagePoints[4] = new OpenCVForUnity.CoreModule.Point((FaceAndIrisLandmarks.Landmark[291].X * (float)rearCaptureWidth), (FaceAndIrisLandmarks.Landmark[291].Y * (float)rearCaptureHeight));//right outside mouth
+                imagePoints[5] = new OpenCVForUnity.CoreModule.Point((FaceAndIrisLandmarks.Landmark[199].X * (float)rearCaptureWidth), (FaceAndIrisLandmarks.Landmark[199].Y * (float)rearCaptureHeight));//chin
+                var image_points = new MatOfPoint2f(imagePoints);
+
+                //Debug.Log("Image Points" + image_points.dump());
+
+                OpenCVForUnity.CoreModule.Point3[] objectPoints = new OpenCVForUnity.CoreModule.Point3[6];
+                objectPoints[0] = new OpenCVForUnity.CoreModule.Point3(0, 0, -7.475604);//tip of nose
+                objectPoints[1] = new OpenCVForUnity.CoreModule.Point3(-4.445859, -3.790856, -3.173422);//left outside eyelid
+                objectPoints[2] = new OpenCVForUnity.CoreModule.Point3(4.445859, -3.790856, -3.173422);//right outside eyelid
+                objectPoints[3] = new OpenCVForUnity.CoreModule.Point3(-2.456206, 3.215756, -4.283884);//left outside mouth
+                objectPoints[4] = new OpenCVForUnity.CoreModule.Point3(2.456206, 3.215756, -4.283884);//right outside mouth
+                objectPoints[5] = new OpenCVForUnity.CoreModule.Point3(0, 8.276513, -4.264492); //chin
+
+                var object_points = new MatOfPoint3f(objectPoints);
+
+                Calib3d.solvePnP(object_points, image_points, camMatrix, distCoeffs, rvec, tvec);
+
+                double tvec_x = tvec.get(0, 0)[0];
+                double tvec_y = tvec.get(1, 0)[0];
+                double tvec_z = tvec.get(2, 0)[0];
+
+                if (!double.IsNaN(tvec_z))
+                { // if tvec is wrong data, do not use extrinsic guesses. (the estimated object is not in the camera field of view)
+                    Calib3d.solvePnP(object_points, image_points, camMatrix, distCoeffs, rvec, tvec, true, Calib3d.SOLVEPNP_ITERATIVE);
+                }
+
+                Mat mtxR = new Mat(3, 3, CvType.CV_64FC1);
+                Mat mtxQ = new Mat(3, 3, CvType.CV_64FC1);
+
+                Calib3d.Rodrigues(rvec, rmat);
+                // Debug.Log("RMAT" + rmat.dump());
+                var angles = Calib3d.RQDecomp3x3(rmat, mtxR, mtxQ);
+
+                Mat XRot = new Mat(3, 3, CvType.CV_64FC1);
+                Mat YRot = new Mat(3, 3, CvType.CV_64FC1);
+                Mat ZRot = new Mat(3, 3, CvType.CV_64FC1);
+
+
+                //XRot.put(0, 0, 1f, 0f, 0f, 0f, Math.Cos((float)angles[0] * Mathf.Deg2Rad), Math.Sin(-(float)angles[0] * Mathf.Deg2Rad), 0f, Math.Sin((float)angles[0] * Mathf.Deg2Rad), Math.Cos((float)angles[0] * Mathf.Deg2Rad));
+                //YRot.put(0, 0, Math.Cos((float)angles[1] * Mathf.Deg2Rad), 0f, Math.Sin((float)angles[1] * Mathf.Deg2Rad), 0f, 1f, 0f, Math.Sin(-(float)angles[1] * Mathf.Deg2Rad), 0f, Math.Cos((float)angles[1] * Mathf.Deg2Rad));
+                //ZRot.put(0, 0, Math.Cos((float)angles[2] * Mathf.Deg2Rad), Math.Sin(-(float)angles[2] * Mathf.Deg2Rad), 0, Math.Sin((float)angles[2] * Mathf.Deg2Rad), Math.Cos((float)angles[2] * Mathf.Deg2Rad), 0f, 0f, 0f, 1f);
+
+                //Left handed
+                XRot.put(0, 0, 1f, 0f, 0f, 0f, Math.Cos((float)angles[0] * Mathf.Deg2Rad), Math.Sin((float)angles[0] * Mathf.Deg2Rad), 0f, Math.Sin(-(float)angles[0] * Mathf.Deg2Rad), Math.Cos((float)angles[0] * Mathf.Deg2Rad));
+                YRot.put(0, 0, Math.Cos((float)angles[1] * Mathf.Deg2Rad), 0f, Math.Sin(-(float)angles[1] * Mathf.Deg2Rad), 0f, 1f, 0f, Math.Sin((float)angles[1] * Mathf.Deg2Rad), 0f, Math.Cos((float)angles[1] * Mathf.Deg2Rad));
+                ZRot.put(0, 0, Math.Cos((float)angles[2] * Mathf.Deg2Rad), Math.Sin((float)angles[2] * Mathf.Deg2Rad), 0, Math.Sin(-(float)angles[2] * Mathf.Deg2Rad), Math.Cos((float)angles[2] * Mathf.Deg2Rad), 0f, 0f, 0f, 1f);
+                var invRot = ZRot * YRot * XRot;
+                //Debug.Log(invRot.dump());
+                //Debug.Log("Angles: " + angles[0] + "," + angles[1] + "," + angles[2]);
+                //var testangles = Calib3d.RQDecomp3x3(invRot, mtxR, mtxQ);
+                // Debug.Log("Test Angles: " + testangles[0] + "," + testangles[1] + "," + testangles[2]);
+
+                //https://storage.googleapis.com/mediapipe-assets/documentation/mediapipe_face_landmark_fullsize.png
+                UnityEngine.Vector3 eyelid_159_unity_coords = new UnityEngine.Vector3((float)rearCaptureWidth - (FaceAndIrisLandmarks.Landmark[159].X * (float)rearCaptureWidth), (float)rearCaptureHeight - (FaceAndIrisLandmarks.Landmark[159].Y * (float)rearCaptureHeight), (FaceAndIrisLandmarks.Landmark[159].Z * 5));
+                UnityEngine.Vector3 eyelid_158_unity_coords = new UnityEngine.Vector3((float)rearCaptureWidth - (FaceAndIrisLandmarks.Landmark[158].X * (float)rearCaptureWidth), (float)rearCaptureHeight - (FaceAndIrisLandmarks.Landmark[158].Y * (float)rearCaptureHeight), (FaceAndIrisLandmarks.Landmark[158].Z * 5));
+                UnityEngine.Vector3 eyelid_157_unity_coords = new UnityEngine.Vector3((float)rearCaptureWidth - (FaceAndIrisLandmarks.Landmark[157].X * (float)rearCaptureWidth), (float)rearCaptureHeight - (FaceAndIrisLandmarks.Landmark[157].Y * (float)rearCaptureHeight), (FaceAndIrisLandmarks.Landmark[157].Z * 5));
+                UnityEngine.Vector3 eyelid_173_unity_coords = new UnityEngine.Vector3((float)rearCaptureWidth - (FaceAndIrisLandmarks.Landmark[173].X * (float)rearCaptureWidth), (float)rearCaptureHeight - (FaceAndIrisLandmarks.Landmark[173].Y * (float)rearCaptureHeight), (FaceAndIrisLandmarks.Landmark[173].Z * 5));
+                UnityEngine.Vector3 eyelid_133_unity_coords = new UnityEngine.Vector3((float)rearCaptureWidth - (FaceAndIrisLandmarks.Landmark[133].X * (float)rearCaptureWidth), (float)rearCaptureHeight - (FaceAndIrisLandmarks.Landmark[133].Y * (float)rearCaptureHeight), (FaceAndIrisLandmarks.Landmark[133].Z * 5));
+                UnityEngine.Vector3 eyelid_155_unity_coords = new UnityEngine.Vector3((float)rearCaptureWidth - (FaceAndIrisLandmarks.Landmark[155].X * (float)rearCaptureWidth), (float)rearCaptureHeight - (FaceAndIrisLandmarks.Landmark[155].Y * (float)rearCaptureHeight), (FaceAndIrisLandmarks.Landmark[155].Z * 5));
+                UnityEngine.Vector3 eyelid_154_unity_coords = new UnityEngine.Vector3((float)rearCaptureWidth - (FaceAndIrisLandmarks.Landmark[154].X * (float)rearCaptureWidth), (float)rearCaptureHeight - (FaceAndIrisLandmarks.Landmark[154].Y * (float)rearCaptureHeight), (FaceAndIrisLandmarks.Landmark[154].Z * 5));
+                UnityEngine.Vector3 eyelid_153_unity_coords = new UnityEngine.Vector3((float)rearCaptureWidth - (FaceAndIrisLandmarks.Landmark[153].X * (float)rearCaptureWidth), (float)rearCaptureHeight - (FaceAndIrisLandmarks.Landmark[153].Y * (float)rearCaptureHeight), (FaceAndIrisLandmarks.Landmark[153].Z * 5));
+                UnityEngine.Vector3 eyelid_145_unity_coords = new UnityEngine.Vector3((float)rearCaptureWidth - (FaceAndIrisLandmarks.Landmark[145].X * (float)rearCaptureWidth), (float)rearCaptureHeight - (FaceAndIrisLandmarks.Landmark[145].Y * (float)rearCaptureHeight), (FaceAndIrisLandmarks.Landmark[145].Z * 5));
+                UnityEngine.Vector3 eyelid_144_unity_coords = new UnityEngine.Vector3((float)rearCaptureWidth - (FaceAndIrisLandmarks.Landmark[144].X * (float)rearCaptureWidth), (float)rearCaptureHeight - (FaceAndIrisLandmarks.Landmark[144].Y * (float)rearCaptureHeight), (FaceAndIrisLandmarks.Landmark[144].Z * 5));
+                UnityEngine.Vector3 eyelid_163_unity_coords = new UnityEngine.Vector3((float)rearCaptureWidth - (FaceAndIrisLandmarks.Landmark[163].X * (float)rearCaptureWidth), (float)rearCaptureHeight - (FaceAndIrisLandmarks.Landmark[163].Y * (float)rearCaptureHeight), (FaceAndIrisLandmarks.Landmark[163].Z * 5));
+                UnityEngine.Vector3 eyelid_7_unity_coords = new UnityEngine.Vector3((float)rearCaptureWidth - (FaceAndIrisLandmarks.Landmark[7].X * (float)rearCaptureWidth), (float)rearCaptureHeight - (FaceAndIrisLandmarks.Landmark[7].Y * (float)rearCaptureHeight), (FaceAndIrisLandmarks.Landmark[7].Z * 5));
+                UnityEngine.Vector3 eyelid_33_unity_coords = new UnityEngine.Vector3((float)rearCaptureWidth - (FaceAndIrisLandmarks.Landmark[33].X * (float)rearCaptureWidth), (float)rearCaptureHeight - (FaceAndIrisLandmarks.Landmark[33].Y * (float)rearCaptureHeight), (FaceAndIrisLandmarks.Landmark[33].Z * 5));
+                UnityEngine.Vector3 eyelid_246_unity_coords = new UnityEngine.Vector3((float)rearCaptureWidth - (FaceAndIrisLandmarks.Landmark[246].X * (float)rearCaptureWidth), (float)rearCaptureHeight - (FaceAndIrisLandmarks.Landmark[246].Y * (float)rearCaptureHeight), (FaceAndIrisLandmarks.Landmark[246].Z * 5));
+                UnityEngine.Vector3 eyelid_161_unity_coords = new UnityEngine.Vector3((float)rearCaptureWidth - (FaceAndIrisLandmarks.Landmark[161].X * (float)rearCaptureWidth), (float)rearCaptureHeight - (FaceAndIrisLandmarks.Landmark[161].Y * (float)rearCaptureHeight), (FaceAndIrisLandmarks.Landmark[161].Z * 5));
+                UnityEngine.Vector3 eyelid_160_unity_coords = new UnityEngine.Vector3((float)rearCaptureWidth - (FaceAndIrisLandmarks.Landmark[160].X * (float)rearCaptureWidth), (float)rearCaptureHeight - (FaceAndIrisLandmarks.Landmark[160].Y * (float)rearCaptureHeight), (FaceAndIrisLandmarks.Landmark[160].Z * 5));
+
+                UnityEngine.Vector3 eyelid_center_unity_coords = (eyelid_33_unity_coords + eyelid_133_unity_coords) / 2;
+                UnityEngine.Vector3 eyelid_left_inside_unity_coords = (eyelid_158_unity_coords + eyelid_153_unity_coords) / 2;
+                UnityEngine.Vector3 eyelid_left_outside_unity_coords = (eyelid_160_unity_coords + eyelid_144_unity_coords) / 2;
+                UnityEngine.Vector3 eyelid_left_up_unity_coords = eyelid_159_unity_coords;
+                UnityEngine.Vector3 eyelid_left_down_unity_coords = eyelid_145_unity_coords;
+
+                UnityEngine.Vector3 iris_left_point_unity_coords = new UnityEngine.Vector3((float)rearCaptureWidth - (FaceAndIrisLandmarks.Landmark[468].X * (float)rearCaptureWidth), (float)rearCaptureHeight - (FaceAndIrisLandmarks.Landmark[468].Y * (float)rearCaptureHeight), (FaceAndIrisLandmarks.Landmark[468].Z * 5));
+
+                var radius = UnityEngine.Vector3.Distance(eyelid_33_unity_coords, eyelid_133_unity_coords) / 2;
+
+                List<double> distanceList = new List<double>();
+                //Add distances to List in order to efficiently poll which index is lower
+                distanceList.Add(UnityEngine.Vector3.Distance(iris_left_point_unity_coords, eyelid_center_unity_coords));
+                //distanceList.Add(UnityEngine.Vector3.Distance(iris_left_point_unity_coords, eyelid_left_up_unity_coords));
+                distanceList.Add(UnityEngine.Vector3.Distance(iris_left_point_unity_coords, eyelid_left_inside_unity_coords));
+                distanceList.Add(UnityEngine.Vector3.Distance(iris_left_point_unity_coords, eyelid_left_outside_unity_coords));
+                //distanceList.Add(UnityEngine.Vector3.Distance(iris_left_point_unity_coords, eyelid_left_down_unity_coords));
+
+
+                double minValue = distanceList.Min();
+                int minIndex = distanceList.IndexOf(minValue);
+                //Debug.Log(minIndex);
+
+                if (minIndex != 0)
+                {
+                    //if eyes are directed left (relative to face)
+                    if (minIndex == 1)
+                    {
+                        angles[1] = angles[1] - 30;
+                        //Debug.Log("Compensated Angles: " + angles[0] + "," + angles[1] + "," + angles[2]);
+                    }
+                    //if eyes are directed right (relative to face)
+                    else if (minIndex == 2)
+                    {
+                        angles[1] = angles[1] + 30;
+                        //Debug.Log("Compensated Angles: " + angles[0] + "," + angles[1] + "," + angles[2]);
+                    }
+                }
+
+
+                //var testMat = get_3d_realigned_landmarks_pos(FaceAndIrisLandmarks);
+                //Debug.Log(testMat.get(0, 0)[0] + "," + testMat.get(0, 0)[1] + "," + testMat.get(0, 0)[2]);
+                //OpenCVForUnity.ImgprocModule.Imgproc.warpPerspective(testMat, testMat, invRot, testMat.size(), Imgproc.INTER_LINEAR);
+               // Mat testPoint = new Mat(3, 1, CvType.CV_64FC1);
+                //testPoint.put(0, 0, testMat.get(0, 0)[0], testMat.get(0, 0)[1], testMat.get(0, 0)[2]);
+
+                //Mat invrmat = new Mat(3, 3, CvType.CV_64FC1);
+                //Calib3d.Rodrigues(rvec.t(), invrmat);
+                //var outPoint = (invRot * testPoint);
+                //Debug.Log(outPoint.dump());
+                //Debug.Log(outPoint.dump());
+
+                return angles;
             }
-            else
+
+            OpenCVForUnity.CoreModule.Mat get_3d_realigned_landmarks_pos(NormalizedLandmarkList LandmarksList)
             {
-                angles[0] = 180f - (float)angles[0];
+
+                int i = 0;
+                OpenCVForUnity.CoreModule.Point3[] landmarkpoints = new OpenCVForUnity.CoreModule.Point3[478];
+                OpenCVForUnity.CoreModule.Point3 center = new OpenCVForUnity.CoreModule.Point3(LandmarksList.Landmark[1].X * (float)rearCaptureWidth, LandmarksList.Landmark[1].Y * (float)rearCaptureHeight, LandmarksList.Landmark[1].Z);
+                foreach (NormalizedLandmark landmark in LandmarksList.Landmark)
+                {
+                    landmarkpoints[i] = new OpenCVForUnity.CoreModule.Point3((landmark.X * (float)rearCaptureWidth), (landmark.Y * (float)rearCaptureHeight), (landmark.Z * (float)rearCaptureWidth));
+                    //landmarkpoints[i] = landmarkpoints[i] - center;
+                    i += 1;
+                }
+                MatOfPoint3f MatLandmarks = new MatOfPoint3f(landmarkpoints);
+
+                return MatLandmarks;
             }
-
-            XRot.put(0, 0, 1f, 0f, 0f, 0f, Math.Cos((float)angles[2] * Mathf.Deg2Rad), Math.Sin((float)angles[2] * Mathf.Deg2Rad) * -1f, 0f, Math.Sin((float)angles[2] * Mathf.Deg2Rad), Math.Cos((float)angles[2] * Mathf.Deg2Rad));
-            YRot.put(0, 0, Math.Cos((float)angles[0] * Mathf.Deg2Rad), 0f, Math.Sin((float)angles[0] * Mathf.Deg2Rad), 0f, 1f, 0f, Math.Sin((float)angles[0] * Mathf.Deg2Rad) * -1f, 0f, Math.Cos((float)angles[0] * Mathf.Deg2Rad));
-            ZRot.put(0, 0, Math.Cos((float)angles[1] * Mathf.Deg2Rad), Math.Sin((float)angles[1] * Mathf.Deg2Rad) * -1f, 0, Math.Sin((float)angles[1] * Mathf.Deg2Rad), Math.Cos((float)angles[1] * Mathf.Deg2Rad), 0f, 0f, 0f, 1f);
-            
-            //Left handed
-            //XRot.put(0, 0, 1f, 0f, 0f, 0f, Math.Cos((float)angles[2] * Mathf.Deg2Rad), Math.Sin((float)angles[2] * Mathf.Deg2Rad), 0f, Math.Sin((float)angles[2] * Mathf.Deg2Rad) * -1f, Math.Cos((float)angles[2] * Mathf.Deg2Rad));
-            //YRot.put(0, 0, Math.Cos((float)angles[0] * Mathf.Deg2Rad), 0f, Math.Sin((float)angles[0] * Mathf.Deg2Rad) * -1f, 0f, 1f, 0f, Math.Sin((float)angles[0] * Mathf.Deg2Rad), 0f, Math.Cos((float)angles[0] * Mathf.Deg2Rad));
-            //ZRot.put(0, 0, Math.Cos((float)angles[1] * Mathf.Deg2Rad), Math.Sin((float)angles[1] * Mathf.Deg2Rad), 0, Math.Sin((float)angles[1] * Mathf.Deg2Rad) * -1f, Math.Cos((float)angles[1] * Mathf.Deg2Rad), 0f, 0f, 0f, 1f);
-            var invRot = ZRot * YRot * XRot;
-
-            //Debug.Log(angles[1]);
-            //var testangles = Calib3d.RQDecomp3x3(invRot.t(), mtxR, mtxQ);
-            //Debug.Log(testangles[1]);
-
-
-            /*Debug.Log("Angles: " + angles[0] + "," + angles[1] + "," + angles[2]);
-            Debug.Log("Coordinates before transform " + nose_world_point.dump());
-            Mat nose_world_point_corrected = new Mat(3, 1, CvType.CV_64FC1);
-            nose_world_point_corrected = invRot.t() * nose_world_point;
-            Debug.Log("Coordinates after transform " + nose_world_point_corrected.dump());*/
-
-            //float eyeball_left_center_X = ((FaceAndIrisLandmarks.Landmark[132].X * (float)rearCaptureWidth) + (FaceAndIrisLandmarks.Landmark[33].X * (float)rearCaptureWidth)) / 2;
-            //float eyeball_left_center_Y = ((FaceAndIrisLandmarks.Landmark[132].Y * (float)rearCaptureHeight) + (FaceAndIrisLandmarks.Landmark[33].Y * (float)rearCaptureHeight)) / 2;
-            //float eyeball_left_center_Z = ((FaceAndIrisLandmarks.Landmark[132].Z * (float)rearCaptureWidth) + (FaceAndIrisLandmarks.Landmark[33].Z * (float)rearCaptureWidth)) / 2;
-            //UnityEngine.Vector3 Eye_ball_center_left_unity = new UnityEngine.Vector3((float)rearCaptureWidth - eyeball_left_center_X, (float)rearCaptureHeight - eyeball_left_center_Y, (float)rearCaptureWidth - eyeball_left_center_Z);
-
-            UnityEngine.Vector3 nose_point_unity_coords = new UnityEngine.Vector3((float)rearCaptureWidth - (FaceAndIrisLandmarks.Landmark[1].X * (float)rearCaptureWidth), (float)rearCaptureHeight - (FaceAndIrisLandmarks.Landmark[1].Y * (float)rearCaptureHeight), (float)rearCaptureWidth - (FaceAndIrisLandmarks.Landmark[1].Z * 5));
-            UnityEngine.Vector3 chin_point_unity_coords = new UnityEngine.Vector3((float)rearCaptureWidth - (FaceAndIrisLandmarks.Landmark[199].X * (float)rearCaptureWidth), (float)rearCaptureHeight - (FaceAndIrisLandmarks.Landmark[199].Y * (float)rearCaptureHeight), (float)rearCaptureWidth - (FaceAndIrisLandmarks.Landmark[199].Z * 5));
-            UnityEngine.Vector3 eyelid_up_unity_coords = new UnityEngine.Vector3((float)rearCaptureWidth - (FaceAndIrisLandmarks.Landmark[159].X * (float)rearCaptureWidth), (float)rearCaptureHeight - (FaceAndIrisLandmarks.Landmark[159].Y * (float)rearCaptureHeight), (float)rearCaptureWidth - (FaceAndIrisLandmarks.Landmark[159].Z * 5));
-            UnityEngine.Vector3 eyelid_down_unity_coords = new UnityEngine.Vector3((float)rearCaptureWidth - (FaceAndIrisLandmarks.Landmark[145].X * (float)rearCaptureWidth), (float)rearCaptureHeight - (FaceAndIrisLandmarks.Landmark[145].Y * (float)rearCaptureHeight), (float)rearCaptureWidth - (FaceAndIrisLandmarks.Landmark[145].Z * 5));
-            UnityEngine.Vector3 eyelid_left_unity_coords = new UnityEngine.Vector3((float)rearCaptureWidth - (FaceAndIrisLandmarks.Landmark[33].X * (float)rearCaptureWidth), (float)rearCaptureHeight - (FaceAndIrisLandmarks.Landmark[33].Y * (float)rearCaptureHeight), (float)rearCaptureWidth - (FaceAndIrisLandmarks.Landmark[33].Z * 5));
-            UnityEngine.Vector3 eyelid_right_unity_coords = new UnityEngine.Vector3((float)rearCaptureWidth - (FaceAndIrisLandmarks.Landmark[133].X * (float)rearCaptureWidth), (float)rearCaptureHeight - (FaceAndIrisLandmarks.Landmark[133].Y * (float)rearCaptureHeight), (float)rearCaptureWidth - (FaceAndIrisLandmarks.Landmark[133].Z * 5));
-
-            UnityEngine.Vector3 iris_left_point_unity_coords = new UnityEngine.Vector3((float)rearCaptureWidth - (FaceAndIrisLandmarks.Landmark[468].X * (float)rearCaptureWidth), (float)rearCaptureHeight - (FaceAndIrisLandmarks.Landmark[468].Y * (float)rearCaptureHeight), (float)rearCaptureWidth - (FaceAndIrisLandmarks.Landmark[468].Z * 5));
-
-
-            var updistance = UnityEngine.Vector3.Distance(iris_left_point_unity_coords, eyelid_up_unity_coords);
-            var downdistance = UnityEngine.Vector3.Distance(iris_left_point_unity_coords, eyelid_down_unity_coords);
-            var leftdistance = UnityEngine.Vector3.Distance(iris_left_point_unity_coords, eyelid_left_unity_coords);
-            var rightdistance = UnityEngine.Vector3.Distance(iris_left_point_unity_coords, eyelid_right_unity_coords);
-
-
-            if(downdistance < updistance && downdistance < leftdistance && downdistance < rightdistance)
-            {
-                Debug.Log("DOWN");
-            }
-            //var testMat = get_3d_realigned_landmarks_pos(FaceAndIrisLandmarks, XRot, YRot, ZRot);
-            return angles;
-        }
-
-        OpenCVForUnity.CoreModule.Mat get_3d_realigned_landmarks_pos(NormalizedLandmarkList LandmarksList, Mat xrot, Mat yrot, Mat zrot)
-        {
-
-            int i = 0;
-            OpenCVForUnity.CoreModule.Point3[] landmarkpoints = new OpenCVForUnity.CoreModule.Point3[478];
-            OpenCVForUnity.CoreModule.Point3 center = new OpenCVForUnity.CoreModule.Point3(LandmarksList.Landmark[1].X * (float)rearCaptureWidth, LandmarksList.Landmark[1].Y * (float)rearCaptureHeight, LandmarksList.Landmark[1].Z);
-            foreach (NormalizedLandmark landmark in LandmarksList.Landmark)
-            {
-                landmarkpoints[i] = new OpenCVForUnity.CoreModule.Point3(LandmarksList.Landmark[i].X * (float)rearCaptureWidth, LandmarksList.Landmark[i].Y * (float)rearCaptureHeight, LandmarksList.Landmark[i].Z * (float)rearCaptureWidth);
-                //landmarkpoints[i] = landmarkpoints[i] - center;
-                i += 1;
-            }
-            MatOfPoint3f MatLandmarks = new MatOfPoint3f(landmarkpoints);
-            Debug.Log("Original " + MatLandmarks.get(0, 0)[0] + "," + MatLandmarks.get(0, 0)[1] + "," + MatLandmarks.get(0, 0)[2]);
-            OpenCVForUnity.CoreModule.Core.transform(MatLandmarks, MatLandmarks, xrot);
-            OpenCVForUnity.CoreModule.Core.transform(MatLandmarks, MatLandmarks, yrot);
-            OpenCVForUnity.CoreModule.Core.transform(MatLandmarks, MatLandmarks, zrot);
-            Debug.Log(MatLandmarks.get(0,0)[0] + "," + MatLandmarks.get(0, 0)[1] + "," + MatLandmarks.get(0, 0)[2]);
-            //OpenCVForUnity.CoreModule.Core.add(MatLandmarks, new Scalar(center.x, center.y, center.z), MatLandmarks);
-
-
-            return MatLandmarks;
-        }
 
 
             double[] EstimateHeadPoseFromFaceLandmarks(NormalizedLandmarkList FaceAndIrisLandmarks)
-        {
-
-            Mat rvec = new Mat(3, 1, CvType.CV_64FC1);
-            Mat tvec = new Mat(3, 1, CvType.CV_64FC1);
-            Mat rmat = new Mat(3, 3, CvType.CV_64FC1);
-
-            OpenCVForUnity.CoreModule.Point[] imagePoints = new OpenCVForUnity.CoreModule.Point[6];
-            imagePoints[0] = new OpenCVForUnity.CoreModule.Point(FaceAndIrisLandmarks.Landmark[1].X * (float)rearCaptureWidth, FaceAndIrisLandmarks.Landmark[1].Y * (float)rearCaptureHeight);
-            imagePoints[1] = new OpenCVForUnity.CoreModule.Point(FaceAndIrisLandmarks.Landmark[33].X * (float)rearCaptureWidth, FaceAndIrisLandmarks.Landmark[33].Y * (float)rearCaptureHeight);
-            imagePoints[2] = new OpenCVForUnity.CoreModule.Point(FaceAndIrisLandmarks.Landmark[263].X * (float)rearCaptureWidth, FaceAndIrisLandmarks.Landmark[263].Y * (float)rearCaptureHeight);
-            imagePoints[3] = new OpenCVForUnity.CoreModule.Point(FaceAndIrisLandmarks.Landmark[61].X * (float)rearCaptureWidth, FaceAndIrisLandmarks.Landmark[61].Y * (float)rearCaptureHeight);
-            imagePoints[4] = new OpenCVForUnity.CoreModule.Point(FaceAndIrisLandmarks.Landmark[291].X * (float)rearCaptureWidth, FaceAndIrisLandmarks.Landmark[291].Y * (float)rearCaptureHeight);
-            imagePoints[5] = new OpenCVForUnity.CoreModule.Point(FaceAndIrisLandmarks.Landmark[199].X * (float)rearCaptureWidth, FaceAndIrisLandmarks.Landmark[199].Y * (float)rearCaptureHeight);
-            var image_points = new MatOfPoint2f(imagePoints);
-
-            OpenCVForUnity.CoreModule.Point3[] objectPoints = new OpenCVForUnity.CoreModule.Point3[6];
-            objectPoints[0] = new OpenCVForUnity.CoreModule.Point3(0, -1.126865, 7.475604);
-            objectPoints[1] = new OpenCVForUnity.CoreModule.Point3(-4.445859, 2.663991, 3.173422);
-            objectPoints[2] = new OpenCVForUnity.CoreModule.Point3(4.445859, 2.663991, 3.173422);
-            objectPoints[3] = new OpenCVForUnity.CoreModule.Point3(-2.456206, -4.342621, 4.283884);
-            objectPoints[4] = new OpenCVForUnity.CoreModule.Point3(2.456206, -4.342621, 4.283884);
-            objectPoints[5] = new OpenCVForUnity.CoreModule.Point3(0, -9.403378, 4.264492);
-
-            MatOfPoint3f object_points = new MatOfPoint3f(objectPoints);
-
-            Calib3d.solvePnP(object_points, image_points, camMatrix, distCoeffs, rvec, tvec);
-
-            double tvec_x = tvec.get(0, 0)[0];
-            double tvec_y = tvec.get(1, 0)[0];
-            double tvec_z = tvec.get(2, 0)[0];
-
-            if (!double.IsNaN(tvec_z))
-            { // if tvec is wrong data, do not use extrinsic guesses. (the estimated object is not in the camera field of view)
-                Calib3d.solvePnP(object_points, image_points, camMatrix, distCoeffs, rvec, tvec, true, Calib3d.SOLVEPNP_ITERATIVE);
-            }
-
-
-            Mat mtxR = new Mat(3, 3, CvType.CV_64FC1);
-            Mat mtxQ = new Mat(3, 3, CvType.CV_64FC1);
-            Calib3d.Rodrigues(rvec, rmat);
-
-            var angles = Calib3d.RQDecomp3x3(rmat, mtxR, mtxQ);
-
-            if ((float)angles[0] < 0)
             {
-                angles[0] = -180f - (float)angles[0];
-            }
-            else
-            {
-                angles[0] = 180f - (float)angles[0];
-            }
 
-            return angles;
-        }
+                Mat rvec = new Mat(3, 1, CvType.CV_64FC1);
+                Mat tvec = new Mat(3, 1, CvType.CV_64FC1);
+                Mat rmat = new Mat(3, 3, CvType.CV_64FC1);
+
+
+                OpenCVForUnity.CoreModule.Point[] imagePoints = new OpenCVForUnity.CoreModule.Point[6];
+                imagePoints[0] = new OpenCVForUnity.CoreModule.Point((FaceAndIrisLandmarks.Landmark[1].X * (float)rearCaptureWidth), (FaceAndIrisLandmarks.Landmark[1].Y * (float)rearCaptureHeight));//tip of nose
+                imagePoints[1] = new OpenCVForUnity.CoreModule.Point((FaceAndIrisLandmarks.Landmark[33].X * (float)rearCaptureWidth), (FaceAndIrisLandmarks.Landmark[33].Y * (float)rearCaptureHeight));//left outside eyelid
+                imagePoints[2] = new OpenCVForUnity.CoreModule.Point((FaceAndIrisLandmarks.Landmark[263].X * (float)rearCaptureWidth), (FaceAndIrisLandmarks.Landmark[263].Y * (float)rearCaptureHeight));//right outside eyelid
+                imagePoints[3] = new OpenCVForUnity.CoreModule.Point((FaceAndIrisLandmarks.Landmark[61].X * (float)rearCaptureWidth), (FaceAndIrisLandmarks.Landmark[61].Y * (float)rearCaptureHeight));//left outside mouth
+                imagePoints[4] = new OpenCVForUnity.CoreModule.Point((FaceAndIrisLandmarks.Landmark[291].X * (float)rearCaptureWidth), (FaceAndIrisLandmarks.Landmark[291].Y * (float)rearCaptureHeight));//right outside mouth
+                imagePoints[5] = new OpenCVForUnity.CoreModule.Point((FaceAndIrisLandmarks.Landmark[199].X * (float)rearCaptureWidth), (FaceAndIrisLandmarks.Landmark[199].Y * (float)rearCaptureHeight));//chin
+                var image_points = new MatOfPoint2f(imagePoints);
+
+                OpenCVForUnity.CoreModule.Point3[] objectPoints = new OpenCVForUnity.CoreModule.Point3[6];
+                objectPoints[0] = new OpenCVForUnity.CoreModule.Point3(0, 0, -7.475604);//tip of nose
+                objectPoints[1] = new OpenCVForUnity.CoreModule.Point3(-4.445859, -3.790856, -3.173422);//left outside eyelid
+                objectPoints[2] = new OpenCVForUnity.CoreModule.Point3(4.445859, -3.790856, -3.173422);//right outside eyelid
+                objectPoints[3] = new OpenCVForUnity.CoreModule.Point3(-2.456206, 3.215756, -4.283884);//left outside mouth
+                objectPoints[4] = new OpenCVForUnity.CoreModule.Point3(2.456206, 3.215756, -4.283884);//right outside mouth
+                objectPoints[5] = new OpenCVForUnity.CoreModule.Point3(0, 8.276513, -4.264492); //chin
+
+                MatOfPoint3f object_points = new MatOfPoint3f(objectPoints);
+
+                Calib3d.solvePnP(object_points, image_points, camMatrix, distCoeffs, rvec, tvec);
+
+                double tvec_x = tvec.get(0, 0)[0];
+                double tvec_y = tvec.get(1, 0)[0];
+                double tvec_z = tvec.get(2, 0)[0];
+
+                if (!double.IsNaN(tvec_z))
+                { // if tvec is wrong data, do not use extrinsic guesses. (the estimated object is not in the camera field of view)
+                    Calib3d.solvePnP(object_points, image_points, camMatrix, distCoeffs, rvec, tvec, true, Calib3d.SOLVEPNP_ITERATIVE);
+                }
+
+
+                Mat mtxR = new Mat(3, 3, CvType.CV_64FC1);
+                Mat mtxQ = new Mat(3, 3, CvType.CV_64FC1);
+                Calib3d.Rodrigues(rvec, rmat);
+
+                var angles = Calib3d.RQDecomp3x3(rmat, mtxR, mtxQ);
+
+                /*if ((float)angles[0] < 0)
+                {
+                    angles[0] = -180f - (float)angles[0];
+                }
+                else
+                {
+                    angles[0] = 180f - (float)angles[0];
+                }*/
+
+                return angles;
+            }
 
 
         /// <summary>
@@ -586,9 +632,9 @@ namespace Mediapipe.Unity
             var FaceLandmarks = mediapipeSolution.currentFaceLandmarks;
             var faceDetection = mediapipeSolution.currentFaceList;
             //if full landmarks are avalable, we have access to iris and a 3D face model, we use this more-accurate result
-            if (FaceAndIrisLandmarks != null)
+            if (FaceAndIrisLandmarks != null && !useOnlyHeadPose)
             {
-                
+
                 var angles = EstimateHeadPoseFromFaceAndIrisLandmarks(FaceAndIrisLandmarks);
 
                 var irisLeftMinX = Mathf.Min(FaceAndIrisLandmarks.Landmark[468].X, FaceAndIrisLandmarks.Landmark[469].X, FaceAndIrisLandmarks.Landmark[470].X, FaceAndIrisLandmarks.Landmark[471].X, FaceAndIrisLandmarks.Landmark[472].X);
@@ -604,7 +650,7 @@ namespace Mediapipe.Unity
                 Debug.Log("Depth: " + dZ);
 
                 var CenterLandmarkPosition = CastRayFromPixelToWorldPoint(rearCaptureWidth, rearCaptureHeight,
-                    new UnityEngine.Vector2(FaceAndIrisLandmarks.Landmark[1].X * (float)rearCaptureWidth, FaceAndIrisLandmarks.Landmark[1].Y * (float)rearCaptureHeight), resultExtras.Intrinsics.Value, 65.0f,
+                    new UnityEngine.Vector2(FaceAndIrisLandmarks.Landmark[1].X * (float)rearCaptureWidth, FaceAndIrisLandmarks.Landmark[1].Y * (float)rearCaptureHeight), resultExtras.Intrinsics.Value, rearCaptureFOV,
                     outMatrix, (float)dZ, false);
 
                 var newObject = Instantiate(tempGO, CenterLandmarkPosition, UnityEngine.Quaternion.identity);
@@ -624,31 +670,35 @@ namespace Mediapipe.Unity
 
                 RaycastHit hitData;
                 Ray bystanderGazeRay = new Ray(rearFace.transform.position, rearFace.transform.forward);
-                Physics.Raycast(bystanderGazeRay, out hitData);
+                var hitSuccess = Physics.Raycast(bystanderGazeRay, out hitData);
                 eyeGazeSphere.transform.position = bystanderGazeRay.GetPoint(3);
 
-                if(hitData.collider.tag == "EyeGaze" && eyeTrackingScript.meanFixationDuration >= fixationDurationThreshold)
-                {
-                    var rearChevronGO = Instantiate(rearChevron, new UnityEngine.Vector3(0f,-.1f,1f), UnityEngine.Quaternion.identity, Camera.main.transform);
-                    rearChevronGO.GetComponent<LookAt>().target = rearChevronGO.transform;
-                }
+                    if (hitSuccess)
+                    {
+                        if (hitData.collider.tag == "EyeGaze" && eyeTrackingScript.meanFixationDuration > fixationDurationThreshold)
+                        {
+                            attackIndicatorObject.GetComponent<ChevronScript>().bystanderGazeHits += 1;
+                            attackIndicatorObject.GetComponent<ChevronScript>().lastHitPosition = rearFace.transform;
+                        }
 
-                GameObject.Destroy(newObject);
+                    }
+
+                    GameObject.Destroy(newObject);
             }
             //if full landmarks are not avalable, we use a less accurate face detection and only estimate head pose
             
-            if (FaceLandmarks != null && (FaceLandmarks.Count > 1 || FaceAndIrisLandmarks == null))
+            if (FaceLandmarks != null && (useOnlyHeadPose || FaceAndIrisLandmarks == null))
             {
 
                 float faceWidthAt1M = 25f;
-                float faceWidth = (FaceLandmarks[1].Landmark[454].X * (float)rearCaptureWidth) - (FaceLandmarks[1].Landmark[324].X * (float)rearCaptureWidth);
+                float faceWidth = (FaceLandmarks[0].Landmark[454].X * (float)rearCaptureWidth) - (FaceLandmarks[0].Landmark[324].X * (float)rearCaptureWidth);
                 float depth = faceWidthAt1M / faceWidth;
                 Debug.Log("Face depth estimated at " + depth + " meters");
 
 
-                var angles = EstimateHeadPoseFromFaceLandmarks(FaceLandmarks[1]);
+                var angles = EstimateHeadPoseFromFaceLandmarks(FaceLandmarks[0]);
                 var CenterLandmarkPosition = CastRayFromPixelToWorldPoint(rearCaptureWidth, rearCaptureHeight,
-                    new UnityEngine.Vector2(FaceAndIrisLandmarks.Landmark[1].X * (float)rearCaptureWidth, FaceAndIrisLandmarks.Landmark[1].Y * (float)rearCaptureHeight), resultExtras.Intrinsics.Value, 65.0f,
+                    new UnityEngine.Vector2(FaceAndIrisLandmarks.Landmark[0].X * (float)rearCaptureWidth, FaceAndIrisLandmarks.Landmark[0].Y * (float)rearCaptureHeight), resultExtras.Intrinsics.Value, rearCaptureFOV,
                     outMatrix, depth, false);
 
                 var newObject = Instantiate(tempGO, CenterLandmarkPosition, UnityEngine.Quaternion.identity);
@@ -668,16 +718,20 @@ namespace Mediapipe.Unity
 
                 RaycastHit hitData;
                 Ray bystanderGazeRay = new Ray(rearFace.transform.position, rearFace.transform.forward);
-                Physics.Raycast(bystanderGazeRay, out hitData);
+                var hitSuccess = Physics.Raycast(bystanderGazeRay, out hitData);
                 eyeGazeSphere.transform.position = bystanderGazeRay.GetPoint(3);
 
-                if (hitData.collider.tag == "EyeGaze" && eyeTrackingScript.meanFixationDuration >= fixationDurationThreshold)
-                {
-                    var rearChevronGO = Instantiate(rearChevron, new UnityEngine.Vector3(0f, -.1f, 1f), UnityEngine.Quaternion.identity, Camera.main.transform);
-                    rearChevronGO.GetComponent<LookAt>().target = rearChevronGO.transform;
-                }
+                    if (hitSuccess)
+                    {
+                        if (hitData.collider.tag == "EyeGaze" && eyeTrackingScript.meanFixationDuration > fixationDurationThreshold)
+                        {
+                            attackIndicatorObject.GetComponent<ChevronScript>().bystanderGazeHits += 1;
+                            attackIndicatorObject.GetComponent<ChevronScript>().lastHitPosition = rearFace.transform;
+                        }
 
-                GameObject.Destroy(newObject);
+                    }
+
+                    GameObject.Destroy(newObject);
             }
 
 

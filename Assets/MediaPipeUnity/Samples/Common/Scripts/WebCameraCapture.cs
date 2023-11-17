@@ -113,98 +113,102 @@ namespace Mediapipe.Unity
             {
                 listener.Bind(ipEndPoint);
                 listener.Listen(100);
-                Socket handler = await listener.AcceptAsync();
-                using (NetworkStream myNetworkStream = new NetworkStream(handler))
+                while (true)
                 {
-                    // Check to see if this NetworkStream is readable.
-                    if (myNetworkStream.CanRead)
+                    Socket handler = await listener.AcceptAsync();
+                    using (NetworkStream myNetworkStream = new NetworkStream(handler))
                     {
-
-                        using (var reader = new StreamReader(myNetworkStream))
+                        // Check to see if this NetworkStream is readable.
+                        if (myNetworkStream.CanRead)
                         {
-                            while (true)
+
+                            using (var reader = new StreamReader(myNetworkStream))
                             {
-                                try
+                                while (true)
                                 {
-                                    int lengthBufferSize = 4;
-                                    byte[] myLengthBuffer = new byte[lengthBufferSize];
-                                    byte[] tempLengthByteArray = new byte[lengthBufferSize];
-                                    int totalLengthBytes = 0;
-                                    int numberOfLengthBytesRead = 0;
-                                    //read in integer value that contains length of next read (the image itself)
-                                    do
+                                    try
                                     {
-                                        if (lengthBufferSize > (4 - totalLengthBytes))
+                                        int lengthBufferSize = 4;
+                                        byte[] myLengthBuffer = new byte[lengthBufferSize];
+                                        byte[] tempLengthByteArray = new byte[lengthBufferSize];
+                                        int totalLengthBytes = 0;
+                                        int numberOfLengthBytesRead = 0;
+                                        //read in integer value that contains length of next read (the image itself)
+                                        do
                                         {
-                                            lengthBufferSize = 4 - totalLengthBytes;
+                                            if (lengthBufferSize > (4 - totalLengthBytes))
+                                            {
+                                                lengthBufferSize = 4 - totalLengthBytes;
+                                            }
+
+                                            numberOfLengthBytesRead = await myNetworkStream.ReadAsync(myLengthBuffer, 0, lengthBufferSize);
+                                            //Debug.Log("Read length bytes: " + numberOfLengthBytesRead);
+                                            Array.Copy(myLengthBuffer, 0, tempLengthByteArray, totalLengthBytes, numberOfLengthBytesRead);
+                                            totalLengthBytes += numberOfLengthBytesRead;
+                                        }
+                                        while (totalLengthBytes < 4);
+
+                                        //read in the image, and only the exact number of bytes required
+
+                                        int imageSize = BitConverter.ToInt32(myLengthBuffer, 0);
+
+                                        if (imageSize > 5000000 || imageSize == null)
+                                        {
+                                            Debug.Log("Image corrupted, breaking out of receive loop");
+                                            reader.Close();
+                                            myNetworkStream.Close();
+                                            break;
                                         }
 
-                                        numberOfLengthBytesRead = await myNetworkStream.ReadAsync(myLengthBuffer, 0, 4);
-                                        //Debug.Log("Read length bytes: " + numberOfLengthBytesRead);
-                                        Array.Copy(myLengthBuffer, 0, tempLengthByteArray, totalLengthBytes, numberOfLengthBytesRead);
-                                        totalLengthBytes += numberOfLengthBytesRead;
-                                    }
-                                    while (totalLengthBytes < 4);
-
-                                    //read in the image, and only the exact number of bytes required
-                                    
-                                    int imageSize = BitConverter.ToInt32(myLengthBuffer, 0);
-
-                                    if(imageSize > 5000000 || imageSize == null)
-                                    {
-                                        Debug.Log("Image corrupted, breaking out of receive loop");
-                                        Service();
-                                        break;
-                                    }
-
-                                    int totalBytes = 0;
-                                    int bufferSize = 65000;
-                                    byte[] myReadBuffer = new byte[bufferSize];
-                                    byte[] tempByteArray = new byte[imageSize];
-                                    int numberOfBytesRead = 0;
-                                    //Debug.Log("Expected image size " + imageSize);
-                                    // Incoming message may be larger than the buffer size.
-                                    do
-                                    {
-                                        if (bufferSize > ((int)imageSize - totalBytes))
+                                        int totalBytes = 0;
+                                        int bufferSize = 65000;
+                                        byte[] myReadBuffer = new byte[bufferSize];
+                                        byte[] tempByteArray = new byte[imageSize];
+                                        int numberOfBytesRead = 0;
+                                        //Debug.Log("Expected image size " + imageSize);
+                                        // Incoming message may be larger than the buffer size.
+                                        do
                                         {
-                                            bufferSize = (int)imageSize - totalBytes;
+                                            if (bufferSize > ((int)imageSize - totalBytes))
+                                            {
+                                                bufferSize = (int)imageSize - totalBytes;
+                                            }
+                                            //Debug.Log("Reading....");
+                                            numberOfBytesRead = await myNetworkStream.ReadAsync(myReadBuffer, 0, bufferSize);
+                                            Array.Copy(myReadBuffer, 0, tempByteArray, totalBytes, numberOfBytesRead);
+                                            totalBytes += numberOfBytesRead;
                                         }
-                                        //Debug.Log("Reading....");
-                                        numberOfBytesRead = await myNetworkStream.ReadAsync(myReadBuffer, 0, bufferSize);
-                                        Array.Copy(myReadBuffer, 0, tempByteArray, totalBytes, numberOfBytesRead);
-                                        totalBytes += numberOfBytesRead;
+                                        while (totalBytes < imageSize);
+
+                                        //load image on Texture2D
+                                        //Debug.Log("You received an image of length : " + totalBytes);
+
+                                        ImageConversion.LoadImage(rawVideoTexturesRGBA, tempByteArray);
                                     }
-                                    while (totalBytes < imageSize);
+                                    catch (Exception exception)
+                                    {
+                                        Debug.Log(exception.Message);
+                                    }
 
-                                    //load image on Texture2D
-                                    //Debug.Log("You received an image of length : " + totalBytes);
- 
-                                    ImageConversion.LoadImage(rawVideoTexturesRGBA, tempByteArray);
-                                }
-                                catch (Exception exception)
-                                {
-                                    Debug.Log(exception.Message);
+
                                 }
 
 
+                                reader.Close();
                             }
 
+                        }
+                        else
+                        {
+                            Debug.Log("Sorry.  You cannot read from this NetworkStream.");
 
-                            reader.Close();
                         }
 
+                        myNetworkStream.Close();
                     }
-                    else
-                    {
-                        Debug.Log("Sorry.  You cannot read from this NetworkStream.");
-
-                    }
-
-                    myNetworkStream.Close();
+                    handler.Close();
                 }
 
-                handler.Close();
                 listener.Close();
             }
 

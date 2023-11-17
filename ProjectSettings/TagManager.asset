@@ -6,6 +6,7 @@ TagManager:
   tags:
   - BoundingBox
   - Global Resource
+  - EyeGaze
   layers:
   - Default
   - TransparentFX
