@@ -30,8 +30,8 @@ WiFiClient client;
 const int timerInterval = 100;    // time between each HTTP POST image
 unsigned long previousMillis = 0;   // last time image was sent
 
-  //String serverName = "10.0.0.99";   
-  String serverName = "10.0.0.40";   
+  String serverName = "10.0.0.99";   
+  //String serverName = "10.0.0.40";   
   const int serverPort = 6464;
 
 void setup() {

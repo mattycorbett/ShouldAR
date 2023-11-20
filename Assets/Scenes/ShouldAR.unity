@@ -636,7 +636,7 @@ PrefabInstance:
     - target: {fileID: 4109117804138322986, guid: 31749ff578870c34ab75e73c1dbff0a7,
         type: 3}
       propertyPath: serverAddress
-      value: 10.0.0.40
+      value: 10.0.0.99
       objectReference: {fileID: 0}
     - target: {fileID: 4109117804138322986, guid: 31749ff578870c34ab75e73c1dbff0a7,
         type: 3}
@@ -848,7 +848,7 @@ MonoBehaviour:
     type: 3}
   eyeGazeSphere: {fileID: 875976932}
   tempGO: {fileID: 2925647055191011406, guid: 1c806e8cf779a0141989a40b29251f44, type: 3}
-  fixationDurationThreshold: 300
+  fixationDurationThreshold: 150
   eyeTrackingObject: {fileID: 639190788}
   attackIndicatorObject: {fileID: 564422346}
   enableFrontDetection: 0
@@ -856,7 +856,7 @@ MonoBehaviour:
   frontCaptureHeight: 720
   rearCaptureWidth: 1280
   rearCaptureHeight: 720
-  rearCaptureFOV: 55
+  rearCaptureFOV: 140
   useOnlyHeadPose: 0
 --- !u!4 &1247828630
 Transform:

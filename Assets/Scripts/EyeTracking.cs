@@ -138,6 +138,7 @@ public class EyeTracking : MonoBehaviour
             {
                 tempFixationDuration = tempFixationDuration + (recognitionState.DurationS);
             }
+            //begin to track a new fixation
             else
             {
                 tempFixationDuration = recognitionState.DurationS;
@@ -189,7 +190,8 @@ public class EyeTracking : MonoBehaviour
             meanFixationDuration = (float)(fixationList.Sum() / (float)fixationList.Count());
             SDFixationDuration = standardDeviation(fixationList.ToArray(), fixationList.Count());
             skewFixationDuration = skewness(fixationList.ToArray(), fixationList.Count());
-            Debug.Log(meanFixationDuration);
+            Debug.Log("Mean Fixation Duration: " + meanFixationDuration);
+            Debug.Log("Fixations per Second: " + numFixationsPerSecond);
             if (enableLogging)
             {
                 loggingScript.WriteCSVLineFixations(numFixationsPerSecond, meanFixationDuration, SDFixationDuration, skewFixationDuration, (float)fixationList.Max(), firstFixationDuration);

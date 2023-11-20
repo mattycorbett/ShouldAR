@@ -650,7 +650,7 @@ namespace Mediapipe.Unity
                 Debug.Log("Depth: " + dZ);
 
                 var CenterLandmarkPosition = CastRayFromPixelToWorldPoint(rearCaptureWidth, rearCaptureHeight,
-                    new UnityEngine.Vector2(FaceAndIrisLandmarks.Landmark[1].X * (float)rearCaptureWidth, FaceAndIrisLandmarks.Landmark[1].Y * (float)rearCaptureHeight), resultExtras.Intrinsics.Value, rearCaptureFOV,
+                    new UnityEngine.Vector2(FaceAndIrisLandmarks.Landmark[8].X * (float)rearCaptureWidth, FaceAndIrisLandmarks.Landmark[8].Y * (float)rearCaptureHeight), resultExtras.Intrinsics.Value, rearCaptureFOV,
                     outMatrix, (float)dZ, false);
 
                 var newObject = Instantiate(tempGO, CenterLandmarkPosition, UnityEngine.Quaternion.identity);
@@ -659,7 +659,7 @@ namespace Mediapipe.Unity
                 newObject.transform.rotation = Camera.main.transform.rotation;
 
                 //rotate temp GO to match detected bystander head pose
-                newObject.transform.Rotate((float)angles[0], (float)angles[1], (float)angles[2], Space.Self);
+                newObject.transform.Rotate((float)angles[0], (float)angles[1] * -1f, (float)angles[2], Space.Self);
 
                 //rotate temp GO to rear to compensate for rear-facing camera FOV
                 newObject.transform.RotateAround(outMatrix.GetPosition(), Camera.main.transform.up, 180);
@@ -698,7 +698,7 @@ namespace Mediapipe.Unity
 
                 var angles = EstimateHeadPoseFromFaceLandmarks(FaceLandmarks[0]);
                 var CenterLandmarkPosition = CastRayFromPixelToWorldPoint(rearCaptureWidth, rearCaptureHeight,
-                    new UnityEngine.Vector2(FaceAndIrisLandmarks.Landmark[0].X * (float)rearCaptureWidth, FaceAndIrisLandmarks.Landmark[0].Y * (float)rearCaptureHeight), resultExtras.Intrinsics.Value, rearCaptureFOV,
+                    new UnityEngine.Vector2(FaceLandmarks[0].Landmark[8].X * (float)rearCaptureWidth, FaceLandmarks[0].Landmark[8].Y * (float)rearCaptureHeight), resultExtras.Intrinsics.Value, rearCaptureFOV,
                     outMatrix, depth, false);
 
                 var newObject = Instantiate(tempGO, CenterLandmarkPosition, UnityEngine.Quaternion.identity);
@@ -707,7 +707,7 @@ namespace Mediapipe.Unity
                 newObject.transform.rotation = Camera.main.transform.rotation;
 
                 //rotate temp GO to match detected bystander head pose
-                newObject.transform.Rotate((float)angles[0], (float)angles[1], (float)angles[2], Space.Self);
+                newObject.transform.Rotate((float)angles[0], (float)angles[1] * -1f, (float)angles[2], Space.Self);
 
                 //rotate temp GO to rear to compensate for rear-facing camera FOV
                 newObject.transform.RotateAround(outMatrix.GetPosition(), Camera.main.transform.up, 180);
