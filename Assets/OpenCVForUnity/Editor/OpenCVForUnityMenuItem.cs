@@ -379,43 +379,50 @@ namespace OpenCVForUnity.Editor
         public static void SetWebGLPluginImportSettings(string pluginsFolderPath, string extraFolderPath, bool displayProgressBar = false)
         {
 
+            SetPlugins(GetPluginFilePaths(pluginsFolderPath + "/WebGL/2021.2"), null, null, displayProgressBar);
+            SetPlugins(GetPluginFilePaths(pluginsFolderPath + "/WebGL/2022.2"), null, null, displayProgressBar);
+            SetPlugins(GetPluginFilePaths(pluginsFolderPath + "/WebGL/2023.2"), null, null, displayProgressBar);
+
+            string version = "2021.2";
 #if UNITY_2023_2_OR_NEWER
-            SetPlugins(new string[] { pluginsFolderPath + "/WebGL/2019.1/opencvforunity.bc" }, null, null, displayProgressBar);
-            SetPlugins(new string[] { pluginsFolderPath + "/WebGL/2021.2/opencvforunity.bc" }, null, null, displayProgressBar);
-            SetPlugins(new string[] { pluginsFolderPath + "/WebGL/2022.2/opencvforunity.bc" }, null, null, displayProgressBar);
-            SetPlugins(new string[] { pluginsFolderPath + "/WebGL/2023.2/opencvforunity.bc" }, null, new Dictionary<BuildTarget, Dictionary<string, string>>() { {
-                                BuildTarget.WebGL,
-                                null
-                            }
-                        }, displayProgressBar);
+            version = "2023.2"; 
 #elif UNITY_2022_2_OR_NEWER
-            SetPlugins(new string[] { pluginsFolderPath + "/WebGL/2019.1/opencvforunity.bc" }, null, null, displayProgressBar);
-            SetPlugins(new string[] { pluginsFolderPath + "/WebGL/2021.2/opencvforunity.bc" }, null, null, displayProgressBar);
-            SetPlugins(new string[] { pluginsFolderPath + "/WebGL/2022.2/opencvforunity.bc" }, null, new Dictionary<BuildTarget, Dictionary<string, string>>() { {
-                                BuildTarget.WebGL,
-                                null
-                            }
-                        }, displayProgressBar);
-            SetPlugins(new string[] { pluginsFolderPath + "/WebGL/2023.2/opencvforunity.bc" }, null, null, displayProgressBar);
+            version = "2022.2";
 #elif UNITY_2021_2_OR_NEWER
-            SetPlugins(new string[] { pluginsFolderPath + "/WebGL/2019.1/opencvforunity.bc" }, null, null, displayProgressBar);
-            SetPlugins(new string[] { pluginsFolderPath + "/WebGL/2021.2/opencvforunity.bc" }, null, new Dictionary<BuildTarget, Dictionary<string, string>>() { {
-                                BuildTarget.WebGL,
-                                null
-                            }
-                        }, displayProgressBar);
-            SetPlugins(new string[] { pluginsFolderPath + "/WebGL/2022.2/opencvforunity.bc" }, null, null, displayProgressBar);
-            SetPlugins(new string[] { pluginsFolderPath + "/WebGL/2023.2/opencvforunity.bc" }, null, null, displayProgressBar);
-#elif UNITY_2019_1_OR_NEWER
-            SetPlugins(new string[] { pluginsFolderPath + "/WebGL/2019.1/opencvforunity.bc" }, null, new Dictionary<BuildTarget, Dictionary<string, string>>() { {
-                                BuildTarget.WebGL,
-                                null
-                            }
-                        }, displayProgressBar);
-            SetPlugins(new string[] { pluginsFolderPath + "/WebGL/2021.2/opencvforunity.bc" }, null, null, displayProgressBar);
-            SetPlugins(new string[] { pluginsFolderPath + "/WebGL/2022.2/opencvforunity.bc" }, null, null, displayProgressBar);
-            SetPlugins(new string[] { pluginsFolderPath + "/WebGL/2023.2/opencvforunity.bc" }, null, null, displayProgressBar);
+            version = "2021.2";
 #endif
+
+#if UNITY_2021_2_OR_NEWER
+            bool threads = ValidateUseWebGLThreadsSupport();
+            bool simd = ValidateUseWebGLSIMDSupport();
+
+            if(threads && simd)
+            {
+                SetPlugins(new string[] { pluginsFolderPath + "/WebGL/" + version + "/opencvforunity_threads_simd.bc" }, null, new Dictionary<BuildTarget, Dictionary<string, string>>() { {
+                                            BuildTarget.WebGL,
+                                            null
+                                        }
+                                    }, displayProgressBar);
+            }else if (threads)
+            {
+                SetPlugins(new string[] { pluginsFolderPath + "/WebGL/" + version + "/opencvforunity_threads.bc" }, null, new Dictionary<BuildTarget, Dictionary<string, string>>() { {
+                                            BuildTarget.WebGL,
+                                            null
+                                        }
+                                    }, displayProgressBar);
+            }
+            else
+            {
+                SetPlugins(new string[] { pluginsFolderPath + "/WebGL/" + version + "/opencvforunity.bc" }, null, new Dictionary<BuildTarget, Dictionary<string, string>>() { {
+                                            BuildTarget.WebGL,
+                                            null
+                                        }
+                                    }, displayProgressBar);
+            }
+#else
+            Debug.LogError("The WebGL platform build of OpenCVForUnity is not supported in versions of Unity under " + version + ".");
+#endif
+
             if (PlayerSettings.WebGL.exceptionSupport == WebGLExceptionSupport.None)
                 PlayerSettings.WebGL.exceptionSupport = WebGLExceptionSupport.ExplicitlyThrownExceptionsOnly;
         }
@@ -573,9 +580,9 @@ namespace OpenCVForUnity.Editor
                     Symbol.Remove(BuildTargetGroup.WebGL, Symbol.GetCurrentSymbols(BuildTargetGroup.WebGL), SYMBOL_OPENCV_USE_UNSAFE_CODE);
                     Symbol.Remove(BuildTargetGroup.WSA, Symbol.GetCurrentSymbols(BuildTargetGroup.WSA), SYMBOL_OPENCV_USE_UNSAFE_CODE);
 #endif
-                    Debug.Log("\"" + SYMBOL_OPENCV_USE_UNSAFE_CODE + "\" has been removed from Scripting Define Symbols. Please set \"Allow 'unsafe' Code\" in \"Assets / OpenCVForUnity / OpenCVForUnity.asmodef\" to false.");
+                    Debug.Log("\"" + SYMBOL_OPENCV_USE_UNSAFE_CODE + "\" has been removed from Scripting Define Symbols.");
                     EditorUtility.DisplayDialog("success!!",
-                "\"" + SYMBOL_OPENCV_USE_UNSAFE_CODE + "\" has been removed from Scripting Define Symbols. Please set \"Allow 'unsafe' Code\" in \"Assets / OpenCVForUnity / OpenCVForUnity.asmodef\" to false.", "OK");
+                "\"" + SYMBOL_OPENCV_USE_UNSAFE_CODE + "\" has been removed from Scripting Define Symbols.", "OK");
                 }
             }
             else
@@ -597,9 +604,9 @@ namespace OpenCVForUnity.Editor
                     Symbol.Add(BuildTargetGroup.WSA, Symbol.GetCurrentSymbols(BuildTargetGroup.WSA), SYMBOL_OPENCV_USE_UNSAFE_CODE);
 #endif
 
-                    Debug.Log("\"" + SYMBOL_OPENCV_USE_UNSAFE_CODE + "\" has been added to Scripting Define Symbols. Please set \"Allow 'unsafe' Code\" in \"Assets / OpenCVForUnity / OpenCVForUnity.asmodef\" to true.");
+                    Debug.Log("\"" + SYMBOL_OPENCV_USE_UNSAFE_CODE + "\" has been added to Scripting Define Symbols.");
                     EditorUtility.DisplayDialog("success!!",
-                        "\"" + SYMBOL_OPENCV_USE_UNSAFE_CODE + "\" has been added to Scripting Define Symbols. Please set \"Allow 'unsafe' Code\" in \"Assets / OpenCVForUnity / OpenCVForUnity.asmodef\" to true.", "OK");
+                        "\"" + SYMBOL_OPENCV_USE_UNSAFE_CODE + "\" has been added to Scripting Define Symbols.", "OK");
                 }
             }
         }
@@ -673,6 +680,33 @@ namespace OpenCVForUnity.Editor
 #endif
         }
 #endif
+
+        public static bool ValidateUseWebGLThreadsSupport()
+        {
+            return PlayerSettings.WebGL.threadsSupport;
+        }
+
+        public static void UseWebGLThreadsSupport(bool enable)
+        {
+            PlayerSettings.WebGL.threadsSupport = enable;
+        }
+
+        public static bool ValidateUseWebGLSIMDSupport()
+        {
+            return PlayerSettings.WebGL.emscriptenArgs.Contains("-msimd128");
+        }
+
+        public static void UseWebGLSIMDSupport(bool enable)
+        {
+            if (enable)
+            {
+                PlayerSettings.WebGL.emscriptenArgs += "-msimd128";
+            }
+            else
+            {
+                PlayerSettings.WebGL.emscriptenArgs = PlayerSettings.WebGL.emscriptenArgs.Replace("-msimd128","");
+            }
+        }
 
         //[MenuItem("Tools/OpenCV for Unity/Import Extra Package", false, 24)]
         public static void ImportExtraPackage()

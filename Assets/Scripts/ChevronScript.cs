@@ -12,14 +12,17 @@ namespace Mediapipe.Unity
         public Stopwatch detectionStopwatch;
         public int staleLimit = 3000;
         Renderer rend;
+        Canvas textCanvas;
         public int bystanderGazeHits = 0;
         public int hitThreshold = 10;
         public Transform lastHitPosition;
 
         void Start()
         {
+            textCanvas = this.transform.GetChild(0).gameObject.GetComponent<Canvas>();
             rend = GetComponent<Renderer>();
             rend.enabled = false;
+            textCanvas.enabled = false;
             detectionStopwatch = new Stopwatch();
             
         }
@@ -53,12 +56,14 @@ namespace Mediapipe.Unity
         {
             
             rend.enabled = true;
+            textCanvas.enabled = true;
             detectionStopwatch.Start();
         }
 
         public void makeChevronInvisible()
         {
             detectionStopwatch.Reset();
+            textCanvas.enabled = false;
             rend.enabled = false;
         }
 

@@ -81,4 +81,3 @@ MonoBehaviour:
   graphRunner: {fileID: 6476623749899640697}
   textureFramePool: {fileID: 9132042850132297435}
   runningMode: 0
-  bystanderLocalizationObject: {fileID: 0}

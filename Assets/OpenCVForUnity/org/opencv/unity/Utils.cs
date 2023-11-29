@@ -23,7 +23,7 @@ namespace OpenCVForUnity.UnityUtils
         */
         public static string getVersion()
         {
-            return "2.5.6";
+            return "2.5.7";
         }
 
         /**
@@ -181,11 +181,12 @@ namespace OpenCVForUnity.UnityUtils
         * <p>
         * <br>This method converts the OpenCV Mat to the Unity Texture2D image.
         * <br>The Mat object must have the types 'CV_8UC4' (RGBA) , 'CV_8UC3' (RGB) or 'CV_8UC1' (GRAY).
-        * <br>The Texture2D object must have the TextureFormat 'RGBA32' , 'ARGB32' , 'RGB24' or 'Alpha8'. (GetPixels32() and SetPixels32() methods is needed.)
+        * <br>The texture2D object supports the following formats. (<a href="https://docs.unity3d.com/ScriptReference/Texture2D.SetPixels32.html">https://docs.unity3d.com/ScriptReference/Texture2D.SetPixels32.html</a>)
         * <br>The Texture2D object must have the same size as the Mat (width * height).
+        * <br>Enable the "unsafe" code if you want the conversion process to run the fastest; use NativeArray to run the conversion process several times faster with no overhead. If you want to use optimization code using NativeArray class, click the MenuItem[Tools/OpenCV for Unity/Open Setup Tools] - [Enable Use Unsafe Code] button.
         *
         * @param mat the Mat object must have the types 'CV_8UC4' (RGBA) , 'CV_8UC3' (RGB) or 'CV_8UC1' (GRAY)
-        * @param texture2D the Texture2D object must have the TextureFormat 'RGBA32' , 'ARGB32' , 'RGB24' or 'Alpha8'. (GetPixels32() and SetPixels32() methods is needed.) The Texture2D object must have the same size as the Mat (width * height).
+        * @param texture2D the texture2D object supports the following formats. (<a href="https://docs.unity3d.com/ScriptReference/Texture2D.SetPixels32.html">https://docs.unity3d.com/ScriptReference/Texture2D.SetPixels32.html</a>) The Texture2D object must have the same size as the Mat (width * height).
         * @param flip if true, the mat is fliped before converting.
         * @param flipCode a flag to specify how to flip the array; 0 means flipping around the x-axis and positive value (for example, 1) means flipping around y-axis. Negative value (for example, -1) means flipping around both axes.
         * @param flipAfter if true, the mat is fliped after converting. If you want to use mat even after calling this method, set true.
@@ -194,7 +195,7 @@ namespace OpenCVForUnity.UnityUtils
         */
         public static void matToTexture2D(Mat mat, Texture2D texture2D, bool flip = true, int flipCode = 0, bool flipAfter = false, bool updateMipmaps = false, bool makeNoLongerReadable = false)
         {
-            matToTexture2D(mat, texture2D, null, flip, flipCode, flipAfter, updateMipmaps, makeNoLongerReadable);
+            matToTexture2D(mat, texture2D, null, null, flip, flipCode, flipAfter, updateMipmaps, makeNoLongerReadable);
         }
 
         /**
@@ -202,21 +203,25 @@ namespace OpenCVForUnity.UnityUtils
         * <p>
         * <br>This method converts the OpenCV Mat to the Unity Texture2D image.
         * <br>The Mat object must have the types 'CV_8UC4' (RGBA) , 'CV_8UC3' (RGB) or 'CV_8UC1' (GRAY).
-        * <br>The Texture2D object must have the TextureFormat 'RGBA32' , 'ARGB32' , 'RGB24' or 'Alpha8'. (GetPixels32() and SetPixels32() methods is needed.)
+        * <br>The texture2D object supports the following formats. (<a href="https://docs.unity3d.com/ScriptReference/Texture2D.SetPixels32.html">https://docs.unity3d.com/ScriptReference/Texture2D.SetPixels32.html</a>)
         * <br>The Texture2D object must have the same size as the Mat (width * height).
+        * <br>Enable the "unsafe" code if you want the conversion process to run the fastest; use NativeArray to run the conversion process several times faster with no overhead. If you want to use optimization code using NativeArray class, click the MenuItem[Tools/OpenCV for Unity/Open Setup Tools] - [Enable Use Unsafe Code] button.
         *
         * @param mat the Mat object must have the types 'CV_8UC4' (RGBA) , 'CV_8UC3' (RGB) or 'CV_8UC1' (GRAY)
-        * @param texture2D the Texture2D object must have the TextureFormat 'RGBA32' , 'ARGB32' , 'RGB24' or 'Alpha8'. (GetPixels32() and SetPixels32() methods is needed) The Texture2D object must have the same size as the Mat (width * height).
-        * @param bufferColors the optional array to receive pixel data. 
-        * You can optionally pass in an array of Color32s to use in colors to avoid allocating new memory each frame.
+        * @param texture2D The texture2D object supports the following formats. (<a href="https://docs.unity3d.com/ScriptReference/Texture2D.SetPixels32.html">https://docs.unity3d.com/ScriptReference/Texture2D.SetPixels32.html</a>) The Texture2D object must have the same size as the Mat (width * height).
+        * @param pixels32Buffer the optional array to receive pixels32 data. 
+        * You can optionally pass in an array of Color32s to avoid allocating new memory each frame.
         * The array needs to be initialized to a length matching width * height of the texture. (<a href="http://docs.unity3d.com/ScriptReference/WebCamTexture.GetPixels32.html">http://docs.unity3d.com/ScriptReference/WebCamTexture.GetPixels32.html</a>)
+        * @param rawTextureDataBuffer the optional array to receive raw texture data. 
+        * You can optionally pass in an array of bytes to avoid allocating new memory each frame.
+        * The array needs to be initialized to a length matching raw data of the texture. (<a href="https://docs.unity3d.com/ScriptReference/Texture2D.GetRawTextureData.html">https://docs.unity3d.com/ScriptReference/Texture2D.GetRawTextureData.html</a>)
         * @param flip if true, the mat is fliped before converting.
         * @param flipCode a flag to specify how to flip the array; 0 means flipping around the x-axis and positive value (for example, 1) means flipping around y-axis. Negative value (for example, -1) means flipping around both axes.
         * @param flipAfter if true, the mat is fliped after converting. If you want to use mat even after calling this method, set true.
-        * @param updateMipmaps When set to true, mipmap levels are recalculated.
-        * @param makeNoLongerReadable When set to true, system memory copy of a texture is released.
+        * @param updateMipmaps when set to true, mipmap levels are recalculated.
+        * @param makeNoLongerReadable when set to true, system memory copy of a texture is released.
         */
-        public static void matToTexture2D(Mat mat, Texture2D texture2D, Color32[] bufferColors, bool flip = true, int flipCode = 0, bool flipAfter = false, bool updateMipmaps = false, bool makeNoLongerReadable = false)
+        public static void matToTexture2D(Mat mat, Texture2D texture2D, Color32[] pixels32Buffer, byte[] rawTextureDataBuffer = null, bool flip = true, int flipCode = 0, bool flipAfter = false, bool updateMipmaps = false, bool makeNoLongerReadable = false)
         {
             if (mat == null)
                 throw new ArgumentNullException("mat");
@@ -230,28 +235,12 @@ namespace OpenCVForUnity.UnityUtils
                 throw new ArgumentException("The Texture2D object must have the same size.");
 
             int type = mat.type();
+            TextureFormat format = texture2D.format;
+            if (!(type == CvType.CV_8UC1 || type == CvType.CV_8UC3 || type == CvType.CV_8UC4))
+                throw new ArgumentException("The Mat object must have the types 'CV_8UC4' (RGBA) , 'CV_8UC3' (RGB) or 'CV_8UC1' (GRAY).");
 
-#if OPENCV_USE_UNSAFE_CODE && UNITY_2018_2_OR_NEWER
-            if ((texture2D.format == TextureFormat.RGBA32 && type == CvType.CV_8UC4) || (texture2D.format == TextureFormat.RGB24 && type == CvType.CV_8UC3) || (texture2D.format == TextureFormat.Alpha8 && type == CvType.CV_8UC1))
-            {
-                if (flip)
-                {
-                    Core.flip(mat, mat, flipCode);
-                }
-                unsafe
-                {
-                    OpenCVForUnity_MatDataToByteArray(mat.nativeObj, (IntPtr)NativeArrayUnsafeUtility.GetUnsafeReadOnlyPtr(texture2D.GetRawTextureData<byte>()));
-                }
-                texture2D.Apply(updateMipmaps, makeNoLongerReadable);
-                if (flipAfter)
-                {
-                    Core.flip(mat, mat, flipCode);
-                }
-
-                return;
-            }
-#else
-            if (mat.isContinuous() && texture2D.mipmapCount == 1 && ((texture2D.format == TextureFormat.RGBA32 && type == CvType.CV_8UC4) || (texture2D.format == TextureFormat.RGB24 && type == CvType.CV_8UC3) || (texture2D.format == TextureFormat.Alpha8 && type == CvType.CV_8UC1)))
+#if !(OPENCV_USE_UNSAFE_CODE && UNITY_2018_2_OR_NEWER)
+            if (((type == CvType.CV_8UC4 && format == TextureFormat.RGBA32) || (type == CvType.CV_8UC3 && format == TextureFormat.RGB24) || (type == CvType.CV_8UC1 && (format == TextureFormat.Alpha8 || format == TextureFormat.R8))) && texture2D.mipmapCount == 1 && mat.isContinuous())
             {
                 if (flip)
                 {
@@ -268,47 +257,80 @@ namespace OpenCVForUnity.UnityUtils
             }
 #endif
 
-            if (!(type == CvType.CV_8UC1 || type == CvType.CV_8UC3 || type == CvType.CV_8UC4))
-                throw new ArgumentException("The Mat object must have the types 'CV_8UC4' (RGBA) , 'CV_8UC3' (RGB) or 'CV_8UC1' (GRAY).");
-
-            GCHandle colorsHandle;
-
-            if (bufferColors == null)
+            if (format == TextureFormat.RGBA32 || format == TextureFormat.BGRA32 || format == TextureFormat.RGB24 || format == TextureFormat.Alpha8 || format == TextureFormat.R8)
             {
-                Color32[] colors = texture2D.GetPixels32();
+#if OPENCV_USE_UNSAFE_CODE && UNITY_2018_2_OR_NEWER
+                unsafe
+                {
+                    OpenCVForUnity_MatToTexture(mat.nativeObj, (IntPtr)NativeArrayUnsafeUtility.GetUnsafeReadOnlyPtr(texture2D.GetRawTextureData<byte>()), (int)format, flip, flipCode, flipAfter);
+                }
+                texture2D.Apply(updateMipmaps, makeNoLongerReadable);
 
-                colorsHandle = GCHandle.Alloc(colors, GCHandleType.Pinned);
-                OpenCVForUnity_MatToTexture(mat.nativeObj, colorsHandle.AddrOfPinnedObject(), flip, flipCode, flipAfter);
+                return;
+#else
 
-                texture2D.SetPixels32(colors);
+                if ((rawTextureDataBuffer != null) || (pixels32Buffer == null && texture2D.mipmapCount == 1))
+                {
+                    GCHandle rawTextureDataHandle;
+                    if (rawTextureDataBuffer == null)
+                    {
+                        byte[] rawTextureData = texture2D.GetRawTextureData();
+                        rawTextureDataHandle = GCHandle.Alloc(rawTextureData, GCHandleType.Pinned);
+                        OpenCVForUnity_MatToTexture(mat.nativeObj, rawTextureDataHandle.AddrOfPinnedObject(), (int)format, flip, flipCode, flipAfter);
+                        texture2D.LoadRawTextureData(rawTextureDataHandle.AddrOfPinnedObject(), rawTextureData.Length);
+                    }
+                    else
+                    {
+                        rawTextureDataHandle = GCHandle.Alloc(rawTextureDataBuffer, GCHandleType.Pinned);
+                        OpenCVForUnity_MatToTexture(mat.nativeObj, rawTextureDataHandle.AddrOfPinnedObject(), (int)format, flip, flipCode, flipAfter);
+                        texture2D.LoadRawTextureData(rawTextureDataHandle.AddrOfPinnedObject(), rawTextureDataBuffer.Length);
+                    }
+                    texture2D.Apply(updateMipmaps, makeNoLongerReadable);
+                    rawTextureDataHandle.Free();
+
+                    return;
+                }
+#endif
+            }
+
+            //You can use SetPixels32 with the following texture formats:
+            //https://docs.unity3d.com/2020.3/Documentation/ScriptReference/Texture2D.SetPixels32.html
+            GCHandle pixels32Handle;
+            if (pixels32Buffer == null)
+            {
+                Color32[] pixels32 = texture2D.GetPixels32();
+
+                pixels32Handle = GCHandle.Alloc(pixels32, GCHandleType.Pinned);
+                OpenCVForUnity_MatToTexture(mat.nativeObj, pixels32Handle.AddrOfPinnedObject(), (int)TextureFormat.RGBA32, flip, flipCode, flipAfter);
+
+                texture2D.SetPixels32(pixels32);
             }
             else
             {
-                colorsHandle = GCHandle.Alloc(bufferColors, GCHandleType.Pinned);
-                OpenCVForUnity_MatToTexture(mat.nativeObj, colorsHandle.AddrOfPinnedObject(), flip, flipCode, flipAfter);
+                pixels32Handle = GCHandle.Alloc(pixels32Buffer, GCHandleType.Pinned);
+                OpenCVForUnity_MatToTexture(mat.nativeObj, pixels32Handle.AddrOfPinnedObject(), (int)TextureFormat.RGBA32, flip, flipCode, flipAfter);
 
-                texture2D.SetPixels32(bufferColors);
+                texture2D.SetPixels32(pixels32Buffer);
             }
-
             texture2D.Apply(updateMipmaps, makeNoLongerReadable);
+            pixels32Handle.Free();
 
-            colorsHandle.Free();
         }
 
         /**
         * Fast converts OpenCV Mat to Unity Texture2D.
         * <p>
-        * <br>This method converts the OpenCV Mat to the Unity Texture2D image.
+        * <br>This method simply copies the mat data to texture2D. Therefore, there are no restrictions on the mat's type and texture2D's format; it is faster than the matToTexture2D() method.
         * <br>The Mat object and the Texture2D object must have the same width, height, and data format.
-        * <br>This method doesn't check bounds.
+        * <br>Enable the "unsafe" code if you want the conversion process to run the fastest; use NativeArray to run the conversion process several times faster with no overhead. If you want to use optimization code using NativeArray class, click the MenuItem[Tools/OpenCV for Unity/Open Setup Tools] - [Enable Use Unsafe Code] button.
         *
         * @param mat
         * @param texture2D the Texture2D object must have the same size and data format (width * height * channels) as the Mat.
         * @param flip if true, the mat is fliped before converting.
         * @param flipCode a flag to specify how to flip the array; 0 means flipping around the x-axis and positive value (for example, 1) means flipping around y-axis. Negative value (for example, -1) means flipping around both axes.
         * @param flipAfter if true, the mat is fliped after converting. If you want to use mat even after calling this method, set true.
-        * @param updateMipmaps When set to true, mipmap levels are recalculated.
-        * @param makeNoLongerReadable When set to true, system memory copy of a texture is released.
+        * @param updateMipmaps when set to true, mipmap levels are recalculated.
+        * @param makeNoLongerReadable when set to true, system memory copy of a texture is released.
         */
         public static void fastMatToTexture2D(Mat mat, Texture2D texture2D, bool flip = true, int flipCode = 0, bool flipAfter = false, bool updateMipmaps = false, bool makeNoLongerReadable = false)
         {
@@ -321,18 +343,31 @@ namespace OpenCVForUnity.UnityUtils
                 throw new ArgumentNullException("texture2D");
 
 #if OPENCV_USE_UNSAFE_CODE && UNITY_2018_2_OR_NEWER
-            if (flip)
+            int type = mat.type();
+            TextureFormat format = texture2D.format;
+            if ((type == CvType.CV_8UC4 && format == TextureFormat.RGBA32) || (type == CvType.CV_8UC3 && format == TextureFormat.RGB24) || (type == CvType.CV_8UC1 && (format == TextureFormat.Alpha8 || format == TextureFormat.R8)))
             {
-                Core.flip(mat, mat, flipCode);
+                unsafe
+                {
+                    OpenCVForUnity_MatToTexture(mat.nativeObj, (IntPtr)NativeArrayUnsafeUtility.GetUnsafeReadOnlyPtr(texture2D.GetRawTextureData<byte>()), (int)texture2D.format, flip, flipCode, flipAfter);
+                }
+                texture2D.Apply(updateMipmaps, makeNoLongerReadable);
             }
-            unsafe
+            else
             {
-                OpenCVForUnity_MatDataToByteArray(mat.nativeObj, (IntPtr)NativeArrayUnsafeUtility.GetUnsafeReadOnlyPtr(texture2D.GetRawTextureData<byte>()));
-            }
-            texture2D.Apply(updateMipmaps, makeNoLongerReadable);
-            if (flipAfter)
-            {
-                Core.flip(mat, mat, flipCode);
+                if (flip)
+                {
+                    Core.flip(mat, mat, flipCode);
+                }
+                unsafe
+                {
+                    OpenCVForUnity_MatDataToByteArray(mat.nativeObj, (IntPtr)NativeArrayUnsafeUtility.GetUnsafeReadOnlyPtr(texture2D.GetRawTextureData<byte>()));
+                }
+                texture2D.Apply(updateMipmaps, makeNoLongerReadable);
+                if (flipAfter)
+                {
+                    Core.flip(mat, mat, flipCode);
+                }
             }
 #else
             if (!mat.isContinuous())
@@ -367,14 +402,15 @@ namespace OpenCVForUnity.UnityUtils
         * <br>The Texture object must have the read/write enabled flag set in the texture import settings, otherwise this function will fail. (GetPixels32() method is needed.)
         * <br>The Mat object must have the same size as the Texture2D (width * height).
         * <br>The Mat object must have the types 'CV_8UC4' (RGBA) , 'CV_8UC3' (RGB) or 'CV_8UC1' (GRAY).
+        * <br>Enable the "unsafe" code if you want the conversion process to run the fastest; use NativeArray to run the conversion process several times faster with no overhead. If you want to use optimization code using NativeArray class, click the MenuItem[Tools/OpenCV for Unity/Open Setup Tools] - [Enable Use Unsafe Code] button.
         * 
         * @param texture2D the Texture2D object must have the read/write enabled flag set in the texture import settings, otherwise this function will fail. (GetPixels32() method is needed.)
         * @param mat the Mat object must have the same size as the Texture2D (width * height).
         * The Mat object must have the types 'CV_8UC4' (RGBA) , 'CV_8UC3' (RGB) or 'CV_8UC1' (GRAY).
-        * @param flip if true, the mat is fliped after converting.
+        * @param flipAfter if true, the mat is fliped after converting.
         * @param flipCode a flag to specify how to flip the array; 0 means flipping around the x-axis and positive value (for example, 1) means flipping around y-axis. Negative value (for example, -1) means flipping around both axes.
         */
-        public static void texture2DToMat(Texture2D texture2D, Mat mat, bool flip = true, int flipCode = 0)
+        public static void texture2DToMat(Texture2D texture2D, Mat mat, bool flipAfter = true, int flipCode = 0)
         {
             if (texture2D == null)
                 throw new ArgumentNullException("texture2D");
@@ -388,52 +424,47 @@ namespace OpenCVForUnity.UnityUtils
                 throw new ArgumentException("The Mat object must have the same size.");
 
             int type = mat.type();
+            TextureFormat format = texture2D.format;
+            if (!(type == CvType.CV_8UC1 || type == CvType.CV_8UC3 || type == CvType.CV_8UC4))
+                throw new ArgumentException("The Mat object must have the types 'CV_8UC4' (RGBA) , 'CV_8UC3' (RGB) or 'CV_8UC1' (GRAY).");
 
-            if ((texture2D.format == TextureFormat.RGBA32 && type == CvType.CV_8UC4) || (texture2D.format == TextureFormat.RGB24 && type == CvType.CV_8UC3) || (texture2D.format == TextureFormat.Alpha8 && type == CvType.CV_8UC1))
+            if (format == TextureFormat.RGBA32 || format == TextureFormat.BGRA32 || format == TextureFormat.RGB24 || format == TextureFormat.Alpha8 || format == TextureFormat.R8)
             {
-
 #if OPENCV_USE_UNSAFE_CODE && UNITY_2018_2_OR_NEWER
                 unsafe
                 {
-                    OpenCVForUnity_ByteArrayToMatData((IntPtr)NativeArrayUnsafeUtility.GetUnsafeReadOnlyPtr(texture2D.GetRawTextureData<byte>()), mat.nativeObj);
+                    OpenCVForUnity_TextureToMat((IntPtr)NativeArrayUnsafeUtility.GetUnsafeReadOnlyPtr(texture2D.GetRawTextureData<byte>()), mat.nativeObj, (int)format, flipAfter, flipCode);
                 }
 #else
-                GCHandle arrayHandle = GCHandle.Alloc(texture2D.GetRawTextureData(), GCHandleType.Pinned);
-                OpenCVForUnity_ByteArrayToMatData(arrayHandle.AddrOfPinnedObject(), mat.nativeObj);
-                arrayHandle.Free();
+                GCHandle RawTextureDataHandle = GCHandle.Alloc(texture2D.GetRawTextureData(), GCHandleType.Pinned);
+                OpenCVForUnity_TextureToMat(RawTextureDataHandle.AddrOfPinnedObject(), mat.nativeObj, (int)format, flipAfter, flipCode);
+                RawTextureDataHandle.Free();
 #endif
-
-                if (flip)
-                {
-                    Core.flip(mat, mat, flipCode);
-                }
 
                 return;
             }
 
-            if (!(type == CvType.CV_8UC1 || type == CvType.CV_8UC3 || type == CvType.CV_8UC4))
-                throw new ArgumentException("The Mat object must have the types 'CV_8UC4' (RGBA) , 'CV_8UC3' (RGB) or 'CV_8UC1' (GRAY).");
+            Color32[] pixels32 = texture2D.GetPixels32();
 
-            Color32[] colors = texture2D.GetPixels32();
+            GCHandle pixels32Handle = GCHandle.Alloc(pixels32, GCHandleType.Pinned);
+            OpenCVForUnity_TextureToMat(pixels32Handle.AddrOfPinnedObject(), mat.nativeObj, (int)TextureFormat.RGBA32, flipAfter, flipCode);
+            pixels32Handle.Free();
 
-            GCHandle colorsHandle = GCHandle.Alloc(colors, GCHandleType.Pinned);
-            OpenCVForUnity_TextureToMat(colorsHandle.AddrOfPinnedObject(), mat.nativeObj, flip, flipCode);
-            colorsHandle.Free();
         }
 
         /**
         * Fast converts Unity Texture2D to OpenCV Mat.
         * <p>
-        * <br>This method converts the Unity Texture2D image to the OpenCV Mat.
+        * <br>This method simply copies the texture2D data to mat. Therefore, there are no restrictions on the mat's type and texture2D's format; it is faster than the texture2DToMat() method.
         * <br>The Texture2D object and the Mat object must have the same width, height, and data format.
-        * <br>This method doesn't check bounds.
+        * <br>Enable the "unsafe" code if you want the conversion process to run the fastest; use NativeArray to run the conversion process several times faster with no overhead. If you want to use optimization code using NativeArray class, click the MenuItem[Tools/OpenCV for Unity/Open Setup Tools] - [Enable Use Unsafe Code] button.
         * 
         * @param texture2D
         * @param mat the Mat object must have the same size and data format (width * height * channels) as the Texture2D.
-        * @param flip if true, the mat is fliped after converting.
+        * @param flipAfter if true, the mat is fliped after converting.
         * @param flipCode a flag to specify how to flip the array; 0 means flipping around the x-axis and positive value (for example, 1) means flipping around y-axis. Negative value (for example, -1) means flipping around both axes.
         */
-        public static void fastTexture2DToMat(Texture2D texture2D, Mat mat, bool flip = true, int flipCode = 0)
+        public static void fastTexture2DToMat(Texture2D texture2D, Mat mat, bool flipAfter = true, int flipCode = 0)
         {
             if (texture2D == null)
                 throw new ArgumentNullException("texture2D");
@@ -444,23 +475,50 @@ namespace OpenCVForUnity.UnityUtils
                 mat.ThrowIfDisposed();
 
 #if OPENCV_USE_UNSAFE_CODE && UNITY_2018_2_OR_NEWER
-            unsafe
+            int type = mat.type();
+            TextureFormat format = texture2D.format;
+            if ((type == CvType.CV_8UC4 && format == TextureFormat.RGBA32) || (type == CvType.CV_8UC3 && format == TextureFormat.RGB24) || (type == CvType.CV_8UC1 && (format == TextureFormat.Alpha8 || format == TextureFormat.R8)))
             {
-                OpenCVForUnity_ByteArrayToMatData((IntPtr)NativeArrayUnsafeUtility.GetUnsafeReadOnlyPtr(texture2D.GetRawTextureData<byte>()), mat.nativeObj);
+                unsafe
+                {
+                    OpenCVForUnity_TextureToMat((IntPtr)NativeArrayUnsafeUtility.GetUnsafeReadOnlyPtr(texture2D.GetRawTextureData<byte>()), mat.nativeObj, (int)texture2D.format, flipAfter, flipCode);
+                }
+            }
+            else
+            {
+                unsafe
+                {
+                    OpenCVForUnity_ByteArrayToMatData((IntPtr)NativeArrayUnsafeUtility.GetUnsafeReadOnlyPtr(texture2D.GetRawTextureData<byte>()), mat.nativeObj);
+                }
+                if (flipAfter)
+                {
+                    Core.flip(mat, mat, flipCode);
+                }
             }
 #else
-            GCHandle arrayHandle = GCHandle.Alloc(texture2D.GetRawTextureData(), GCHandleType.Pinned);
-            OpenCVForUnity_ByteArrayToMatData(arrayHandle.AddrOfPinnedObject(), mat.nativeObj);
-            arrayHandle.Free();
-#endif
-            if (flip)
+            int type = mat.type();
+            TextureFormat format = texture2D.format;
+            if ((type == CvType.CV_8UC4 && format == TextureFormat.RGBA32) || (type == CvType.CV_8UC3 && format == TextureFormat.RGB24) || (type == CvType.CV_8UC1 && (format == TextureFormat.Alpha8 || format == TextureFormat.R8)))
             {
-                Core.flip(mat, mat, flipCode);
+                GCHandle RawTextureDataHandle = GCHandle.Alloc(texture2D.GetRawTextureData(), GCHandleType.Pinned);
+                OpenCVForUnity_TextureToMat(RawTextureDataHandle.AddrOfPinnedObject(), mat.nativeObj, (int)texture2D.format, flipAfter, flipCode);
+                RawTextureDataHandle.Free();
             }
+            else
+            {
+                GCHandle RawTextureDataHandle = GCHandle.Alloc(texture2D.GetRawTextureData(), GCHandleType.Pinned);
+                OpenCVForUnity_ByteArrayToMatData(RawTextureDataHandle.AddrOfPinnedObject(), mat.nativeObj);
+                RawTextureDataHandle.Free();
+                if (flipAfter)
+                {
+                    Core.flip(mat, mat, flipCode);
+                }
+            }
+#endif
+
         }
 
 #if !OPENCV_DONT_USE_WEBCAMTEXTURE_API
-#if !(PLATFORM_LUMIN && !UNITY_EDITOR)
 
         /**
         * Converts Unity WebCamTexture to OpenCV Mat.
@@ -472,12 +530,12 @@ namespace OpenCVForUnity.UnityUtils
         * @param webcamTexture a WebCamTexture object.
         * @param mat the Mat object must have the same size as the WebCamTexture (width * height).
         * The Mat object must have the types 'CV_8UC4' (RGBA) , 'CV_8UC3' (RGB) or 'CV_8UC1' (GRAY).
-        * @param flip if true, the mat is fliped after converting.
+        * @param flipAfter if true, the mat is fliped after converting.
         * @param flipCode a flag to specify how to flip the array; 0 means flipping around the x-axis and positive value (for example, 1) means flipping around y-axis. Negative value (for example, -1) means flipping around both axes.
         */
-        public static void webCamTextureToMat(WebCamTexture webCamTexture, Mat mat, bool flip = true, int flipCode = 0)
+        public static void webCamTextureToMat(WebCamTexture webCamTexture, Mat mat, bool flipAfter = true, int flipCode = 0)
         {
-            webCamTextureToMat(webCamTexture, mat, null, flip, flipCode);
+            webCamTextureToMat(webCamTexture, mat, null, flipAfter, flipCode);
         }
 
         /**
@@ -493,10 +551,10 @@ namespace OpenCVForUnity.UnityUtils
         * @param bufferColors the optional array to receive pixel data.
         * You can optionally pass in an array of Color32s to use in colors to avoid allocating new memory each frame.
         * The array needs to be initialized to a length matching width * height of the texture. (http://docs.unity3d.com/ScriptReference/WebCamTexture.GetPixels32.html)
-        * @param flip if true, the mat is fliped after converting.
+        * @param flipAfter if true, the mat is fliped after converting.
         * @param flipCode a flag to specify how to flip the array; 0 means flipping around the x-axis and positive value (for example, 1) means flipping around y-axis. Negative value (for example, -1) means flipping around both axes.
         */
-        public static void webCamTextureToMat(WebCamTexture webCamTexture, Mat mat, Color32[] bufferColors, bool flip = true, int flipCode = 0)
+        public static void webCamTextureToMat(WebCamTexture webCamTexture, Mat mat, Color32[] pixels32Buffer, bool flipAfter = true, int flipCode = 0)
         {
             if (webCamTexture == null)
                 throw new ArgumentNullException("webCamTexture");
@@ -509,27 +567,26 @@ namespace OpenCVForUnity.UnityUtils
             if (mat.cols() != webCamTexture.width || mat.rows() != webCamTexture.height)
                 throw new ArgumentException("The Mat object must have the same size.");
 
-            GCHandle colorsHandle;
-            if (bufferColors == null)
+            GCHandle pixels32Handle;
+            if (pixels32Buffer == null)
             {
 
                 Color32[] colors = webCamTexture.GetPixels32();
 
-                colorsHandle = GCHandle.Alloc(colors, GCHandleType.Pinned);
+                pixels32Handle = GCHandle.Alloc(colors, GCHandleType.Pinned);
             }
             else
             {
-                webCamTexture.GetPixels32(bufferColors);
+                webCamTexture.GetPixels32(pixels32Buffer);
 
-                colorsHandle = GCHandle.Alloc(bufferColors, GCHandleType.Pinned);
+                pixels32Handle = GCHandle.Alloc(pixels32Buffer, GCHandleType.Pinned);
             }
 
-            OpenCVForUnity_TextureToMat(colorsHandle.AddrOfPinnedObject(), mat.nativeObj, flip, flipCode);
+            OpenCVForUnity_TextureToMat(pixels32Handle.AddrOfPinnedObject(), mat.nativeObj, (int)TextureFormat.RGBA32, flipAfter, flipCode);
 
-            colorsHandle.Free();
+            pixels32Handle.Free();
         }
 
-#endif
 #endif
 
         /**
@@ -1163,10 +1220,10 @@ namespace OpenCVForUnity.UnityUtils
         private static extern void OpenCVForUnity_DebugLogTest();
 
         [DllImport(LIBNAME)]
-        private static extern void OpenCVForUnity_MatToTexture(IntPtr mat, IntPtr textureColors, [MarshalAs(UnmanagedType.U1)] bool flip, int flipCode, bool flipAfter);
+        private static extern void OpenCVForUnity_MatToTexture(IntPtr mat, IntPtr textureColors, int textureFormat, [MarshalAs(UnmanagedType.U1)] bool flip, int flipCode, bool flipAfter);
 
         [DllImport(LIBNAME)]
-        private static extern void OpenCVForUnity_TextureToMat(IntPtr textureColors, IntPtr Mat, [MarshalAs(UnmanagedType.U1)] bool flip, int flipCode);
+        private static extern void OpenCVForUnity_TextureToMat(IntPtr textureColors, IntPtr Mat, int textureFormat, [MarshalAs(UnmanagedType.U1)] bool flip, int flipCode);
 
         [DllImport(LIBNAME)]
         private static extern void OpenCVForUnity_MatDataToByteArray(IntPtr mat, IntPtr byteArray);

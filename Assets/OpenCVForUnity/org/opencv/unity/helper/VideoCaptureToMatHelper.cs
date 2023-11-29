@@ -11,7 +11,7 @@ namespace OpenCVForUnity.UnityUtils.Helper
 {
     /// <summary>
     /// VideoCapture to mat helper.
-    /// v 1.0.3
+    /// v 1.0.4
     /// </summary>
     public class VideoCaptureToMatHelper : MonoBehaviour
     {
@@ -84,7 +84,7 @@ namespace OpenCVForUnity.UnityUtils.Helper
         /// The number of frames before the initialization process times out.
         /// </summary>
         [SerializeField, FormerlySerializedAs("timeoutFrameCount"), TooltipAttribute("The number of frames before the initialization process times out.")]
-        protected int _timeoutFrameCount = 300;
+        protected int _timeoutFrameCount = 1500;
 
         public virtual int timeoutFrameCount
         {

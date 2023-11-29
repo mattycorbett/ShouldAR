@@ -158,15 +158,17 @@ namespace Mediapipe.Unity
 
             Calib3d.calibrationMatrixValues(camMatrix, imageSize, apertureWidth, apertureHeight, fovx, fovy, focalLength, principalPoint, aspectratio);
 
-
-            //Debug.Log(fovx[0]);
-            //Debug.Log(fovy[0]);
             StartCoroutine(FramerateCountLoop());
 
             eyeTrackingScript = eyeTrackingObject.GetComponent<EyeTracking>();
 
             mediapipeSolution = GameObject.Find("MediapipeSolution").GetComponent<IrisTrackingSolution>();
 
+#if UNITY_EDITOR
+
+#else
+            StartVideoCapture();
+#endif
 
 #if UNITY_EDITOR
 
@@ -321,19 +323,19 @@ namespace Mediapipe.Unity
                 Mat ZRot = new Mat(3, 3, CvType.CV_64FC1);
 
 
-                //XRot.put(0, 0, 1f, 0f, 0f, 0f, Math.Cos((float)angles[0] * Mathf.Deg2Rad), Math.Sin(-(float)angles[0] * Mathf.Deg2Rad), 0f, Math.Sin((float)angles[0] * Mathf.Deg2Rad), Math.Cos((float)angles[0] * Mathf.Deg2Rad));
-                //YRot.put(0, 0, Math.Cos((float)angles[1] * Mathf.Deg2Rad), 0f, Math.Sin((float)angles[1] * Mathf.Deg2Rad), 0f, 1f, 0f, Math.Sin(-(float)angles[1] * Mathf.Deg2Rad), 0f, Math.Cos((float)angles[1] * Mathf.Deg2Rad));
-                //ZRot.put(0, 0, Math.Cos((float)angles[2] * Mathf.Deg2Rad), Math.Sin(-(float)angles[2] * Mathf.Deg2Rad), 0, Math.Sin((float)angles[2] * Mathf.Deg2Rad), Math.Cos((float)angles[2] * Mathf.Deg2Rad), 0f, 0f, 0f, 1f);
+                //XRot.put(0, 0, 1f, 0f, 0f, 0f, Math.Cos((float)angles[0] * Mathf.Deg2Rad), -Math.Sin((float)angles[0] * Mathf.Deg2Rad), 0f, Math.Sin((float)angles[0] * Mathf.Deg2Rad), Math.Cos((float)angles[0] * Mathf.Deg2Rad));
+                //YRot.put(0, 0, Math.Cos((float)angles[1] * Mathf.Deg2Rad), 0f, Math.Sin((float)angles[1] * Mathf.Deg2Rad), 0f, 1f, 0f, -Math.Sin((float)angles[1] * Mathf.Deg2Rad), 0f, Math.Cos((float)angles[1] * Mathf.Deg2Rad));
+                //ZRot.put(0, 0, Math.Cos((float)angles[2] * Mathf.Deg2Rad), -Math.Sin((float)angles[2] * Mathf.Deg2Rad), 0, Math.Sin((float)angles[2] * Mathf.Deg2Rad), Math.Cos((float)angles[2] * Mathf.Deg2Rad), 0f, 0f, 0f, 1f);
 
                 //Left handed
-                XRot.put(0, 0, 1f, 0f, 0f, 0f, Math.Cos((float)angles[0] * Mathf.Deg2Rad), Math.Sin((float)angles[0] * Mathf.Deg2Rad), 0f, Math.Sin(-(float)angles[0] * Mathf.Deg2Rad), Math.Cos((float)angles[0] * Mathf.Deg2Rad));
-                YRot.put(0, 0, Math.Cos((float)angles[1] * Mathf.Deg2Rad), 0f, Math.Sin(-(float)angles[1] * Mathf.Deg2Rad), 0f, 1f, 0f, Math.Sin((float)angles[1] * Mathf.Deg2Rad), 0f, Math.Cos((float)angles[1] * Mathf.Deg2Rad));
-                ZRot.put(0, 0, Math.Cos((float)angles[2] * Mathf.Deg2Rad), Math.Sin((float)angles[2] * Mathf.Deg2Rad), 0, Math.Sin(-(float)angles[2] * Mathf.Deg2Rad), Math.Cos((float)angles[2] * Mathf.Deg2Rad), 0f, 0f, 0f, 1f);
-                var invRot = ZRot * YRot * XRot;
+                XRot.put(0, 0, 1f, 0f, 0f, 0f, Math.Cos((float)angles[0] * Mathf.Deg2Rad), Math.Sin((float)angles[0] * Mathf.Deg2Rad), 0f, -Math.Sin((float)angles[0] * Mathf.Deg2Rad), Math.Cos((float)angles[0] * Mathf.Deg2Rad));
+                YRot.put(0, 0, Math.Cos((float)angles[1] * Mathf.Deg2Rad), 0f, -Math.Sin((float)angles[1] * Mathf.Deg2Rad), 0f, 1f, 0f, Math.Sin((float)angles[1] * Mathf.Deg2Rad), 0f, Math.Cos((float)angles[1] * Mathf.Deg2Rad));
+                ZRot.put(0, 0, Math.Cos((float)angles[2] * Mathf.Deg2Rad), Math.Sin((float)angles[2] * Mathf.Deg2Rad), 0, -Math.Sin((float)angles[2] * Mathf.Deg2Rad), Math.Cos((float)angles[2] * Mathf.Deg2Rad), 0f, 0f, 0f, 1f);
+                var invRot = XRot * YRot * ZRot;
                 //Debug.Log(invRot.dump());
                 //Debug.Log("Angles: " + angles[0] + "," + angles[1] + "," + angles[2]);
-                //var testangles = Calib3d.RQDecomp3x3(invRot, mtxR, mtxQ);
-                // Debug.Log("Test Angles: " + testangles[0] + "," + testangles[1] + "," + testangles[2]);
+                //var testangles = Calib3d.RQDecomp3x3(invRot.t(), mtxR, mtxQ);
+                 //Debug.Log("Test Angles: " + testangles[0] + "," + testangles[1] + "," + testangles[2]);
 
                 //https://storage.googleapis.com/mediapipe-assets/documentation/mediapipe_face_landmark_fullsize.png
                 UnityEngine.Vector3 eyelid_159_unity_coords = new UnityEngine.Vector3((float)rearCaptureWidth - (FaceAndIrisLandmarks.Landmark[159].X * (float)rearCaptureWidth), (float)rearCaptureHeight - (FaceAndIrisLandmarks.Landmark[159].Y * (float)rearCaptureHeight), (FaceAndIrisLandmarks.Landmark[159].Z * 5));
@@ -354,8 +356,8 @@ namespace Mediapipe.Unity
                 UnityEngine.Vector3 eyelid_160_unity_coords = new UnityEngine.Vector3((float)rearCaptureWidth - (FaceAndIrisLandmarks.Landmark[160].X * (float)rearCaptureWidth), (float)rearCaptureHeight - (FaceAndIrisLandmarks.Landmark[160].Y * (float)rearCaptureHeight), (FaceAndIrisLandmarks.Landmark[160].Z * 5));
 
                 UnityEngine.Vector3 eyelid_center_unity_coords = (eyelid_33_unity_coords + eyelid_133_unity_coords) / 2;
-                UnityEngine.Vector3 eyelid_left_inside_unity_coords = (eyelid_158_unity_coords + eyelid_153_unity_coords) / 2;
-                UnityEngine.Vector3 eyelid_left_outside_unity_coords = (eyelid_160_unity_coords + eyelid_144_unity_coords) / 2;
+                UnityEngine.Vector3 eyelid_left_inside_unity_coords = (eyelid_157_unity_coords + eyelid_154_unity_coords) / 2;
+                UnityEngine.Vector3 eyelid_left_outside_unity_coords = (eyelid_161_unity_coords + eyelid_163_unity_coords) / 2;
                 UnityEngine.Vector3 eyelid_left_up_unity_coords = eyelid_159_unity_coords;
                 UnityEngine.Vector3 eyelid_left_down_unity_coords = eyelid_145_unity_coords;
 
@@ -396,12 +398,12 @@ namespace Mediapipe.Unity
                 //var testMat = get_3d_realigned_landmarks_pos(FaceAndIrisLandmarks);
                 //Debug.Log(testMat.get(0, 0)[0] + "," + testMat.get(0, 0)[1] + "," + testMat.get(0, 0)[2]);
                 //OpenCVForUnity.ImgprocModule.Imgproc.warpPerspective(testMat, testMat, invRot, testMat.size(), Imgproc.INTER_LINEAR);
-               // Mat testPoint = new Mat(3, 1, CvType.CV_64FC1);
+               //Mat testPoint = new Mat(3, 1, CvType.CV_64FC1);
                 //testPoint.put(0, 0, testMat.get(0, 0)[0], testMat.get(0, 0)[1], testMat.get(0, 0)[2]);
 
                 //Mat invrmat = new Mat(3, 3, CvType.CV_64FC1);
                 //Calib3d.Rodrigues(rvec.t(), invrmat);
-                //var outPoint = (invRot * testPoint);
+                //var outPoint = (invRot.t() * testPoint);
                 //Debug.Log(outPoint.dump());
                 //Debug.Log(outPoint.dump());
 
@@ -416,7 +418,7 @@ namespace Mediapipe.Unity
                 OpenCVForUnity.CoreModule.Point3 center = new OpenCVForUnity.CoreModule.Point3(LandmarksList.Landmark[1].X * (float)rearCaptureWidth, LandmarksList.Landmark[1].Y * (float)rearCaptureHeight, LandmarksList.Landmark[1].Z);
                 foreach (NormalizedLandmark landmark in LandmarksList.Landmark)
                 {
-                    landmarkpoints[i] = new OpenCVForUnity.CoreModule.Point3((landmark.X * (float)rearCaptureWidth), (landmark.Y * (float)rearCaptureHeight), (landmark.Z * (float)rearCaptureWidth));
+                    landmarkpoints[i] = new OpenCVForUnity.CoreModule.Point3((landmark.X * (float)rearCaptureWidth), (landmark.Y * (float)rearCaptureHeight), (landmark.Z));
                     //landmarkpoints[i] = landmarkpoints[i] - center;
                     i += 1;
                 }
@@ -659,7 +661,7 @@ namespace Mediapipe.Unity
                 newObject.transform.rotation = Camera.main.transform.rotation;
 
                 //rotate temp GO to match detected bystander head pose
-                newObject.transform.Rotate((float)angles[0], (float)angles[1] * -1f, (float)angles[2], Space.Self);
+                newObject.transform.Rotate((float)angles[0] * -1f, (float)angles[1], (float)angles[2], Space.Self);
 
                 //rotate temp GO to rear to compensate for rear-facing camera FOV
                 newObject.transform.RotateAround(outMatrix.GetPosition(), Camera.main.transform.up, 180);
@@ -707,7 +709,7 @@ namespace Mediapipe.Unity
                 newObject.transform.rotation = Camera.main.transform.rotation;
 
                 //rotate temp GO to match detected bystander head pose
-                newObject.transform.Rotate((float)angles[0], (float)angles[1] * -1f, (float)angles[2], Space.Self);
+                newObject.transform.Rotate((float)angles[0] * -1f, (float)angles[1], (float)angles[2], Space.Self);
 
                 //rotate temp GO to rear to compensate for rear-facing camera FOV
                 newObject.transform.RotateAround(outMatrix.GetPosition(), Camera.main.transform.up, 180);

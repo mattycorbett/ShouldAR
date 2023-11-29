@@ -17,7 +17,7 @@ namespace OpenCVForUnity.Editor
         {
 
             OpenCVForUnitySetupToolsWindow m_Window = GetWindow<OpenCVForUnitySetupToolsWindow>(true,"OpenCV for Unity | Setup Tools");
-            m_Window.minSize = new Vector2(320, 660);
+            m_Window.minSize = new Vector2(320, 780);
             //m_Window.maxSize = new Vector2(320, 800);
         }
 
@@ -122,6 +122,64 @@ namespace OpenCVForUnity.Editor
                         {
 
                             OpenCVForUnityMenuItem.UseUnsafeCode(true);
+                        }
+
+                    }
+                }
+                GUILayout.EndVertical();
+
+                EditorGUILayout.Space();
+
+                EditorGUILayout.LabelField("[WebGL Settings]");
+
+                GUILayout.BeginVertical("box");
+                {
+
+                    if (OpenCVForUnityMenuItem.ValidateUseWebGLThreadsSupport())
+                    {
+                        string aboutText = "PlayerSettings.WebGL.threadsSupport : "+ PlayerSettings.WebGL.threadsSupport;
+                        EditorGUILayout.LabelField(aboutText, EditorStyles.textArea);
+                        if (GUILayout.Button("Disable MultiThreads Support"))
+                        {
+
+                            OpenCVForUnityMenuItem.UseWebGLThreadsSupport(false);
+                        }
+                    }
+                    else
+                    {
+                        string aboutText = "PlayerSettings.WebGL.threadsSupport : " + PlayerSettings.WebGL.threadsSupport;
+                        EditorGUILayout.LabelField(aboutText, EditorStyles.textArea);
+                        if (GUILayout.Button("Enable MultiThreads Support"))
+                        {
+
+                            OpenCVForUnityMenuItem.UseWebGLThreadsSupport(true);
+                        }
+
+                    }
+                }
+                GUILayout.EndVertical();
+
+                GUILayout.BeginVertical("box");
+                {
+
+                    if (OpenCVForUnityMenuItem.ValidateUseWebGLSIMDSupport())
+                    {
+                        string aboutText = "PlayerSettings.WebGL.emscriptenArgs : " + PlayerSettings.WebGL.emscriptenArgs;
+                        EditorGUILayout.LabelField(aboutText, EditorStyles.textArea);
+                        if (GUILayout.Button("Disable SIMD Support"))
+                        {
+
+                            OpenCVForUnityMenuItem.UseWebGLSIMDSupport(false);
+                        }
+                    }
+                    else
+                    {
+                        string aboutText = "PlayerSettings.WebGL.emscriptenArgs : " + PlayerSettings.WebGL.emscriptenArgs;
+                        EditorGUILayout.LabelField(aboutText, EditorStyles.textArea);
+                        if (GUILayout.Button("Enable SIMD Support"))
+                        {
+
+                            OpenCVForUnityMenuItem.UseWebGLSIMDSupport(true);
                         }
 
                     }

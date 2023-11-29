@@ -3,7 +3,7 @@
 #include "WiFi.h"
 
 // Pin definition for CAMERA_MODEL_AI_THINKER
-//#define CAMERA_MODEL_AI_THINKER
+#define CAMERA_MODEL_AI_THINKER
 #define PWDN_GPIO_NUM     32
 #define RESET_GPIO_NUM    -1
 #define XCLK_GPIO_NUM      0
@@ -23,20 +23,22 @@
 
 // Variables
 camera_fb_t * fb = NULL;
-WiFiServer wifiServer(5005);
 const char* ssid = "Corbett";
 const char* password = "ConnorBuddy2018";
+//const char* ssid = "TP-Link_E6BE"; // Gilbert Place
+//const char* password = "19572871"; // Gilbert Place
 WiFiClient client;
 const int timerInterval = 100;    // time between each HTTP POST image
 unsigned long previousMillis = 0;   // last time image was sent
 
-  String serverName = "10.0.0.99";   
-  //String serverName = "10.0.0.40";   
+  //String serverName = "10.0.0.99";  //local headset IP 
+  //String serverName = "192.168.0.100";  //Gilbert Place Magic Leap IP
+  String serverName = "10.0.0.40";   
   const int serverPort = 6464;
 
 void setup() {
   Serial.begin(115200);
-
+  WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
   Serial.print("Connecting to WiFi.");
   while (WiFi.status() != WL_CONNECTED) {
@@ -46,8 +48,6 @@ void setup() {
 
   Serial.println("\nConnected!");
   Serial.println(WiFi.localIP());
-
-  wifiServer.begin();
   
 
   camera_config_t config;

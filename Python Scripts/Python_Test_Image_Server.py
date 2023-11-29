@@ -31,7 +31,8 @@ while True:
         totalData = 0
         size = conn.recv(4)
         sizeInt = int.from_bytes(size, "little")
-        print()
+        print(sizeInt)
+
         while totalData < sizeInt:
             if (bufferSize > (sizeInt - totalData)):
                 bufferSize = sizeInt - totalData;

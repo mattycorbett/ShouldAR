@@ -92,6 +92,7 @@ namespace Mediapipe.Unity
         {
             return new List<WaitForResult> {
         WaitForAsset("face_detection_full_range_sparse.bytes"),
+        WaitForAsset("face_detection_short_range.bytes"),
         WaitForAsset("face_landmark.bytes"),
         WaitForAsset("iris_landmark.bytes"),
       };
