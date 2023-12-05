@@ -38,7 +38,7 @@ namespace Mediapipe.Unity
         private const string _InputStreamName = "input_video";
 
         private const string _FaceDetectionsStreamName = "face_detections";
-        private const string _FaceRectStreamName = "face_rect";
+        private const string _FaceRectStreamName = "face_rect_first";
         private const string _FaceLandmarksWithIrisStreamName = "face_landmarks_with_iris";
         private const string _FaceLandmarksStreamName = "multi_face_landmarks";
         
@@ -92,6 +92,7 @@ namespace Mediapipe.Unity
         {
             return new List<WaitForResult> {
         WaitForAsset("face_detection_full_range_sparse.bytes"),
+        WaitForAsset("face_detection_full_range.bytes"),
         WaitForAsset("face_detection_short_range.bytes"),
         WaitForAsset("face_landmark.bytes"),
         WaitForAsset("iris_landmark.bytes"),

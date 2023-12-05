@@ -49,6 +49,8 @@ public class EyeTracking : MonoBehaviour
     public GameObject CSVGameObject;
 
     public float meanFixationDuration;
+
+    public float minFixationDuration;
     #endregion
 
     private void Awake()
@@ -59,7 +61,7 @@ public class EyeTracking : MonoBehaviour
 
         InvokeRepeating("CounterLoop", 1.0f, 1.0f);
         InvokeRepeating("BlinkRateCountLoop", 1.0f, 60.0f);
-        InvokeRepeating("EyeDataRecorderLoop", 1.0f, 1.0f);
+        InvokeRepeating("EyeDataRecorderLoop", 3.0f, 3.0f);
     }
 
     private void OnDestroy()
@@ -117,7 +119,6 @@ public class EyeTracking : MonoBehaviour
             //if a fixation has ended, compute new totals and averages
             if (previousBehavior == "Fixation")
             {
-
                 //If first fixation
                 if (fixationList.Count == 0)
                 {
@@ -125,6 +126,13 @@ public class EyeTracking : MonoBehaviour
                 }
                 fixationList.Add((double)tempFixationDuration);
                 tempFixationDuration = 0F;
+
+                if (tempFixationDuration > minFixationDuration)
+                {
+ 
+                }
+                
+
 
 
             }
@@ -136,12 +144,12 @@ public class EyeTracking : MonoBehaviour
         {
             if (previousBehavior == "Fixation")
             {
-                tempFixationDuration = tempFixationDuration + (recognitionState.DurationS);
+                tempFixationDuration = (recognitionState.DurationS) * 1000;
             }
             //begin to track a new fixation
             else
             {
-                tempFixationDuration = recognitionState.DurationS;
+                tempFixationDuration = recognitionState.DurationS * 1000;
             }
             previousBehavior = "Fixation";
             
@@ -192,6 +200,7 @@ public class EyeTracking : MonoBehaviour
             skewFixationDuration = skewness(fixationList.ToArray(), fixationList.Count());
             Debug.Log("Mean Fixation Duration: " + meanFixationDuration);
             Debug.Log("Fixations per Second: " + numFixationsPerSecond);
+            Debug.Log("Blink Rate: " + blinkRate);
             if (enableLogging)
             {
                 loggingScript.WriteCSVLineFixations(numFixationsPerSecond, meanFixationDuration, SDFixationDuration, skewFixationDuration, (float)fixationList.Max(), firstFixationDuration);
@@ -201,6 +210,8 @@ public class EyeTracking : MonoBehaviour
 
 
         }
+        numberSecondsElapsed = 0;
+
     }
     void CounterLoop()
     {

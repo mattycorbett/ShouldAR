@@ -90,6 +90,7 @@ namespace Mediapipe.Unity
     void Update()
         {
             StartCoroutine(ProcessTexture());
+
         }
     IEnumerator ProcessTexture()
         {

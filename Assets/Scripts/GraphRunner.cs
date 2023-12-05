@@ -15,177 +15,181 @@ using Stopwatch = System.Diagnostics.Stopwatch;
 
 namespace Mediapipe.Unity
 {
-  public abstract class GraphRunner : MonoBehaviour
-  {
-    public enum ConfigType
+    public abstract class GraphRunner : MonoBehaviour
     {
-      None,
-      CPU,
-      GPU,
-      OpenGLES,
-    }
+        public enum ConfigType
+        {
+            None,
+            CPU,
+            GPU,
+            OpenGLES,
+        }
 
 #pragma warning disable IDE1006
-    // TODO: make it static
-    protected string TAG => GetType().Name;
+        // TODO: make it static
+        protected string TAG => GetType().Name;
 #pragma warning restore IDE1006
 
-    [SerializeField] private TextAsset _cpuConfig = null;
-    [SerializeField] private TextAsset _gpuConfig = null;
-    [SerializeField] private TextAsset _openGlEsConfig = null;
-    [SerializeField] private long _timeoutMicrosec = 0;
+        [SerializeField] private TextAsset _cpuConfig = null;
+        [SerializeField] private TextAsset _gpuConfig = null;
+        [SerializeField] private TextAsset _openGlEsConfig = null;
+        [SerializeField] private long _timeoutMicrosec = 0;
 
-    private static readonly GlobalInstanceTable<int, GraphRunner> _InstanceTable = new GlobalInstanceTable<int, GraphRunner>(5);
-    private static readonly Dictionary<IntPtr, int> _NameTable = new Dictionary<IntPtr, int>();
+        private static readonly GlobalInstanceTable<int, GraphRunner> _InstanceTable = new GlobalInstanceTable<int, GraphRunner>(5);
+        private static readonly Dictionary<IntPtr, int> _NameTable = new Dictionary<IntPtr, int>();
 
-    protected RunningMode runningMode { get; private set; } = RunningMode.Async;
-    private bool _isRunning = false;
+        protected RunningMode runningMode { get; private set; } = RunningMode.Async;
+        private bool _isRunning = false;
 
-    public InferenceMode inferenceMode => configType == ConfigType.CPU ? InferenceMode.CPU : InferenceMode.GPU;
-    public virtual ConfigType configType
-    {
-      get
-      {
-        if (GpuManager.IsInitialized)
+        public InferenceMode inferenceMode => configType == ConfigType.CPU ? InferenceMode.CPU : InferenceMode.GPU;
+        public virtual ConfigType configType
         {
+            get
+            {
+                if (GpuManager.IsInitialized)
+                {
 #if UNITY_ANDROID
           if (SystemInfo.graphicsDeviceType == GraphicsDeviceType.OpenGLES3 && _openGlEsConfig != null)
           {
             return ConfigType.OpenGLES;
           }
 #endif
-          if (_gpuConfig != null)
-          {
-            return ConfigType.GPU;
-          }
+                    if (_gpuConfig != null)
+                    {
+                        return ConfigType.GPU;
+                    }
+                }
+                return _cpuConfig != null ? ConfigType.CPU : ConfigType.None;
+            }
         }
-        return _cpuConfig != null ? ConfigType.CPU : ConfigType.None;
-      }
-    }
-    public TextAsset textConfig
-    {
-      get
-      {
-        switch (configType)
+        public TextAsset textConfig
         {
-          case ConfigType.CPU: return _cpuConfig;
-          case ConfigType.GPU: return _gpuConfig;
-          case ConfigType.OpenGLES: return _openGlEsConfig;
-          case ConfigType.None:
-          default: return null;
+            get
+            {
+                switch (configType)
+                {
+                    case ConfigType.CPU: return _cpuConfig;
+                    case ConfigType.GPU: return _gpuConfig;
+                    case ConfigType.OpenGLES: return _openGlEsConfig;
+                    case ConfigType.None:
+                    default: return null;
+                }
+            }
         }
-      }
-    }
 
-    public long timeoutMicrosec
-    {
-      get => _timeoutMicrosec;
-      set => _timeoutMicrosec = (long)Mathf.Max(0, value);
-    }
-    public long timeoutMillisec
-    {
-      get => timeoutMicrosec / 1000;
-      set => timeoutMicrosec = value * 1000;
-    }
-
-    public RotationAngle rotation { get; private set; } = 0;
-
-    private Stopwatch _stopwatch;
-    protected CalculatorGraph calculatorGraph { get; private set; }
-    protected Timestamp latestTimestamp;
-
-    protected virtual void Start()
-    {
-      _InstanceTable.Add(GetInstanceID(), this);
-    }
-
-    protected virtual void OnDestroy()
-    {
-      Stop();
-    }
-
-    public WaitForResult WaitForInit(RunningMode runningMode)
-    {
-      return new WaitForResult(this, Initialize(runningMode));
-    }
-
-    public virtual IEnumerator Initialize(RunningMode runningMode)
-    {
-      this.runningMode = runningMode;
-
-      Debug.Log($"Config Type = {configType}");
-      Debug.Log($"Running Mode = {runningMode}");
-
-      InitializeCalculatorGraph();
-      _stopwatch = new Stopwatch();
-      _stopwatch.Start();
-
-      Debug.Log("Loading dependent assets...");
-      var assetRequests = RequestDependentAssets();
-      yield return new WaitWhile(() => assetRequests.Any((request) => request.keepWaiting));
-
-      var errors = assetRequests.Where((request) => request.isError).Select((request) => request.error).ToList();
-      if (errors.Count > 0)
-      {
-        foreach (var error in errors)
+        public long timeoutMicrosec
         {
-          Debug.LogError(error);
+            get => _timeoutMicrosec;
+            set => _timeoutMicrosec = (long)Mathf.Max(0, value);
         }
-        throw new InternalException("Failed to prepare dependent assets");
-      }
-    }
-
-    public abstract void StartRun(ImageSource imageSource);
-
-    protected void StartRun(PacketMap sidePacket)
-    {
-      calculatorGraph.StartRun(sidePacket);
-      _isRunning = true;
-    }
-
-    public virtual void Stop()
-    {
-      if (calculatorGraph != null)
-      {
-        if (_isRunning)
+        public long timeoutMillisec
         {
-          try
-          {
-            calculatorGraph.CloseAllPacketSources();
-          }
-          catch (BadStatusException exception)
-          {
-            Debug.LogError(exception);
-          }
-
-          try
-          {
-            calculatorGraph.WaitUntilDone();
-          }
-          catch (BadStatusException exception)
-          {
-            Debug.LogError(exception);
-          }
+            get => timeoutMicrosec / 1000;
+            set => timeoutMicrosec = value * 1000;
         }
 
-        _isRunning = false;
-        var _ = _NameTable.Remove(calculatorGraph.mpPtr);
-        calculatorGraph.Dispose();
-        calculatorGraph = null;
-      }
+        public RotationAngle rotation { get; private set; } = 0;
 
-      if (_stopwatch != null && _stopwatch.IsRunning)
-      {
-        _stopwatch.Stop();
-      }
-    }
+        private Stopwatch _stopwatch;
+        protected CalculatorGraph calculatorGraph { get; private set; }
+        protected Timestamp latestTimestamp;
 
-    protected void AddPacketToInputStream<T>(string streamName, Packet<T> packet)
-    {
-      calculatorGraph.AddPacketToInputStream(streamName, packet);
-    }
+        protected virtual void Start()
+        {
+            _InstanceTable.Add(GetInstanceID(), this);
+        }
 
-    protected void AddTextureFrameToInputStream(string streamName, TextureFrame textureFrame)
+        protected virtual void OnDestroy()
+        {
+            Stop();
+        }
+
+        public WaitForResult WaitForInit(RunningMode runningMode)
+        {
+            return new WaitForResult(this, Initialize(runningMode));
+        }
+
+        public virtual IEnumerator Initialize(RunningMode runningMode)
+        {
+            this.runningMode = runningMode;
+
+            Debug.Log($"Config Type = {configType}");
+            Debug.Log($"Running Mode = {runningMode}");
+
+            InitializeCalculatorGraph();
+            _stopwatch = new Stopwatch();
+            _stopwatch.Start();
+
+            Debug.Log("Loading dependent assets...");
+            var assetRequests = RequestDependentAssets();
+            yield return new WaitWhile(() => assetRequests.Any((request) => request.keepWaiting));
+
+            var errors = assetRequests.Where((request) => request.isError).Select((request) => request.error).ToList();
+            if (errors.Count > 0)
+            {
+                foreach (var error in errors)
+                {
+                    Debug.LogError(error);
+                }
+                throw new InternalException("Failed to prepare dependent assets");
+            }
+        }
+
+        public abstract void StartRun(ImageSource imageSource);
+
+        protected void StartRun(PacketMap sidePacket)
+        {
+            calculatorGraph.StartRun(sidePacket);
+            _isRunning = true;
+        }
+
+        public virtual void Stop()
+        {
+            if (calculatorGraph != null)
+            {
+                if (_isRunning)
+                {
+                    try
+                    {
+                        calculatorGraph.CloseAllPacketSources();
+                    }
+                    catch (BadStatusException exception)
+                    {
+                        Debug.LogError(exception);
+                    }
+
+                    try
+                    {
+                        calculatorGraph.WaitUntilDone();
+                    }
+                    catch (BadStatusException exception)
+                    {
+                        Debug.LogError(exception);
+                    }
+                }
+
+                _isRunning = false;
+                var _ = _NameTable.Remove(calculatorGraph.mpPtr);
+                calculatorGraph.Dispose();
+                calculatorGraph = null;
+            }
+
+            if (_stopwatch != null && _stopwatch.IsRunning)
+            {
+                _stopwatch.Stop();
+            }
+        }
+
+        protected void AddPacketToInputStream<T>(string streamName, Packet<T> packet)
+
+        {
+
+            calculatorGraph.AddPacketToInputStream(streamName, packet);
+
+
+        }
+
+        protected void AddTextureFrameToInputStream(string streamName, TextureFrame textureFrame)
     {
       latestTimestamp = GetCurrentTimestamp();
 

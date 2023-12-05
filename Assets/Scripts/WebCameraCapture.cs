@@ -67,12 +67,15 @@ namespace Mediapipe.Unity
         /// </summary>
         MatOfDouble distCoeffs;
 
+        Texture2D tempVideoTexturesRGB;
+
         /// <summary>
         /// Using Awake so that Permissions is set before PermissionRequester Start.
         /// </summary>
         void Awake()
         {
-            rawVideoTexturesRGBA = new Texture2D(1280, 720, TextureFormat.BGRA32, false);
+            rawVideoTexturesRGBA = new Texture2D(1280, 720, TextureFormat.RGBA32, false);
+            tempVideoTexturesRGB = new Texture2D(1280, 720, TextureFormat.RGB24, false);
 
             UnityEngine.Color[] pixels = Enumerable.Repeat(UnityEngine.Color.white, 1280 * 720).ToArray();
             rawVideoTexturesRGBA.SetPixels(pixels);
@@ -141,10 +144,17 @@ namespace Mediapipe.Unity
 
         void UndistortImage(byte[] tempByteArray)
         {
-            Mat buff = new Mat(1, tempByteArray.Length, CvType.CV_8UC1);
+            /*Mat buff = new Mat(1, tempByteArray.Length, CvType.CV_8UC1);
             Utils.copyToMat<byte>(tempByteArray, buff);
             
-            Mat img_result = Imgcodecs.imdecode(buff, Imgcodecs.IMREAD_COLOR);
+            Mat img_result = Imgcodecs.imdecode(buff, Imgcodecs.IMREAD_COLOR);*/
+
+            ImageConversion.LoadImage(tempVideoTexturesRGB, tempByteArray);
+
+            Mat img_result = new Mat(tempVideoTexturesRGB.height, tempVideoTexturesRGB.width, CvType.CV_8UC4);
+
+            OpenCVForUnity.UnityUtils.Utils.texture2DToMat(tempVideoTexturesRGB, img_result);
+
             Mat outMat = new Mat();
 
             Size size = new Size(img_result.width(), img_result.height());
@@ -157,14 +167,11 @@ namespace Mediapipe.Unity
 
             Size dim2 = size.clone();
             Size dim3 = size.clone();
-            //Debug.Log(scaled_K.dump());
             Calib3d.fisheye_estimateNewCameraMatrixForUndistortRectify(scaled_K, distCoeffs, dim2, E, new_K, 1.0);
-            //Debug.Log(new_K.dump());
-
             Calib3d.fisheye_initUndistortRectifyMap(scaled_K, distCoeffs, E, new_K, dim3, CvType.CV_16SC2, map1, map2);
             Imgproc.remap(img_result, outMat, map1, map2, Imgproc.INTER_LINEAR, Core.BORDER_CONSTANT);
-            // OpenCVForUnity.Calib3dModule.Calib3d.fisheye_undistortImage(img_result, outMat, camMatrix, distCoeffs, camMatrix, size);
-            OpenCVForUnity.UnityUtils.Utils.matToTexture2D(outMat, rawVideoTexturesRGBA, false, 0, true);
+            //OpenCVForUnity.Calib3dModule.Calib3d.fisheye_undistortImage(img_result, outMat, camMatrix, distCoeffs, camMatrix, size);
+            OpenCVForUnity.UnityUtils.Utils.matToTexture2D(outMat, rawVideoTexturesRGBA);
             //rawVideoTexturesRGBA.Apply();
         }
 

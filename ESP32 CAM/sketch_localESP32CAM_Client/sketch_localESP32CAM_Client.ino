@@ -23,17 +23,17 @@
 
 // Variables
 camera_fb_t * fb = NULL;
-const char* ssid = "Corbett";
-const char* password = "ConnorBuddy2018";
-//const char* ssid = "TP-Link_E6BE"; // Gilbert Place
-//const char* password = "19572871"; // Gilbert Place
+//const char* ssid = "Corbett";
+//const char* password = "ConnorBuddy2018";
+const char* ssid = "TP-Link_E6BE"; // Gilbert Place
+const char* password = "19572871"; // Gilbert Place
 WiFiClient client;
 const int timerInterval = 100;    // time between each HTTP POST image
 unsigned long previousMillis = 0;   // last time image was sent
 
   //String serverName = "10.0.0.99";  //local headset IP 
-  //String serverName = "192.168.0.100";  //Gilbert Place Magic Leap IP
-  String serverName = "10.0.0.40";   
+  String serverName = "192.168.0.100";  //Gilbert Place Magic Leap IP
+  //String serverName = "10.0.0.40";   
   const int serverPort = 6464;
 
 void setup() {
