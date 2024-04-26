@@ -7,6 +7,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Diagnostics;
 
 namespace Mediapipe.Unity
 {
@@ -15,6 +16,7 @@ namespace Mediapipe.Unity
         public List<NormalizedLandmarkList> currentFaceLandmarks;
         public NormalizedLandmarkList currentFaceAndIrisLandmarks;
         public List<Detection> currentFaceList;
+        //Stopwatch stopWatch = new Stopwatch();
 
         protected override void OnStartRun()
         {
@@ -27,6 +29,7 @@ namespace Mediapipe.Unity
             }
 
             var imageSource = ImageSourceProvider.ImageSource;
+            //stopWatch.Start();
         }
 
         protected override void AddTextureFrameToInputStream(TextureFrame textureFrame)
@@ -67,6 +70,9 @@ namespace Mediapipe.Unity
         {
             //_faceLandmarksWithIrisAnnotationController.DrawLater(eventArgs.value);
             currentFaceAndIrisLandmarks = eventArgs.value;
+            //UnityEngine.Debug.Log(stopWatch.ElapsedMilliseconds);
+            //stopWatch.Reset();
+            //stopWatch.Start();
 
         }
 

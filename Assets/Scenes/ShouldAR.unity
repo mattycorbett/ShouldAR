@@ -956,7 +956,7 @@ PrefabInstance:
     - target: {fileID: 1718845344379982862, guid: f33d963c8d4e9ed45aef8e8f3511704d,
         type: 3}
       propertyPath: m_Radius
-      value: 3
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1718845344379982862, guid: f33d963c8d4e9ed45aef8e8f3511704d,
         type: 3}
@@ -1100,8 +1100,8 @@ MonoBehaviour:
   frontCaptureHeight: 720
   rearCaptureWidth: 1280
   rearCaptureHeight: 720
-  rearCaptureFOV: 65
-  useOnlyHeadPose: 1
+  rearCaptureFOV: 140
+  useOnlyHeadPose: 0
   imageQuad: {fileID: 1263523334}
 --- !u!4 &1247828630
 Transform:
